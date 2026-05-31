@@ -31,6 +31,8 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text-p);line-heigh
 
 header{padding:.7rem 2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg);position:sticky;top:0;z-index:50;backdrop-filter:blur(14px)}
 .brand{font-family:var(--mono);font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;color:var(--teal);text-decoration:none;font-weight:500}
+.header-right{display:flex;gap:.75rem;align-items:center}
+.header-link{font-family:var(--mono);font-size:.68rem;color:var(--text-t);text-decoration:none;letter-spacing:.06em;transition:color .2s}.header-link:hover{color:var(--teal)}
 .theme-toggle{background:none;border:1px solid var(--border);border-radius:6px;padding:.3rem .6rem;cursor:pointer;font-size:.82rem;color:var(--text-t);font-family:var(--sans);transition:all .2s}
 .theme-toggle:hover{border-color:var(--teal);color:var(--teal)}
 
@@ -39,6 +41,8 @@ main{max-width:760px;margin:0 auto;padding:4rem 2rem 6rem}
 .intro{margin-bottom:4rem}
 .intro h1{font-family:var(--serif);font-size:2.4rem;font-weight:600;line-height:1.18;margin-bottom:.8rem;letter-spacing:-.01em}
 .intro p{font-size:1.05rem;color:var(--text-s);max-width:600px;line-height:1.72}
+.intro-links{display:flex;gap:1.5rem;margin-top:1.2rem;font-family:var(--mono);font-size:.76rem}
+.intro-links a{color:var(--teal);text-decoration:none;letter-spacing:.04em;transition:opacity .2s}.intro-links a:hover{opacity:.7}
 
 .section-label{font-family:var(--mono);font-size:.65rem;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);margin-bottom:1.2rem;padding-top:2rem;border-top:1px solid var(--border)}
 
@@ -49,11 +53,9 @@ main{max-width:760px;margin:0 auto;padding:4rem 2rem 6rem}
 .work-card p{font-size:.9rem;color:var(--text-s);margin-bottom:.8rem;line-height:1.65}
 .work-card .card-meta{font-size:.78rem;color:var(--text-t);font-family:var(--mono)}
 
-.cta-section{margin-top:4rem;padding:2.5rem;border:1px solid var(--border);border-radius:10px;background:var(--bg-card)}
-.cta-section h2{font-family:var(--serif);font-size:1.4rem;font-weight:400;margin-bottom:.6rem}
-.cta-section p{font-size:.95rem;color:var(--text-s);margin-bottom:1rem}
-.cta-section a{color:var(--teal);font-weight:600;text-decoration:none}
-.cta-section a:hover{text-decoration:underline}
+.cta-band{margin-top:4rem;padding:2rem 0;border-top:1px solid var(--border)}
+.cta-band p{font-size:.95rem;color:var(--text-s);line-height:1.72}
+.cta-band a{color:var(--teal);font-weight:600;text-decoration:none}.cta-band a:hover{text-decoration:underline}
 
 footer{max-width:760px;margin:0 auto;padding:0 2rem 3rem;font-size:.74rem;color:var(--text-t);border-top:1px solid var(--border);padding-top:2rem}
 
@@ -69,15 +71,24 @@ footer{max-width:760px;margin:0 auto;padding:0 2rem 3rem;font-size:.74rem;color:
 
 <header>
   <a class="brand" href="/">Tawhid Rahman</a>
-  <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">◑ Theme</button>
+  <div class="header-right">
+    <a class="header-link" href="https://www.linkedin.com/in/tawhidurr/" target="_blank" rel="noopener">LinkedIn</a>
+    <a class="header-link" href="https://substack.com/@tawhidr" target="_blank" rel="noopener">Substack</a>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#9685; Theme</button>
+  </div>
 </header>
 
 <main>
   <section class="intro">
     <h1>Building AI systems that run companies.</h1>
     <p>
-      CEO of Softograph (est. 2012). I design and build AI-powered operational automation architectures — the kind that compound across every function of a business, from prospect discovery to executive intelligence. The work below documents the thinking, the architecture, and the patterns that emerged.
+      CEO of Softograph (est. 2012). I design and build AI-powered operational automation architectures &mdash; the kind that compound across every function of a business, from prospect discovery to executive intelligence. The work below documents the thinking, the architecture, and the patterns that emerged.
     </p>
+    <div class="intro-links">
+      <a href="https://www.linkedin.com/in/tawhidurr/" target="_blank" rel="noopener">LinkedIn &nearr;</a>
+      <a href="https://substack.com/@tawhidr" target="_blank" rel="noopener">Substack &nearr;</a>
+      <a href="mailto:tawhid@softograph.com">tawhid@softograph.com</a>
+    </div>
   </section>
 
   <p class="section-label">Published Work</p>
@@ -85,26 +96,43 @@ footer{max-width:760px;margin:0 auto;padding:0 2rem 3rem;font-size:.74rem;color:
   <a class="work-card" href="/work/continuum.html">
     <span class="card-eyebrow">Architecture Reference</span>
     <h3>Continuum</h3>
-    <p>A skill-based AI automation architecture that decomposes business operations into composable, orchestrated workflows. Four layers — Skills, Agents, Workflows, Intelligence — running a 100-person company.</p>
-    <span class="card-meta">2026 · ~18 min read</span>
+    <p>A skill-based AI automation architecture that decomposes business operations into composable, orchestrated workflows. Four layers &mdash; Skills, Agents, Workflows, Intelligence &mdash; running a 100-person company.</p>
+    <span class="card-meta">2026 &middot; ~18 min read</span>
   </a>
 
-  <!-- Future work cards go here -->
+  <a class="work-card" href="/work/three-dollar-revolution.html">
+    <span class="card-eyebrow">Analysis &middot; AI Adoption</span>
+    <h3>The Three-Dollar Revolution</h3>
+    <p>For every dollar invested in AI, companies see $3.50 back. But only 6% experience transformation. Data-driven analysis of the adoption gap and the composed-system architecture that bridges it.</p>
+    <span class="card-meta">2026 &middot; ~22 min read</span>
+  </a>
 
-  <div class="cta-section">
-    <h2>Working through a similar challenge?</h2>
-    <p>If you are building AI-powered operations for your organisation — or beginning to think about what that looks like — I would welcome a conversation.</p>
-    <a href="mailto:tawhid@softograph.com">tawhid@softograph.com</a>
+  <a class="work-card" href="/work/you-are-not-behind.html">
+    <span class="card-eyebrow">Framework &middot; CEO Playbook</span>
+    <h3>You Are Not Behind</h3>
+    <p>Nearly half of the world&rsquo;s executives feel underprepared for AI. Three diagnostic questions, a four-stage implementation pipeline, and the technical anatomy of converting a manual process into a compounding capability.</p>
+    <span class="card-meta">2026 &middot; ~20 min read</span>
+  </a>
+
+  <a class="work-card" href="/work/same-machine.html">
+    <span class="card-eyebrow">Cross-Industry Analysis</span>
+    <h3>The Same Machine, Different Factories</h3>
+    <p>How one composable architecture deploys across FMCG, healthcare, manufacturing, financial services, real estate, and logistics. Six industries, one four-layer system, and the universal patterns that connect them.</p>
+    <span class="card-meta">2026 &middot; ~25 min read</span>
+  </a>
+
+  <div class="cta-band">
+    <p>Working through a similar challenge? If you are building AI-powered operations for your organisation &mdash; or beginning to think about what that looks like &mdash; I would welcome a conversation. <a href="mailto:tawhid@softograph.com">tawhid@softograph.com</a></p>
   </div>
 </main>
 
 <footer>
-  <p>© 2026 Tawhid Rahman. All rights reserved.</p>
+  <p>&copy; 2026 Tawhid Rahman. All rights reserved.</p>
 </footer>
 
 <script>
-function toggleTheme(){const h=document.documentElement,c=h.getAttribute('data-theme');h.setAttribute('data-theme',c==='dark'?'light':'dark');localStorage.setItem('theme',h.getAttribute('data-theme'))}
-(function(){const s=localStorage.getItem('theme');if(s)document.documentElement.setAttribute('data-theme',s)})();
+function toggleTheme(){var h=document.documentElement,c=h.getAttribute('data-theme');h.setAttribute('data-theme',c==='dark'?'light':'dark');localStorage.setItem('theme',h.getAttribute('data-theme'))}
+(function(){var s=localStorage.getItem('theme');if(s)document.documentElement.setAttribute('data-theme',s)})();
 </script>
 
 </body>
