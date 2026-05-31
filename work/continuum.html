@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Continuum — The AI Automation Architecture | Tawhid Rahman</title>
+<meta name="description" content="Continuum: a skill-based AI automation architecture that decomposes business operations into composable, orchestrated workflows. Built and battle-tested on a 100-person company.">
+<meta name="author" content="Tawhid Rahman">
+<meta name="keywords" content="AI automation architecture, enterprise AI operations, skill-based composition, orchestrated workflows, operational automation, Continuum">
+<meta property="og:title" content="Continuum — The AI Automation Architecture">
+<meta property="og:description" content="How a CEO decomposed business operations into composable, AI-powered skills and orchestrated them across an entire company.">
+<meta property="og:type" content="article">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,400&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0b1426;--navy-mid:#162033;--navy-light:#1e2d47;
+  --cream:#f8f5f0;--cream-dark:#ebe5dc;
+  --teal:#1a9e8f;--teal-light:#2ec4b6;--teal-dim:#145c54;
+  --text-primary:#1a1a2e;--text-secondary:#3d3d56;--text-tertiary:#6e6e88;
+  --bg:var(--cream);--bg-card:#ffffff;--bg-code:#f0ebe4;
+  --border:#d4cdc2;--shadow:rgba(10,20,38,.06);
+  --serif:'Fraunces',Georgia,serif;
+  --sans:'Instrument Sans',-apple-system,sans-serif;
+  --mono:'JetBrains Mono','Menlo',monospace;
+  --max-w:780px;--toc-w:240px;
+}
+[data-theme="dark"]{
+  --text-primary:#e8e4de;--text-secondary:#b8b0a4;--text-tertiary:#7a7268;
+  --bg:var(--navy);--bg-card:var(--navy-mid);--bg-code:var(--navy-light);
+  --border:#2a3a52;--shadow:rgba(0,0,0,.3);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;font-size:17px}
+body{font-family:var(--sans);background:var(--bg);color:var(--text-primary);line-height:1.78;font-weight:400;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+
+/* HEADER */
+.site-header{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:.7rem 2rem;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(14px);transition:background .3s}
+.brand{text-decoration:none;display:flex;align-items:baseline;gap:.4rem}
+.brand-name{font-family:var(--mono);font-weight:500;font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;color:var(--teal)}
+.header-controls{display:flex;gap:.75rem;align-items:center}
+.theme-toggle{background:none;border:1px solid var(--border);border-radius:6px;padding:.3rem .6rem;cursor:pointer;font-size:.82rem;color:var(--text-tertiary);transition:all .2s;font-family:var(--sans)}
+.theme-toggle:hover{border-color:var(--teal);color:var(--teal)}
+
+/* LAYOUT */
+.page-wrapper{display:flex;margin-top:3.2rem;min-height:calc(100vh - 3.2rem)}
+.toc-rail{position:fixed;top:3.2rem;left:0;width:var(--toc-w);height:calc(100vh - 3.2rem);overflow-y:auto;padding:2rem 1.2rem 2rem 1.5rem;border-right:1px solid var(--border);background:var(--bg);transition:background .3s}
+.toc-rail h3{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:1rem}
+.toc-rail a{display:block;padding:.28rem 0;font-size:.8rem;color:var(--text-tertiary);text-decoration:none;border-left:2px solid transparent;padding-left:.7rem;margin-left:-.7rem;transition:all .2s;line-height:1.5}
+.toc-rail a:hover,.toc-rail a.active{color:var(--teal);border-left-color:var(--teal)}
+.main-content{margin-left:var(--toc-w);flex:1;padding:3rem 3.5rem 6rem;max-width:calc(var(--max-w) + 7rem)}
+
+/* TYPOGRAPHY */
+h1{font-family:var(--serif);font-size:2.6rem;font-weight:600;line-height:1.15;color:var(--text-primary);margin-bottom:.5rem;letter-spacing:-.01em}
+h2{font-family:var(--serif);font-size:1.65rem;font-weight:400;line-height:1.28;margin:3.5rem 0 1.1rem;padding-top:2.2rem;border-top:1px solid var(--border);color:var(--text-primary)}
+h3{font-family:var(--sans);font-size:1.05rem;font-weight:700;margin:2rem 0 .7rem;color:var(--text-primary)}
+p{margin-bottom:1.15rem;color:var(--text-secondary);text-align:justify}
+strong{color:var(--text-primary);font-weight:600}
+
+/* HERO */
+.hero{margin-bottom:3rem;padding-bottom:2.5rem;border-bottom:1px solid var(--border)}
+.hero-eyebrow{font-family:var(--mono);font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);margin-bottom:.6rem}
+.hero-subtitle{font-size:1.12rem;color:var(--text-secondary);line-height:1.68;max-width:620px;margin-bottom:1.8rem}
+.hero-author{font-size:.92rem;color:var(--text-secondary);line-height:1.65;max-width:600px;margin-bottom:1.4rem;border-left:2px solid var(--teal);padding-left:1rem}
+.hero-meta{display:flex;gap:2rem;flex-wrap:wrap;font-size:.75rem;color:var(--text-tertiary);font-family:var(--mono)}
+
+/* CARDS */
+.arch-card{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:1.6rem 1.75rem;margin:1.5rem 0;box-shadow:0 1px 4px var(--shadow);transition:background .3s,border .3s}
+.arch-card h4{font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);margin-bottom:.8rem}
+.layer-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.layer-item{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:1.2rem 1.3rem;border-left:3px solid var(--teal);transition:all .2s}
+.layer-item:hover{border-left-color:var(--teal-light);transform:translateY(-1px);box-shadow:0 3px 8px var(--shadow)}
+.layer-item h4{font-family:var(--sans);font-size:.92rem;font-weight:700;color:var(--text-primary);margin-bottom:.35rem}
+.layer-item p{font-size:.87rem;margin-bottom:0;line-height:1.6}
+.layer-num{font-family:var(--serif);font-size:1.6rem;color:var(--teal);opacity:.4;float:right;margin-top:-.2rem}
+
+/* DIAGRAMS */
+.diagram-wrapper{margin:2rem 0;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:1.8rem;overflow-x:auto}
+.diagram-wrapper svg{width:100%;height:auto;display:block}
+.diagram-caption{font-family:var(--mono);font-size:.68rem;color:var(--text-tertiary);text-align:center;margin-top:.9rem;letter-spacing:.04em}
+.diagram-watermark{font-family:'JetBrains Mono',monospace;font-size:9px;opacity:.35}
+
+/* CODE */
+code{font-family:var(--mono);font-size:.86em;background:var(--bg-code);padding:.12em .38em;border-radius:3px;color:var(--teal-dim)}
+[data-theme="dark"] code{color:var(--teal-light)}
+
+/* CALLOUT */
+.callout{border-left:3px solid var(--teal);padding:1rem 1.3rem;margin:1.8rem 0;background:var(--bg-card);border-radius:0 6px 6px 0;font-size:.94rem;box-shadow:0 1px 3px var(--shadow)}
+.callout p{margin-bottom:0}
+
+/* TABLE */
+.ref-table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:.88rem}
+.ref-table th{text-align:left;font-family:var(--mono);font-size:.67rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-tertiary);padding:.55rem .7rem;border-bottom:2px solid var(--border)}
+.ref-table td{padding:.6rem .7rem;border-bottom:1px solid var(--border);color:var(--text-secondary);vertical-align:top;line-height:1.55}
+.ref-table td:first-child{color:var(--text-primary);font-weight:600}
+
+/* FOOTER */
+.site-footer{margin-left:var(--toc-w);padding:3rem 3.5rem;border-top:1px solid var(--border);font-size:.76rem;color:var(--text-tertiary);line-height:1.85}
+.disclaimer{margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);font-size:.7rem;font-style:italic}
+
+/* PRINT */
+@media print{
+  .site-header,.toc-rail,.theme-toggle,.header-controls{display:none!important}
+  .main-content{margin-left:0!important;padding:0!important;max-width:100%}
+  .site-footer{margin-left:0}
+  body{font-size:11pt;background:#fff;color:#111}
+  h1{font-size:22pt}h2{font-size:15pt;border-top:none;padding-top:0}
+  .arch-card,.layer-item{break-inside:avoid}
+}
+
+/* MOBILE */
+@media(max-width:900px){
+  .toc-rail{display:none}
+  .main-content{margin-left:0;padding:1.5rem 1.2rem 4rem}
+  .site-footer{margin-left:0;padding:2rem 1.2rem}
+  .layer-grid{grid-template-columns:1fr}
+  h1{font-size:1.9rem}
+  .site-header{padding:.7rem 1.2rem}
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="brand" href="#"><span class="brand-name">Continuum</span></a>
+  <div class="header-controls">
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">◑ Theme</button>
+  </div>
+</header>
+
+<div class="page-wrapper">
+
+<nav class="toc-rail" aria-label="Table of contents">
+  <h3>Contents</h3>
+  <a href="#problem">The State of Play</a>
+  <a href="#philosophy">Design Philosophy</a>
+  <a href="#architecture">The Architecture</a>
+  <a href="#layer-skills">Skills</a>
+  <a href="#layer-agents">Agents</a>
+  <a href="#layer-workflows">Workflows</a>
+  <a href="#layer-intelligence">Intelligence</a>
+  <a href="#stack">The Stack</a>
+  <a href="#outcomes">What It Runs</a>
+  <a href="#patterns">Patterns Worth Stealing</a>
+  <a href="#applicability">Where It Fits</a>
+</nav>
+
+<main class="main-content">
+
+  <section class="hero">
+    <p class="hero-eyebrow">Architecture Reference</p>
+    <h1>Continuum</h1>
+    <p class="hero-subtitle">
+      A skill-based AI automation architecture that decomposes business operations into composable, orchestrated workflows — and runs them across an entire company. Built over 12 months. Battle-tested on a 100-person organisation.
+    </p>
+    <p class="hero-author">
+      Tawhid Rahman is the CEO of Softograph, a software company he founded in 2012. He designed Continuum because he needed a system that understood both the business logic of <em>why</em> to automate and the technical architecture of <em>how</em> — and discovered that the gap between those two disciplines is where most AI implementations go to die.
+    </p>
+    <div class="hero-meta">
+      <span>Tawhid Rahman</span>
+      <span>2026</span>
+      <span>~18 min read</span>
+    </div>
+  </section>
+
+  <!-- THE STATE OF PLAY -->
+  <h2 id="problem">The State of Play</h2>
+  <p>
+    The technology landscape has arrived at a peculiar juncture. The tools available to a mid-market company in 2026 would have required a dedicated AI research division five years ago — and the price of entry has collapsed to something resembling a monthly coffee budget. Large language models, autonomous agents, workflow orchestration platforms, and integration protocols have matured to production grade. The raw capability is there, sitting on the shelf, waiting to be deployed.
+  </p>
+  <p>
+    And yet, the deployment pattern at most companies follows a remarkably consistent script: leadership announces an AI initiative, the team gets access to a chatbot, a handful of enthusiasts use it for drafting emails and summarising meetings, and six months later the conversation has moved on to the next strategic priority. Usage plateaus. The ROI case evaporates. The chatbot sits in the corner of the tech stack like an expensive piece of gym equipment purchased in January.
+  </p>
+  <p>
+    The problem is rarely the model, the budget, or the team's willingness. <strong>The problem is architecture.</strong> Without a system that connects AI capabilities to the actual operational workflows of the business — discovery, research, outreach, delivery, oversight, quality control — every interaction with AI remains a one-off. A disconnected prompt. An experiment that produces a result and then vanishes into the ether, teaching the organisation nothing and compounding nothing.
+  </p>
+  <p>
+    Meanwhile, the competitive pressure has become asymmetric. A company with well-orchestrated AI automation can run the operational throughput of a firm three times its size — not because the AI is smarter, but because the architecture ensures that every output feeds the next input, that patterns repeat with precision, and that human judgment is applied at the moments where it matters most rather than spread thin across every task.
+  </p>
+  <p>
+    The question facing leadership is no longer whether to adopt AI. That decision has been made by the market. The question is whether to deploy it as a collection of disconnected tools — or as an architecture that compounds.
+  </p>
+
+  <!-- DESIGN PHILOSOPHY -->
+  <h2 id="philosophy">Design Philosophy</h2>
+  <p>
+    Continuum was designed around a conviction that most AI failures are architecture failures, not intelligence failures. The model can reason, generate, and analyse at remarkable levels. What it cannot do — what no model can do — is decide where in a business to deploy itself, what quality standards to enforce, when to escalate to a human, or how to route its outputs into the next step of a workflow. Those decisions belong to the architecture.
+  </p>
+  <p>
+    Three principles govern the design:
+  </p>
+  <h3>AI where it amplifies, humans where they decide</h3>
+  <p>
+    Continuum does not pursue automation for its own sake. Every placement of AI in the system answers a specific question: does this task benefit from speed, consistency, or scale that a human cannot sustain? Prospect research benefits — a human cannot read forty company profiles every morning and produce structured intelligence reports before the team arrives. Brand voice enforcement benefits — consistency across hundreds of communications requires a standard that does not drift with fatigue or mood. But strategic prioritisation does not benefit. Relationship judgment does not benefit. The architecture draws that line deliberately, placing AI at the points of maximum leverage and keeping humans at the points of maximum consequence.
+  </p>
+  <h3>Everything composes, nothing is a silo</h3>
+  <p>
+    The most wasteful pattern in enterprise AI is the standalone agent — a tool that performs one task brilliantly and then drops its output into a dead end. Continuum requires that every capability produces outputs consumed by another capability. The prospect research skill feeds the outreach sequencing workflow, which feeds the CRM pipeline, which feeds the intelligence layer, which feeds the executive briefing. Nothing exists in isolation. The system compounds because every component is designed to be composed.
+  </p>
+  <h3>Quality is a structural property, not an afterthought</h3>
+  <p>
+    Quality gates are embedded in the architecture itself — at the skill level (output contracts and formatting standards), at the agent level (handoff protocols and scope boundaries), and at the workflow level (approval gates for consequential actions). The system does not rely on humans to catch errors downstream. It prevents them upstream, by constraining each component to produce outputs that meet defined standards before passing them forward.
+  </p>
+
+  <!-- THE ARCHITECTURE -->
+  <h2 id="architecture">The Architecture</h2>
+  <p>
+    Continuum operates as four layers, each with a distinct responsibility. Skills execute. Agents compose. Workflows orchestrate. Intelligence observes. The separation means any component — a research skill, a marketing agent, an outreach workflow — can be swapped, upgraded, or retired without destabilising the rest of the system.
+  </p>
+
+  <div class="diagram-wrapper">
+    <svg viewBox="0 0 740 530" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Continuum four-layer architecture">
+      <defs>
+        <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2ec4b6" stop-opacity=".14"/><stop offset="100%" stop-color="#2ec4b6" stop-opacity=".02"/></linearGradient>
+      </defs>
+
+      <!-- Layer 4 -->
+      <rect x="30" y="20" width="680" height="100" rx="6" fill="url(#g1)" stroke="#1a9e8f" stroke-width="1.5"/>
+      <text x="52" y="46" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#1a9e8f" letter-spacing=".12em">LAYER 4 · OBSERVE</text>
+      <text x="52" y="72" font-family="Fraunces,serif" font-size="18" fill="currentColor" font-weight="400">Intelligence &amp; Oversight</text>
+      <text x="52" y="98" font-family="Instrument Sans,sans-serif" font-size="10.5" fill="#6e6e88">Executive briefings · Anomaly detection · Composite digests · Approval gating</text>
+      <text x="52" y="113" font-family="Instrument Sans,sans-serif" font-size="10.5" fill="#6e6e88">Reads all systems · Writes to none · Delivers via mobile</text>
+
+      <line x1="370" y1="120" x2="370" y2="140" stroke="#1a9e8f" stroke-width="1" stroke-dasharray="4,3"/>
+
+      <!-- Layer 3 -->
+      <rect x="30" y="140" width="680" height="100" rx="6" fill="url(#g1)" stroke="#1a9e8f" stroke-width="1" stroke-opacity=".65"/>
+      <text x="52" y="166" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#1a9e8f" letter-spacing=".12em">LAYER 3 · ORCHESTRATE</text>
+      <text x="52" y="192" font-family="Fraunces,serif" font-size="18" fill="currentColor" font-weight="400">Autonomous Workflows</text>
+      <text x="52" y="218" font-family="Instrument Sans,sans-serif" font-size="10.5" fill="#6e6e88">n8n pipelines · Cron schedules · Webhook triggers · Event-driven chains</text>
+      <text x="52" y="233" font-family="Instrument Sans,sans-serif" font-size="10.5" fill="#6e6e88">Discovery → Research → Scoring → Outreach → CRM sync</text>
+
+      <line x1="370" y1="240" x2="370" y2="260" stroke="#1a9e8f" stroke-width="1" stroke-dasharray="4,3"/>
+
+      <!-- Layer 2 -->
+      <rect x="30" y="260" width="680" height="100" rx="6" fill="url(#g1)" stroke="#1a9e8f" stroke-width="1" stroke-opacity=".4"/>
+      <text x="52" y="286" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#1a9e8f" letter-spacing=".12em">LAYER 2 · COMPOSE</text>
+      <text x="52" y="312" font-family="Fraunces,serif" font-size="18" fill="currentColor" font-weight="400">Function-Specific Agents</text>
+      <text x="52" y="338" font-family="Instrument Sans,sans-serif" font-size="10.5" fill="#6e6e88">Engineering · Sales · Marketing · QA · Design · Operations · Executive</text>
+      <text x="52" y="353" font-family="Instrument Sans,sans-serif" font-size="10.5" fill="#6e6e88">Scoped roles · Handoff protocols · Quality gates per function</text>
+
+      <line x1="370" y1="360" x2="370" y2="380" stroke="#1a9e8f" stroke-width="1" stroke-dasharray="4,3"/>
+
+      <!-- Layer 1 -->
+      <rect x="30" y="380" width="680" height="100" rx="6" fill="url(#g1)" stroke="#1a9e8f" stroke-width="1" stroke-opacity=".25"/>
+      <text x="52" y="406" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#1a9e8f" letter-spacing=".12em">LAYER 1 · EXECUTE</text>
+      <text x="52" y="432" font-family="Fraunces,serif" font-size="18" fill="currentColor" font-weight="400">Composable Skills</text>
+      <text x="52" y="458" font-family="Instrument Sans,sans-serif" font-size="10.5" fill="#6e6e88">Writing · Research · Analysis · Proposals · Data science · Code review</text>
+      <text x="52" y="473" font-family="Instrument Sans,sans-serif" font-size="10.5" fill="#6e6e88">Version-controlled · Changelog · I/O contracts · Reusable across agents</text>
+
+      <text x="680" y="515" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#6e6e88" text-anchor="end" opacity=".4">Continuum · © 2026 Tawhid Rahman</text>
+    </svg>
+    <p class="diagram-caption">The four-layer architecture: each layer has a single responsibility and a clean interface to the layers above and below it.</p>
+  </div>
+
+  <!-- LAYER 1: SKILLS -->
+  <h2 id="layer-skills">Layer 1: Composable Skills</h2>
+  <p>
+    A skill is the atomic unit of the entire system — a self-contained module of expertise that knows how to perform one task with production-grade consistency. Research a company. Draft a proposal. Analyse a dataset. Evaluate a code review. Enforce brand voice across a batch of outgoing communications.
+  </p>
+  <p>
+    What separates a skill from a prompt is the engineering discipline wrapped around it. Every skill carries structured metadata: a description, version number, input/output contract, integration targets, and a changelog that records every modification with dates and rationale. Skills live in a Git repository, version-controlled alongside the rest of the codebase. When the prospect-scoring rubric changes — new criteria, adjusted weights — the changelog captures what shifted and why, and every downstream consumer of that skill inherits the update automatically.
+  </p>
+  <div class="arch-card">
+    <h4>Anatomy of a production skill</h4>
+    <table class="ref-table">
+      <tr><th>Component</th><th>Purpose</th></tr>
+      <tr><td>YAML header</td><td>Name, version, category, integration targets, trigger conditions</td></tr>
+      <tr><td>System prompt</td><td>The expertise itself — domain knowledge, formatting rules, quality criteria, decision boundaries</td></tr>
+      <tr><td>Input contract</td><td>What the skill expects: structured data, raw context, or human instructions</td></tr>
+      <tr><td>Output contract</td><td>What the skill produces: structured intelligence, scored data, prose, recommendations</td></tr>
+      <tr><td>Changelog</td><td>Version history with dates, changes, and the reasoning behind each modification</td></tr>
+    </table>
+  </div>
+  <p>
+    The system maintains two categories: <strong>team skills</strong> shared across the organisation — proposal writing, code review, project management, brand enforcement — and <strong>personal skills</strong> for individual workflows that iterate faster and serve a single operator. The separation matters because team skills demand stability and documentation, while personal skills can evolve daily without coordination overhead.
+  </p>
+
+  <!-- LAYER 2: AGENTS -->
+  <h2 id="layer-agents">Layer 2: Function-Specific Agents</h2>
+  <p>
+    Agents operate one level above skills, handling the broader scope of a business function. Where a skill knows how to research a company, an agent manages the entire sales research function — determining when to invoke which skill, what context to pass, how to route outputs to the right team member, and what quality thresholds to enforce before anything leaves the system.
+  </p>
+  <p>
+    The agent layer connects to over 40 tools through MCP (Model Context Protocol) — code editors, file systems, design tools, communication platforms, CRM, project boards, knowledge bases. On top of that integration foundation, custom-designed agents serve each major business function:
+  </p>
+
+  <div class="layer-grid">
+    <div class="layer-item">
+      <span class="layer-num">E</span>
+      <h4>Engineering</h4>
+      <p>Code review, architecture decisions, debugging workflows, technical documentation, deployment checklists, tech debt triage, security scanning.</p>
+    </div>
+    <div class="layer-item">
+      <span class="layer-num">Q</span>
+      <h4>Quality Assurance</h4>
+      <p>API testing, integration validation, accessibility audits, performance benchmarking, demo environment verification, regression detection.</p>
+    </div>
+    <div class="layer-item">
+      <span class="layer-num">S</span>
+      <h4>Sales &amp; Business Development</h4>
+      <p>Account research, prospect scoring, outreach sequencing, proposal generation, pipeline health analysis, competitive intelligence.</p>
+    </div>
+    <div class="layer-item">
+      <span class="layer-num">M</span>
+      <h4>Marketing &amp; Content</h4>
+      <p>Content production pipelines, brand voice governance, SEO optimisation, LinkedIn strategy, competitive content monitoring, editorial calendars.</p>
+    </div>
+    <div class="layer-item">
+      <span class="layer-num">D</span>
+      <h4>Design</h4>
+      <p>Brand consistency enforcement, UI component review, UX research synthesis, design system governance, accessibility compliance checks.</p>
+    </div>
+    <div class="layer-item">
+      <span class="layer-num">X</span>
+      <h4>Executive &amp; Operations</h4>
+      <p>Pipeline orchestration, cross-functional summaries, strategic intelligence synthesis, financial analysis, capacity planning, operational oversight.</p>
+    </div>
+  </div>
+
+  <p>
+    Every agent has a <strong>defined scope</strong> (what it handles and what it refuses), a <strong>handoff protocol</strong> (how it receives work and where it sends results), and <strong>quality gates</strong> (the standards outputs must meet before they leave). This prevents the most common failure mode: scope creep, where a single agent attempts everything and performs nothing at the level required.
+  </p>
+
+  <!-- LAYER 3: WORKFLOWS -->
+  <h2 id="layer-workflows">Layer 3: Autonomous Workflows</h2>
+  <p>
+    The workflow layer is where autonomy begins. Workflows run on schedules, respond to triggers, and execute multi-step pipelines without human intervention — except at designated approval gates where the stakes warrant a decision-maker's judgment.
+  </p>
+  <p>
+    The orchestration engine is <strong>n8n</strong>, self-hosted on the company's own infrastructure. Workflows connect skills and agents into end-to-end pipelines that would otherwise require manual coordination across multiple tools and team members. A prospect discovery workflow, for example, runs every morning: scanning for companies matching target criteria across four international markets, scoring each prospect against a multi-dimensional rubric, enriching the top candidates with detailed research, generating personalised outreach sequences, and pushing qualified prospects to the sales team's board — all before the workday begins.
+  </p>
+
+  <div class="arch-card">
+    <h4>Workflow categories</h4>
+    <table class="ref-table">
+      <tr><th>Type</th><th>Trigger</th><th>Example</th></tr>
+      <tr><td>Scheduled</td><td>Cron (daily, weekly, biweekly)</td><td>Morning prospect research, Friday content digest, biweekly competitive radar</td></tr>
+      <tr><td>Event-driven</td><td>Webhook, database change</td><td>New prospect card triggers research → scoring → outreach sequence generation</td></tr>
+      <tr><td>On-demand</td><td>Human command via mobile</td><td>CEO requests a competitive intelligence briefing through a single message</td></tr>
+    </table>
+  </div>
+
+  <p>
+    A critical design decision: <strong>email serves as notification, never as destination.</strong> Workflows route actionable items to the platforms where the team already works — project boards, CRM records, knowledge bases. Email carries a short summary with links to the source material. The result: nothing critical gets buried in an inbox, and the team never needs to context-switch to discover what the system produced overnight.
+  </p>
+
+  <div class="callout">
+    <p><strong>Pre-filtering principle:</strong> Every signal source is evaluated for noise ratio before it enters any workflow. If a source consistently produces more than 80% irrelevant results, the architecture drops it entirely rather than attempting to filter harder downstream. The cheapest computation is the one that never runs.</p>
+  </div>
+
+  <!-- LAYER 4: INTELLIGENCE -->
+  <h2 id="layer-intelligence">Layer 4: Intelligence &amp; Oversight</h2>
+  <p>
+    The intelligence layer answers the question that every executive asks and most dashboards fail to address: <strong>what happened, what does it mean for the business, and what requires a decision?</strong>
+  </p>
+  <p>
+    The system aggregates signals from every lower layer — pipeline movements, content performance, workflow outputs, error rates, market signals — and synthesises them into actionable intelligence delivered on a structured cadence. A morning briefing arrives at 7 AM with overnight changes, scheduled events, and flagged anomalies. A Friday digest summarises content performance and engagement patterns. A biweekly radar surfaces emerging trends and competitive movements. A weekly composite rolls everything up into a single view of the business.
+  </p>
+  <p>
+    The intelligence layer is deliberately personal — it serves the CEO, not the team. It reads from every system the company operates (CRM, project boards, content pipelines, sales automation, engineering workflows) but writes to none of them. This boundary is load-bearing. The team operates through their own interfaces and workflows. The intelligence layer provides an executive overlay that observes without interfering, synthesises without modifying, and alerts without disrupting.
+  </p>
+
+  <h3>Approval gating</h3>
+  <p>
+    Autonomy without boundaries produces chaos. Continuum implements approval gates at <em>consequence boundaries</em> — the points where an automated action carries real stakes. Sending outreach to a high-value prospect. Publishing content under the company's name. Executing a financial workflow. At each gate, the system delivers a summary and a decision prompt to the CEO's mobile device. A single tap approves, and the workflow resumes. The friction is measured in seconds, not minutes — approval is effortless, but the human remains in the loop for every action that matters.
+  </p>
+
+  <div class="diagram-wrapper">
+    <svg viewBox="0 0 740 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Intelligence delivery cadence">
+      <text x="370" y="28" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#1a9e8f" letter-spacing=".12em">INTELLIGENCE DELIVERY CADENCE</text>
+
+      <!-- Horizontal timeline -->
+      <line x1="70" y1="115" x2="680" y2="115" stroke="#1a9e8f" stroke-width="1.5"/>
+
+      <!-- Daily -->
+      <line x1="140" y1="90" x2="140" y2="115" stroke="#1a9e8f" stroke-width="1.5"/>
+      <circle cx="140" cy="68" r="22" fill="var(--bg-card)" stroke="#1a9e8f" stroke-width="1.5"/>
+      <text x="140" y="74" text-anchor="middle" font-family="Fraunces,serif" font-size="15" fill="#1a9e8f">D</text>
+      <text x="140" y="140" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="10.5" fill="currentColor" font-weight="600">Daily</text>
+      <text x="140" y="156" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88">Morning Briefing</text>
+      <text x="140" y="170" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#6e6e88">7:00 AM</text>
+
+      <!-- Friday -->
+      <line x1="310" y1="90" x2="310" y2="115" stroke="#1a9e8f" stroke-width="1.5"/>
+      <circle cx="310" cy="68" r="22" fill="var(--bg-card)" stroke="#1a9e8f" stroke-width="1.5"/>
+      <text x="310" y="74" text-anchor="middle" font-family="Fraunces,serif" font-size="15" fill="#1a9e8f">F</text>
+      <text x="310" y="140" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="10.5" fill="currentColor" font-weight="600">Friday</text>
+      <text x="310" y="156" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88">Content Digest</text>
+      <text x="310" y="170" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#6e6e88">6:00 PM</text>
+
+      <!-- Biweekly -->
+      <line x1="480" y1="90" x2="480" y2="115" stroke="#1a9e8f" stroke-width="1.5"/>
+      <circle cx="480" cy="68" r="22" fill="var(--bg-card)" stroke="#1a9e8f" stroke-width="1.5"/>
+      <text x="480" y="74" text-anchor="middle" font-family="Fraunces,serif" font-size="15" fill="#1a9e8f">B</text>
+      <text x="480" y="140" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="10.5" fill="currentColor" font-weight="600">Biweekly</text>
+      <text x="480" y="156" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88">Radar Scan</text>
+      <text x="480" y="170" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#6e6e88">Sunday 9 PM</text>
+
+      <!-- Weekly -->
+      <line x1="640" y1="90" x2="640" y2="115" stroke="#1a9e8f" stroke-width="1.5"/>
+      <circle cx="640" cy="68" r="22" fill="var(--bg-card)" stroke="#1a9e8f" stroke-width="1.5"/>
+      <text x="640" y="74" text-anchor="middle" font-family="Fraunces,serif" font-size="15" fill="#1a9e8f">W</text>
+      <text x="640" y="140" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="10.5" fill="currentColor" font-weight="600">Weekly</text>
+      <text x="640" y="156" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88">Composite Digest</text>
+      <text x="640" y="170" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#6e6e88">Sunday 7 PM</text>
+
+      <text x="680" y="208" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#6e6e88" text-anchor="end" opacity=".4">Continuum · © 2026 Tawhid Rahman</text>
+    </svg>
+    <p class="diagram-caption">Intelligence cadence: daily morning briefings through weekly composite digests, all delivered to mobile.</p>
+  </div>
+
+  <!-- THE STACK -->
+  <h2 id="stack">The Stack</h2>
+  <p>
+    Continuum runs on open-source infrastructure with zero vendor lock-in. Every component can be self-hosted, swapped, or replaced without rewriting the layers above it.
+  </p>
+
+  <div class="arch-card">
+    <h4>Infrastructure</h4>
+    <table class="ref-table">
+      <tr><th>Layer</th><th>Technology</th><th>Rationale</th></tr>
+      <tr><td>Orchestration</td><td>n8n (self-hosted)</td><td>Open-source, visual workflow builder, 400+ native integrations, full webhook and API control</td></tr>
+      <tr><td>AI synthesis</td><td>DeepSeek + Claude</td><td>DeepSeek for high-volume data pipelines, Claude for complex reasoning and architecture work</td></tr>
+      <tr><td>Tool connectivity</td><td>MCP (Model Context Protocol)</td><td>Open standard connecting to 40+ tools without proprietary API wrappers</td></tr>
+      <tr><td>Knowledge base</td><td>Notion + Obsidian</td><td>Notion for structured team knowledge, Obsidian for unstructured personal intelligence</td></tr>
+      <tr><td>CRM &amp; pipeline</td><td>HubSpot + Trello</td><td>HubSpot for relationship management, Trello for team-facing task orchestration</td></tr>
+      <tr><td>Executive channel</td><td>Telegram</td><td>Real-time intelligence delivery and mobile-native approval gating</td></tr>
+      <tr><td>Version control</td><td>Git (GitHub)</td><td>All skills, agents, and workflow configurations tracked with full commit history</td></tr>
+    </table>
+  </div>
+
+  <h3>Build sequence</h3>
+  <p>
+    Continuum was built incrementally over twelve months, with each phase validating assumptions before the next began. <strong>Phase 1</strong> (months 1–3) established foundation skills for writing, research, and analysis, the Git repository structure, and the first production workflows. <strong>Phase 2</strong> (months 4–6) expanded into function-specific agents, CRM integration, and prospect automation with approval gating. <strong>Phase 3</strong> (months 7–9) introduced the intelligence layer: morning briefings, failure relay, radar scans, composite digests, and the mobile command centre. <strong>Phase 4</strong> (months 10–12) focused on refinement — quality gates, design system integration, skill evaluation frameworks, and documentation for team adoption across the organisation.
+  </p>
+
+  <!-- WHAT IT RUNS -->
+  <h2 id="outcomes">What It Runs</h2>
+  <p>
+    Continuum operates the daily machinery of a 100-person software company across six major domains:
+  </p>
+
+  <div class="layer-grid">
+    <div class="layer-item">
+      <h4>Prospect Discovery</h4>
+      <p>Discovers, researches, and scores potential clients across four international markets every morning. Prospects above a quality threshold push directly to the sales board with structured intelligence packets attached.</p>
+    </div>
+    <div class="layer-item">
+      <h4>Outreach Sequencing</h4>
+      <p>Generates personalised multi-step outreach sequences for each qualified prospect. Dual-sender rotation, scheduled delivery cadence, human approval gates for high-value targets.</p>
+    </div>
+    <div class="layer-item">
+      <h4>Content Production</h4>
+      <p>Near-zero marginal cost content pipeline producing articles, LinkedIn content, and technical documentation through structured skill chains with brand voice governance at every stage.</p>
+    </div>
+    <div class="layer-item">
+      <h4>Software Delivery</h4>
+      <p>Multi-checkpoint delivery pipeline for all engineering projects. Code review, testing, accessibility audit, performance benchmarking, deployment verification — each checkpoint operated by specialised agents.</p>
+    </div>
+    <div class="layer-item">
+      <h4>Executive Intelligence</h4>
+      <p>Synthesised intelligence delivered daily to the CEO's mobile device. Pipeline changes, market signals, team activity, workflow health — distilled to what requires attention and what can wait.</p>
+    </div>
+    <div class="layer-item">
+      <h4>Brand Governance</h4>
+      <p>Every external communication passes through brand voice enforcement before it leaves the building. Consistency across sales emails, LinkedIn posts, proposals, and documentation — without a dedicated brand team.</p>
+    </div>
+  </div>
+
+  <div class="callout">
+    <p>The system handles the work that is repetitive, research-intensive, and time-consuming — freeing the team to focus on judgment, relationships, and the decisions that require human context. AI provides the throughput. Humans provide the direction.</p>
+  </div>
+
+  <!-- PATTERNS -->
+  <h2 id="patterns">Patterns Worth Stealing</h2>
+  <p>
+    Twelve months of building, breaking, and rebuilding produced a handful of patterns that generalise well beyond this specific implementation:
+  </p>
+
+  <h3>1. Skill-first composition</h3>
+  <p>
+    Every new capability starts as a skill. Only promote it to an agent when you need to compose multiple skills and maintain state across invocations. This keeps the system flat and avoids the orchestration overhead that arrives with premature agent creation — a cost that most teams underestimate until they are deep in debugging sessions at 11 PM.
+  </p>
+  <h3>2. Aggressive pre-filtering</h3>
+  <p>
+    Every LLM call consumes tokens and latency. Before any data reaches a model, apply hard filters: validation, deduplication, relevance scoring, format checks. If a signal source produces more than 80% noise, the correct response is to drop it entirely rather than engineer increasingly sophisticated filters. The cheapest token is the one that never enters the pipeline.
+  </p>
+  <h3>3. Notification-only email</h3>
+  <p>
+    Actionable items route to the platform where the team works — project boards, CRM, knowledge base. Email carries a summary with links. This sounds obvious until you realise how many automation systems default to dumping their entire output into an inbox and hoping someone reads it before the window of relevance closes.
+  </p>
+  <h3>4. Read/write separation</h3>
+  <p>
+    The intelligence layer reads from every system in the company but writes to none of them. The moment an executive overlay begins modifying CRM records or project boards, you have destroyed the boundary between observation and action — and the next time something goes wrong, nobody can determine whether the human or the system made the decision.
+  </p>
+  <h3>5. Consequence-gated approval</h3>
+  <p>
+    Routine actions run autonomously. Consequential actions — outreach to a key prospect, content publication, financial workflows — require a human tap before they execute. The architecture makes approval effortless (a single button on a mobile screen), which means the human stays in the loop without the friction that causes most approval workflows to be abandoned within weeks.
+  </p>
+
+  <!-- WHERE IT FITS -->
+  <h2 id="applicability">Where It Fits</h2>
+  <p>
+    Continuum was built for a B2B software company, but the architecture is sector-agnostic. Any organisation with repeatable operational workflows — sales, marketing, support, engineering, compliance, executive reporting — can decompose them into composable skills and orchestrate them into automated pipelines.
+  </p>
+  <p>
+    The approach produces the strongest returns in companies with 50 to 500 employees: large enough that operational complexity justifies the architectural investment, small enough that a lean team can implement it without building a platform engineering department first.
+  </p>
+  <p>
+    Industries where the fit is most natural: professional services firms managing complex client engagements, FMCG companies coordinating field operations and distributor networks, healthcare organisations navigating compliance and reporting burdens, financial services firms wrestling with regulatory workflows and client onboarding, and research organisations managing grant lifecycles and publication pipelines.
+  </p>
+  <p>
+    The first step is always the same. Audit the operations that consume the most human time relative to the judgment they require. Identify the workflows that are repeatable. Decompose them into skills. Build one pipeline. Get it running. Then compound.
+  </p>
+
+  <div class="callout">
+    <p>If you are working through a similar challenge — or beginning to think about it — I would welcome a conversation. <strong>tawhid@softograph.com</strong></p>
+  </div>
+
+</main>
+</div>
+
+<footer class="site-footer">
+  <p>© 2026 Tawhid Rahman. All rights reserved.</p>
+  <p>Licensed under <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" style="color:var(--teal);text-decoration:none">CC BY-NC-ND 4.0</a>. Share with attribution. Do not modify or use commercially without permission.</p>
+  <div class="disclaimer">
+    <p>This document describes an architectural approach and implementation methodology provided for informational purposes. It does not constitute professional advice. Results described reflect a specific implementation context and should not be assumed to be directly replicable in other environments.</p>
+  </div>
+</footer>
+
+<script>
+function toggleTheme(){const h=document.documentElement,c=h.getAttribute('data-theme');h.setAttribute('data-theme',c==='dark'?'light':'dark');localStorage.setItem('theme',h.getAttribute('data-theme'))}
+(function(){const s=localStorage.getItem('theme');if(s)document.documentElement.setAttribute('data-theme',s)})();
+(function(){const secs=document.querySelectorAll('h2[id]'),links=document.querySelectorAll('.toc-rail a');const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.remove('active'));const t=document.querySelector('.toc-rail a[href="#'+e.target.id+'"]');if(t)t.classList.add('active')}})},{rootMargin:'-15% 0px -75% 0px'});secs.forEach(s=>obs.observe(s))})();
+</script>
+
+</body>
+</html>
