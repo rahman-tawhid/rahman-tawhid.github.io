@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portable AI Orchestration — One Architecture Across Industries | Tawhid Rahman</title>
+<meta name="description" content="How one composition architecture adapts across industries. The methodology for isolating domain knowledge from orchestration substrate, and what changes when the vertical changes.">
+<meta name="author" content="Tawhid Rahman">
+<meta name="keywords" content="AI orchestration, cross-industry architecture, portable AI, domain knowledge isolation, enterprise AI deployment, vertical adaptation">
+<meta property="og:title" content="Portable AI Orchestration — One Architecture Across Industries">
+<meta property="og:description" content="How one composition architecture adapts across industries. The methodology for isolating domain knowledge from orchestration substrate.">
+<meta property="og:type" content="article">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,400&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0b1426;--navy-mid:#162033;--navy-light:#1e2d47;--cream:#f8f5f0;--cream-dark:#ebe5dc;--teal:#1a9e8f;--teal-light:#2ec4b6;--teal-dim:#145c54;--text-primary:#1a1a2e;--text-secondary:#3d3d56;--text-tertiary:#6e6e88;--bg:var(--cream);--bg-card:#ffffff;--bg-code:#f0ebe4;--border:#d4cdc2;--shadow:rgba(10,20,38,.06);--serif:'Fraunces',Georgia,serif;--sans:'Instrument Sans',-apple-system,sans-serif;--mono:'JetBrains Mono','Menlo',monospace;--max-w:780px;--toc-w:240px}
+[data-theme="dark"]{--text-primary:#e8e4de;--text-secondary:#b8b0a4;--text-tertiary:#7a7268;--bg:var(--navy);--bg-card:var(--navy-mid);--bg-code:var(--navy-light);--border:#2a3a52;--shadow:rgba(0,0,0,.3)}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth;font-size:17px}body{font-family:var(--sans);background:var(--bg);color:var(--text-primary);line-height:1.78;font-weight:400;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+.site-header{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:.7rem 2rem;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(14px);transition:background .3s}.brand{text-decoration:none;display:flex;align-items:baseline;gap:.4rem}.brand-name{font-family:var(--mono);font-weight:500;font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;color:var(--teal)}.header-controls{display:flex;gap:.75rem;align-items:center}.header-link{font-family:var(--mono);font-size:.68rem;color:var(--text-tertiary);text-decoration:none;letter-spacing:.06em;transition:color .2s}.header-link:hover{color:var(--teal)}.theme-toggle{background:none;border:1px solid var(--border);border-radius:6px;padding:.3rem .6rem;cursor:pointer;font-size:.82rem;color:var(--text-tertiary);transition:all .2s;font-family:var(--sans)}.theme-toggle:hover{border-color:var(--teal);color:var(--teal)}
+.page-wrapper{display:flex;margin-top:3.2rem;min-height:calc(100vh - 3.2rem)}.toc-rail{position:fixed;top:3.2rem;left:0;width:var(--toc-w);height:calc(100vh - 3.2rem);overflow-y:auto;padding:2rem 1.2rem 2rem 1.5rem;border-right:1px solid var(--border);background:var(--bg);transition:background .3s}.toc-rail h3{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:1rem}.toc-rail a{display:block;padding:.28rem 0;font-size:.8rem;color:var(--text-tertiary);text-decoration:none;border-left:2px solid transparent;padding-left:.7rem;margin-left:-.7rem;transition:all .2s;line-height:1.5}.toc-rail a:hover,.toc-rail a.active{color:var(--teal);border-left-color:var(--teal)}.main-content{margin-left:var(--toc-w);flex:1;padding:3rem 3.5rem 6rem;max-width:calc(var(--max-w) + 7rem)}
+h1{font-family:var(--serif);font-size:2.6rem;font-weight:600;line-height:1.15;color:var(--text-primary);margin-bottom:.5rem;letter-spacing:-.01em}h2{font-family:var(--serif);font-size:1.65rem;font-weight:400;line-height:1.28;margin:3.5rem 0 1.1rem;padding-top:2.2rem;border-top:1px solid var(--border);color:var(--text-primary)}h3{font-family:var(--sans);font-size:1.05rem;font-weight:700;margin:2rem 0 .7rem;color:var(--text-primary)}p{margin-bottom:1.15rem;color:var(--text-secondary);text-align:justify}strong{color:var(--text-primary);font-weight:600}
+.hero{margin-bottom:3rem;padding-bottom:2.5rem;border-bottom:1px solid var(--border)}.hero-eyebrow{font-family:var(--mono);font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);margin-bottom:.6rem}.hero-subtitle{font-size:1.12rem;color:var(--text-secondary);line-height:1.68;max-width:620px;margin-bottom:1.8rem}.hero-author{font-size:.92rem;color:var(--text-secondary);line-height:1.65;max-width:600px;margin-bottom:1.4rem;border-left:2px solid var(--teal);padding-left:1rem}.hero-meta{display:flex;gap:2rem;flex-wrap:wrap;font-size:.75rem;color:var(--text-tertiary);font-family:var(--mono)}
+.arch-card{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:1.6rem 1.75rem;margin:1.5rem 0;box-shadow:0 1px 4px var(--shadow);transition:background .3s,border .3s}.arch-card h4{font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);margin-bottom:.8rem}
+.layer-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}.layer-item{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:1.2rem 1.3rem;border-left:3px solid var(--teal);transition:all .2s}.layer-item:hover{border-left-color:var(--teal-light);transform:translateY(-1px);box-shadow:0 3px 8px var(--shadow)}.layer-item h4{font-family:var(--sans);font-size:.92rem;font-weight:700;color:var(--text-primary);margin-bottom:.35rem}.layer-item p{font-size:.87rem;margin-bottom:0;line-height:1.6}.layer-num{font-family:var(--serif);font-size:1.6rem;color:var(--teal);opacity:.4;float:right;margin-top:-.2rem}
+.diagram-wrapper{margin:2rem 0;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:1.8rem;overflow-x:auto}.diagram-wrapper svg{width:100%;height:auto;display:block}.diagram-caption{font-family:var(--mono);font-size:.68rem;color:var(--text-tertiary);text-align:center;margin-top:.9rem;letter-spacing:.04em}
+code{font-family:var(--mono);font-size:.86em;background:var(--bg-code);padding:.12em .38em;border-radius:3px;color:var(--teal-dim)}[data-theme="dark"] code{color:var(--teal-light)}
+.callout{border-left:3px solid var(--teal);padding:1rem 1.3rem;margin:1.8rem 0;background:var(--bg-card);border-radius:0 6px 6px 0;font-size:.94rem;box-shadow:0 1px 3px var(--shadow)}.callout p{margin-bottom:0}
+.ref-table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:.88rem}.ref-table th{text-align:left;font-family:var(--mono);font-size:.67rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-tertiary);padding:.55rem .7rem;border-bottom:2px solid var(--border)}.ref-table td{padding:.6rem .7rem;border-bottom:1px solid var(--border);color:var(--text-secondary);vertical-align:top;line-height:1.55}.ref-table td:first-child{color:var(--text-primary);font-weight:600}
+.site-footer{margin-left:var(--toc-w);padding:3rem 3.5rem;border-top:1px solid var(--border);font-size:.76rem;color:var(--text-tertiary);line-height:1.85}.disclaimer{margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);font-size:.7rem;font-style:italic}
+@media print{.site-header,.toc-rail,.theme-toggle,.header-controls{display:none!important}.main-content{margin-left:0!important;padding:0!important;max-width:100%}.site-footer{margin-left:0}body{font-size:11pt;background:#fff;color:#111}h1{font-size:22pt}h2{font-size:15pt;border-top:none;padding-top:0}.arch-card,.layer-item{break-inside:avoid}}
+@media(max-width:900px){.toc-rail{display:none}.main-content{margin-left:0;padding:1.5rem 1.2rem 4rem}.site-footer{margin-left:0;padding:2rem 1.2rem}.layer-grid{grid-template-columns:1fr}h1{font-size:1.9rem}.site-header{padding:.7rem 1.2rem}}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="brand" href="/"><span class="brand-name">Tawhid Rahman</span></a>
+  <div class="header-controls">
+    <a class="header-link" href="/">&larr; All Work</a>
+    <a class="header-link" href="https://www.linkedin.com/in/tawhidurr/" target="_blank" rel="noopener">LinkedIn</a>
+    <a class="header-link" href="https://substack.com/@tawhidr" target="_blank" rel="noopener">Substack</a>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">&#9685; Theme</button>
+  </div>
+</header>
+
+<div class="page-wrapper">
+<nav class="toc-rail" aria-label="Table of contents">
+  <h3>Contents</h3>
+  <a href="#portability-thesis">The Portability Thesis</a>
+  <a href="#separation">The Separation Principle</a>
+  <a href="#constant-layer">What Stays Constant</a>
+  <a href="#variable-layer">What Must Change</a>
+  <a href="#isolation-pattern">Domain Knowledge Isolation</a>
+  <a href="#industry-analysis">Industry Adaptation Analysis</a>
+  <a href="#fit-assessment">Assessing Vertical Fit</a>
+  <a href="#adaptation-cost">Adaptation Cost Model</a>
+  <a href="#design-principles">Design Principles for Portability</a>
+</nav>
+
+<main class="main-content">
+
+  <section class="hero">
+    <p class="hero-eyebrow">Cross-Industry Architecture</p>
+    <h1>Portable AI Orchestration</h1>
+    <p class="hero-subtitle">
+      How one composition architecture adapts across industries. The methodology for isolating domain knowledge from orchestration substrate, and what changes when the vertical changes.
+    </p>
+    <p class="hero-author">
+      This piece describes a design principle validated through building composed systems for a B2B software company and evaluating its applicability to six additional verticals. The architecture was designed for portability from the beginning &mdash; not as an afterthought, but as a structural requirement driven by the recognition that operational patterns repeat across industries even when the domain knowledge does not.
+    </p>
+    <div class="hero-meta">
+      <span>Tawhid Rahman</span>
+      <span>2026</span>
+      <span>~20 min read</span>
+    </div>
+  </section>
+
+  <!-- PORTABILITY THESIS -->
+  <h2 id="portability-thesis">The Portability Thesis</h2>
+  <p>
+    Most AI implementations are built as bespoke systems &mdash; designed for one company, one process, one industry. When the implementer moves to a new client or a new vertical, they start from scratch: new prompts, new workflows, new quality criteria, new integration points. The architectural investment of the previous deployment produces zero carryover. Every engagement begins at zero.
+  </p>
+  <p>
+    This approach is not wrong for consultancies that bill by the hour. It is catastrophically wrong for companies that need to deploy AI across multiple contexts &mdash; multiple product lines, multiple client verticals, multiple market geographies &mdash; without rebuilding the foundation each time.
+  </p>
+  <p>
+    The portability thesis proposes that composed AI systems can be designed with a structural separation between what is universal and what is domain-specific. The orchestration engine, the composition patterns, the quality governance, the observation architecture, and the approval gating mechanisms are universal &mdash; they work the same way regardless of whether the system is managing FMCG distributor networks or processing healthcare compliance workflows. What changes is the domain knowledge: the expertise encoded in skills, the scoring criteria embedded in evaluation rubrics, the quality standards enforced at gates, and the decision boundaries that determine where human judgment is required.
+  </p>
+  <p>
+    If the separation is clean, deploying to a new vertical becomes a reconfiguration exercise rather than a rebuild. The architecture stays. The domain knowledge changes. And the time to deploy drops from months to weeks.
+  </p>
+
+  <!-- SEPARATION PRINCIPLE -->
+  <h2 id="separation">The Separation Principle</h2>
+  <p>
+    The architectural separation operates at every layer of the composed system. At the skill layer, the separation is between the <strong>skill interface</strong> (how the skill receives input, how it produces output, how it reports errors) and the <strong>skill knowledge</strong> (the domain expertise, quality criteria, and decision logic embedded within the skill). The interface is universal. The knowledge is vertical-specific.
+  </p>
+  <p>
+    Consider a prospect research skill. In a B2B software context, the skill knows how to evaluate a company&rsquo;s technology stack, assess their digital maturity, identify budget signals, and rate their fit against a product portfolio. In a healthcare context, the same structural skill &mdash; research a target organisation &mdash; would evaluate regulatory compliance posture, assess patient volume and service mix, identify procurement cycles, and rate fit against a different set of solutions. The interface is identical: accept a company identifier, produce a structured intelligence report with a confidence score. The knowledge is entirely different.
+  </p>
+  <p>
+    The same separation applies at the pipeline layer. A prospect-to-outreach pipeline follows the same structural pattern in every vertical: discover candidates, research them, score them, generate personalised communication, and route qualified opportunities to the sales function. The discovery criteria, scoring rubrics, communication templates, and qualification thresholds change with the vertical. The pipeline architecture does not.
+  </p>
+
+  <div class="diagram-wrapper">
+    <svg viewBox="0 0 740 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Architecture portability model">
+      <defs>
+        <linearGradient id="pg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2ec4b6" stop-opacity=".12"/><stop offset="100%" stop-color="#2ec4b6" stop-opacity=".02"/></linearGradient>
+      </defs>
+      <text x="370" y="24" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#1a9e8f" letter-spacing=".12em">ARCHITECTURE PORTABILITY MODEL</text>
+
+      <!-- Universal layer -->
+      <rect x="30" y="50" width="680" height="120" rx="8" fill="url(#pg1)" stroke="#1a9e8f" stroke-width="1.5"/>
+      <text x="52" y="72" font-family="JetBrains Mono,monospace" font-size="9" fill="#1a9e8f" letter-spacing=".1em">CONSTANT &mdash; REUSED ACROSS VERTICALS</text>
+
+      <text x="52" y="98" font-family="Instrument Sans,sans-serif" font-size="11" fill="currentColor" font-weight="600">Orchestration Engine</text>
+      <text x="52" y="114" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Pipeline patterns, scheduling, trigger logic, error handling, retry mechanisms</text>
+
+      <text x="390" y="98" font-family="Instrument Sans,sans-serif" font-size="11" fill="currentColor" font-weight="600">Governance Framework</text>
+      <text x="390" y="114" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Approval gating, consequence assessment, audit logging, version control</text>
+
+      <text x="52" y="140" font-family="Instrument Sans,sans-serif" font-size="11" fill="currentColor" font-weight="600">Observation Architecture</text>
+      <text x="52" y="156" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Read/write separation, synthesis cadence, delivery channels, health monitoring</text>
+
+      <text x="390" y="140" font-family="Instrument Sans,sans-serif" font-size="11" fill="currentColor" font-weight="600">Skill Interface Contracts</text>
+      <text x="390" y="156" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Input/output schemas, error protocols, versioning, changelog standards</text>
+
+      <!-- Separator -->
+      <line x1="30" y1="190" x2="710" y2="190" stroke="#1a9e8f" stroke-width="1.5" stroke-dasharray="6,4"/>
+      <text x="370" y="206" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#1a9e8f" letter-spacing=".1em">SEPARATION BOUNDARY</text>
+
+      <!-- Variable layer -->
+      <rect x="30" y="218" width="680" height="90" rx="8" fill="url(#pg1)" stroke="#1a9e8f" stroke-width="1" stroke-opacity=".5"/>
+      <text x="52" y="240" font-family="JetBrains Mono,monospace" font-size="9" fill="#1a9e8f" letter-spacing=".1em">VARIABLE &mdash; RECONFIGURED PER VERTICAL</text>
+
+      <text x="52" y="266" font-family="Instrument Sans,sans-serif" font-size="10.5" fill="currentColor" font-weight="600">Domain Knowledge</text>
+      <text x="52" y="282" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Skill expertise, scoring criteria, quality thresholds, decision boundaries, terminology</text>
+
+      <text x="390" y="266" font-family="Instrument Sans,sans-serif" font-size="10.5" fill="currentColor" font-weight="600">Vertical Configuration</text>
+      <text x="390" y="282" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Compliance requirements, approval authority, regulatory constraints, data sensitivity</text>
+
+      <text x="680" y="332" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#6e6e88" text-anchor="end" opacity=".4">&copy; 2026 Tawhid Rahman</text>
+    </svg>
+    <p class="diagram-caption">Above the separation boundary: universal and reusable. Below: reconfigured for each vertical deployment.</p>
+  </div>
+
+  <!-- CONSTANT LAYER -->
+  <h2 id="constant-layer">What Stays Constant</h2>
+  <p>
+    Four architectural components carry over without modification across every vertical deployment. They constitute the platform investment &mdash; the infrastructure that is built once and amortised across every subsequent deployment.
+  </p>
+  <h3>Orchestration patterns</h3>
+  <p>
+    The mechanisms by which skills are composed into pipelines, pipelines are scheduled or triggered, and outputs are routed to their destinations. The orchestration engine does not care whether it is routing a FMCG product verification result or a healthcare compliance check &mdash; it routes structured data from origin to destination according to defined rules. The rules change. The routing mechanism does not.
+  </p>
+  <h3>Quality governance architecture</h3>
+  <p>
+    The framework for approval gating, consequence assessment, and quality enforcement. Every vertical requires consequence-gated approval, but the consequence thresholds differ. In financial services, sending a communication to a regulated entity is high-consequence. In FMCG, sending a communication to a distributor is lower-consequence. The governance framework supports both by parameterising the threshold, not by reimplementing the gate.
+  </p>
+  <h3>Observation and intelligence patterns</h3>
+  <p>
+    The read/write separation, the synthesis cadence, and the delivery mechanism for executive intelligence. The intelligence layer reads from whatever systems the vertical operates &mdash; CRM, ERP, compliance databases, field operation platforms &mdash; and synthesises what it finds using the same aggregation patterns. The sources change. The synthesis methodology does not.
+  </p>
+  <h3>Skill interface standards</h3>
+  <p>
+    The structural contract that every skill adheres to: how it declares its inputs and outputs, how it versions itself, how it reports errors, how it logs its changelog. This standard is the connective tissue that allows skills from different domains to compose into pipelines without interface mismatch.
+  </p>
+
+  <!-- VARIABLE LAYER -->
+  <h2 id="variable-layer">What Must Change</h2>
+  <p>
+    Three categories of knowledge change with every vertical deployment. These represent the reconfiguration cost &mdash; the work required to adapt the architecture to a new industry context.
+  </p>
+  <h3>Domain expertise in skills</h3>
+  <p>
+    The knowledge encoded within each skill is vertical-specific. A research skill for pharmaceutical companies evaluates pipeline stage, regulatory approval status, patent portfolio, and market exclusivity. A research skill for real estate developers evaluates land bank, construction timeline, regulatory approvals, and financing structure. Both skills share the same interface: accept an entity identifier, produce a structured intelligence report. The expertise inside them shares nothing.
+  </p>
+  <h3>Decision boundaries and quality thresholds</h3>
+  <p>
+    Where human judgment is required and what constitutes acceptable quality are not universal constants &mdash; they are vertical-specific configurations. In healthcare, any communication touching patient data requires human review regardless of the communication&rsquo;s apparent consequence level. In logistics, a routing decision affecting a hundred shipments might be fully autonomous if the financial exposure per shipment is below a defined threshold. The governance framework supports both configurations, but the thresholds themselves must be set by someone who understands the industry&rsquo;s risk topology.
+  </p>
+  <h3>Compliance and regulatory constraints</h3>
+  <p>
+    Some verticals operate under regulatory frameworks that impose constraints on what an automated system may do. Financial services have fiduciary obligations. Healthcare has data protection regimes. Defence has classification requirements. These constraints do not change the architecture &mdash; they parameterise it. An approval gate configured to require dual sign-off is the same architectural component whether the regulation driving it is financial or medical. But the configuration must be informed by regulatory expertise that the architecture itself does not possess.
+  </p>
+
+  <!-- ISOLATION PATTERN -->
+  <h2 id="isolation-pattern">The Domain Knowledge Isolation Pattern</h2>
+  <p>
+    The design principle that makes portability practical is <strong>strict isolation of domain knowledge</strong>. Domain knowledge lives in exactly one place: inside the skill that uses it. It does not leak into the orchestration engine, the pipeline definitions, or the governance framework. When a skill is replaced with a vertical-specific variant, the replacement is surgical &mdash; one file changes, and nothing else in the system requires modification.
+  </p>
+  <p>
+    This isolation has a cost. It means that domain knowledge cannot be shared between skills through informal mechanisms &mdash; shared assumptions, implied context, undocumented conventions. If two skills need to share domain knowledge, that knowledge must be extracted into a shared reference that both skills explicitly consume. The extraction is additional work, but it produces an artefact that is visible, version-controlled, and auditable &mdash; which is precisely what a new vertical deployment needs in order to identify what must be reconfigured.
+  </p>
+  <p>
+    The isolation pattern also applies to scoring criteria and quality standards. A scoring rubric is not embedded in the pipeline logic. It is a parameterised input that the pipeline consumes. Changing the rubric changes the scoring without touching the pipeline. A quality threshold is not hardcoded in the approval gate. It is a configuration that the gate reads at runtime. Changing the threshold changes the governance without modifying the governance framework.
+  </p>
+
+  <div class="diagram-wrapper">
+    <svg viewBox="0 0 740 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Domain knowledge isolation pattern">
+      <defs>
+        <linearGradient id="pg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2ec4b6" stop-opacity=".10"/><stop offset="100%" stop-color="#2ec4b6" stop-opacity=".02"/></linearGradient>
+      </defs>
+      <text x="370" y="24" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#1a9e8f" letter-spacing=".12em">DOMAIN KNOWLEDGE ISOLATION</text>
+
+      <!-- Skill structure -->
+      <rect x="30" y="50" width="320" height="210" rx="8" fill="url(#pg2)" stroke="#1a9e8f" stroke-width="1.5"/>
+      <text x="190" y="74" text-anchor="middle" font-family="Fraunces,serif" font-size="15" fill="currentColor">Skill Architecture</text>
+
+      <!-- Interface layer -->
+      <rect x="55" y="92" width="270" height="44" rx="4" fill="var(--bg-card)" stroke="#1a9e8f" stroke-width="1"/>
+      <text x="190" y="108" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#1a9e8f" letter-spacing=".06em">INTERFACE (UNIVERSAL)</text>
+      <text x="190" y="126" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88">Input contract &middot; Output contract &middot; Error protocol &middot; Version</text>
+
+      <!-- Knowledge layer -->
+      <rect x="55" y="148" width="270" height="44" rx="4" fill="var(--bg-card)" stroke="#1a9e8f" stroke-width="1" stroke-opacity=".5"/>
+      <text x="190" y="164" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#1a9e8f" letter-spacing=".06em">KNOWLEDGE (VERTICAL-SPECIFIC)</text>
+      <text x="190" y="182" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88">Domain expertise &middot; Quality criteria &middot; Decision logic</text>
+
+      <!-- Config layer -->
+      <rect x="55" y="204" width="270" height="38" rx="4" fill="var(--bg-card)" stroke="#1a9e8f" stroke-width="1" stroke-opacity=".3"/>
+      <text x="190" y="218" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#1a9e8f" letter-spacing=".06em">CONFIG (PARAMETERISED)</text>
+      <text x="190" y="234" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88">Scoring rubrics &middot; Thresholds &middot; Terminology maps</text>
+
+      <!-- Deployment arrows -->
+      <text x="560" y="70" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#1a9e8f">DEPLOYMENT</text>
+
+      <rect x="420" y="88" width="260" height="34" rx="4" fill="url(#pg2)" stroke="#1a9e8f" stroke-width="1"/>
+      <text x="550" y="110" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="10" fill="currentColor">FMCG: field verification, distributor scoring</text>
+
+      <rect x="420" y="132" width="260" height="34" rx="4" fill="url(#pg2)" stroke="#1a9e8f" stroke-width="1"/>
+      <text x="550" y="154" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="10" fill="currentColor">Healthcare: compliance checks, patient flow</text>
+
+      <rect x="420" y="176" width="260" height="34" rx="4" fill="url(#pg2)" stroke="#1a9e8f" stroke-width="1"/>
+      <text x="550" y="198" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="10" fill="currentColor">Financial services: risk assessment, KYC</text>
+
+      <rect x="420" y="220" width="260" height="34" rx="4" fill="url(#pg2)" stroke="#1a9e8f" stroke-width="1"/>
+      <text x="550" y="242" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="10" fill="currentColor">Manufacturing: QC pipelines, supply chain</text>
+
+      <!-- Arrows -->
+      <line x1="350" y1="114" x2="420" y2="105" stroke="#1a9e8f" stroke-width="1" stroke-opacity=".4"/>
+      <line x1="350" y1="148" x2="420" y2="149" stroke="#1a9e8f" stroke-width="1" stroke-opacity=".4"/>
+      <line x1="350" y1="182" x2="420" y2="193" stroke="#1a9e8f" stroke-width="1" stroke-opacity=".4"/>
+      <line x1="350" y1="216" x2="420" y2="237" stroke="#1a9e8f" stroke-width="1" stroke-opacity=".4"/>
+
+      <text x="680" y="288" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#6e6e88" text-anchor="end" opacity=".4">&copy; 2026 Tawhid Rahman</text>
+    </svg>
+    <p class="diagram-caption">Each skill separates its universal interface from its vertical-specific knowledge. Deployment swaps knowledge, not architecture.</p>
+  </div>
+
+  <!-- INDUSTRY ANALYSIS -->
+  <h2 id="industry-analysis">Industry Adaptation Analysis</h2>
+  <p>
+    The portability thesis gains credibility through analysis of how the architecture manifests across different industry contexts. The following is not a catalogue of case studies &mdash; it is an analysis of how the same architectural reasoning shifts when applied to different operational domains.
+  </p>
+
+  <div class="layer-grid">
+    <div class="layer-item">
+      <span class="layer-num">F</span>
+      <h4>FMCG &amp; Distribution</h4>
+      <p>The operational pattern is field-heavy: distributor management, route optimisation, shelf verification, counterfeit detection. Skills reconfigure toward image analysis, geographic scoring, and supply chain intelligence. Decision boundaries shift toward field operations &mdash; a failed verification is higher-consequence here than in most verticals because it affects physical product on physical shelves.</p>
+    </div>
+    <div class="layer-item">
+      <span class="layer-num">H</span>
+      <h4>Healthcare</h4>
+      <p>Compliance dominates the configuration. Skills reconfigure toward regulatory knowledge, patient data handling protocols, and clinical workflow patterns. The approval gating tightens significantly &mdash; in healthcare, almost every external communication is high-consequence. The observation layer adds compliance monitoring to its standard intelligence synthesis.</p>
+    </div>
+    <div class="layer-item">
+      <span class="layer-num">M</span>
+      <h4>Manufacturing</h4>
+      <p>Quality control is the native domain. Skills reconfigure toward defect detection, production scheduling, supply chain risk assessment, and maintenance prediction. The feedback loops are particularly strong in manufacturing &mdash; production data feeds quality assessment feeds process adjustment feeds production data. The architecture&rsquo;s composition capabilities find a natural home here.</p>
+    </div>
+    <div class="layer-item">
+      <span class="layer-num">$</span>
+      <h4>Financial Services</h4>
+      <p>Regulatory constraint density is the defining characteristic. Skills reconfigure toward risk assessment, compliance checking, client onboarding workflows, and fiduciary obligation monitoring. The dual-approval pattern &mdash; system proposes, human approves, compliance validates &mdash; extends the standard approval gate into a three-party mechanism.</p>
+    </div>
+    <div class="layer-item">
+      <span class="layer-num">R</span>
+      <h4>Real Estate</h4>
+      <p>Transaction cycles are long, information density is high, and decision-making involves multiple stakeholders. Skills reconfigure toward property analysis, market comparison, regulatory approval tracking, and client portfolio management. The intelligence layer becomes particularly valuable because the observation window is months, not days.</p>
+    </div>
+    <div class="layer-item">
+      <span class="layer-num">L</span>
+      <h4>Logistics</h4>
+      <p>Operational velocity is the defining factor. Skills reconfigure toward routing optimisation, carrier evaluation, customs documentation, and exception handling. The autonomy boundary moves lower than in other verticals &mdash; many logistics decisions are high-volume, low-consequence per unit, and speed-sensitive enough that human approval would destroy the operational advantage.</p>
+    </div>
+  </div>
+
+  <!-- FIT ASSESSMENT -->
+  <h2 id="fit-assessment">Assessing Vertical Fit</h2>
+  <p>
+    Not every vertical is equally suited to portable composed AI. The fit assessment evaluates three factors: operational regularity (how repeatable are the workflows?), data availability (how accessible is the information the system needs?), and consequence distribution (how are high- and low-consequence actions distributed across the workflow?).
+  </p>
+
+  <div class="arch-card">
+    <h4>Vertical fit assessment criteria</h4>
+    <table class="ref-table">
+      <tr><th>Factor</th><th>Strong Fit</th><th>Weak Fit</th></tr>
+      <tr><td>Operational regularity</td><td>Workflows are repeatable, documented, and follow predictable patterns across clients within the vertical</td><td>Every engagement is bespoke. Processes vary significantly between clients with no transferable patterns.</td></tr>
+      <tr><td>Data availability</td><td>The information the system needs exists in digital form, is accessible via APIs or structured exports, and is reasonably clean</td><td>Critical data lives in paper files, tribal knowledge, or systems without export capability.</td></tr>
+      <tr><td>Consequence distribution</td><td>Most actions are low-consequence (internal, reversible, non-client-facing). High-consequence actions are clearly identifiable and relatively rare.</td><td>Most actions are high-consequence. Nearly every step requires human review, leaving little room for autonomous operation.</td></tr>
+    </table>
+  </div>
+
+  <p>
+    Verticals that score well on all three factors &mdash; FMCG, manufacturing, logistics, professional services &mdash; are strong candidates for portable orchestration. Verticals that score poorly on one factor &mdash; healthcare (consequence distribution) or financial services (regulatory constraint) &mdash; are still viable but require more reconfiguration work, particularly in the governance layer. Verticals that score poorly on two or more factors require evaluation of whether the architecture investment is justified at all.
+  </p>
+
+  <!-- ADAPTATION COST -->
+  <h2 id="adaptation-cost">The Adaptation Cost Model</h2>
+  <p>
+    Portability is not free. Deploying the architecture to a new vertical requires work: domain research, skill reconfiguration, threshold calibration, and validation. The question is whether that cost is significantly lower than building from scratch &mdash; and the answer depends on how cleanly the separation principle was implemented.
+  </p>
+  <p>
+    In a well-separated architecture, the adaptation cost follows a predictable distribution. Roughly 30% of the effort goes into domain research &mdash; understanding the vertical&rsquo;s operational patterns, regulatory constraints, and decision boundaries deeply enough to configure the system correctly. Another 40% goes into skill reconfiguration &mdash; rewriting the domain knowledge layer of each skill while preserving the interface. The remaining 30% goes into validation &mdash; running the reconfigured system against real data and confirming that the outputs meet the vertical&rsquo;s quality and compliance requirements.
+  </p>
+  <p>
+    The key metric is the ratio of adaptation cost to full-build cost. If deploying to a new vertical costs 30&ndash;40% of what a ground-up build would cost, the architecture is delivering on its portability promise. If the ratio exceeds 60%, the separation was not clean enough &mdash; domain knowledge leaked into the platform layer, and the reconfiguration is touching components that should have been universal.
+  </p>
+
+  <!-- DESIGN PRINCIPLES -->
+  <h2 id="design-principles">Design Principles for Portability</h2>
+  <p>
+    Portability is not a feature that can be added after the architecture is built. It is a design discipline that must be present from the first skill definition. The following principles, applied consistently, produce architectures that carry across verticals:
+  </p>
+  <h3>1. Interface before knowledge</h3>
+  <p>
+    Define the input and output contract of every skill before writing the domain knowledge inside it. The interface is the public API. The knowledge is the private implementation. When the interface is stable, any knowledge variant can be swapped in without affecting the system around it.
+  </p>
+  <h3>2. Parameterise, do not hardcode</h3>
+  <p>
+    Every threshold, scoring criterion, quality standard, and decision boundary should be a parameter that the system reads, not a constant embedded in the code. This seems obvious until you are building at speed and hardcoding a scoring weight because it is faster than building the parameter infrastructure. The technical debt of hardcoded domain values is invisible during the first deployment and ruinous during the second.
+  </p>
+  <h3>3. Isolate regulatory constraints</h3>
+  <p>
+    Compliance requirements should be expressed as configuration, not as architectural decisions. A pipeline that has been architecturally modified to comply with one regulatory framework cannot be deployed into a different framework without rearchitecting. A pipeline that reads its compliance constraints from a configuration file can be deployed into any regulatory environment by changing the file.
+  </p>
+  <h3>4. Test with domain experts, not domain knowledge</h3>
+  <p>
+    The validation step for a new vertical deployment should be performed by someone who knows the industry, not by someone who knows the architecture. If validation requires architectural knowledge, the domain knowledge has not been sufficiently isolated. The domain expert should be able to evaluate the system&rsquo;s outputs without understanding how the system produces them.
+  </p>
+
+  <div class="callout">
+    <p><strong>The portability test:</strong> If a new vertical deployment requires modifications to the orchestration engine, the governance framework, or the observation architecture, the separation is leaking. Domain adaptation should touch skills and configuration &mdash; nothing above that boundary.</p>
+  </div>
+
+  <p>
+    Portable orchestration is not an abstract architectural goal. It is a concrete business advantage: the ability to serve multiple verticals with a single platform investment, adapting to each industry&rsquo;s requirements through reconfiguration rather than reconstruction. The separation principle makes this possible. The design discipline makes it real.
+  </p>
+
+  <div class="callout">
+    <p>If you are evaluating whether a composed AI architecture can adapt to your industry context &mdash; or designing one for cross-vertical deployment &mdash; I would welcome a conversation. <strong>tawhid@softograph.com</strong></p>
+  </div>
+
+</main>
+</div>
+
+<footer class="site-footer">
+  <p>&copy; 2026 Tawhid Rahman. All rights reserved.</p>
+  <p>Licensed under <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" style="color:var(--teal);text-decoration:none">CC BY-NC-ND 4.0</a>. Share with attribution. Do not modify or use commercially without permission.</p>
+  <div class="disclaimer">
+    <p>This document describes a cross-industry architecture evaluation methodology provided for informational purposes. It does not constitute professional advice. Industry analyses reflect evaluation methodology, not active deployments in all verticals described.</p>
+  </div>
+</footer>
+
+<script>
+function toggleTheme(){var h=document.documentElement,c=h.getAttribute('data-theme');h.setAttribute('data-theme',c==='dark'?'light':'dark');localStorage.setItem('theme',h.getAttribute('data-theme'))}
+(function(){var s=localStorage.getItem('theme');if(s)document.documentElement.setAttribute('data-theme',s)})();
+(function(){var secs=document.querySelectorAll('h2[id]'),links=document.querySelectorAll('.toc-rail a');var obs=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){links.forEach(function(l){l.classList.remove('active')});var t=document.querySelector('.toc-rail a[href="#'+e.target.id+'"]');if(t)t.classList.add('active')}})},{rootMargin:'-15% 0px -75% 0px'});secs.forEach(function(s){obs.observe(s)})})();
+</script>
+
+</body>
+</html>

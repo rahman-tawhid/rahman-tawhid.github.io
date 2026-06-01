@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Composition Architecture — Why Most Orchestration Fails | Tawhid Rahman</title>
+<meta name="description" content="The diagnostic methodology applied before touching any tool. How to evaluate whether an organisation's operations are composition-ready, and why most AI orchestration fails at the structural level.">
+<meta name="author" content="Tawhid Rahman">
+<meta name="keywords" content="AI orchestration, composition architecture, diagnostic methodology, AI implementation failure, operational topology, enterprise AI">
+<meta property="og:title" content="AI Composition Architecture — Why Most Orchestration Fails and What the Diagnostic Looks Like">
+<meta property="og:description" content="The methodology for evaluating whether an organisation's operations are composition-ready. Where human-judgment boundaries belong, why most orchestration fails, and what the diagnostic looks like.">
+<meta property="og:type" content="article">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,400&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0b1426;--navy-mid:#162033;--navy-light:#1e2d47;
+  --cream:#f8f5f0;--cream-dark:#ebe5dc;
+  --teal:#1a9e8f;--teal-light:#2ec4b6;--teal-dim:#145c54;
+  --text-primary:#1a1a2e;--text-secondary:#3d3d56;--text-tertiary:#6e6e88;
+  --bg:var(--cream);--bg-card:#ffffff;--bg-code:#f0ebe4;
+  --border:#d4cdc2;--shadow:rgba(10,20,38,.06);
+  --serif:'Fraunces',Georgia,serif;
+  --sans:'Instrument Sans',-apple-system,sans-serif;
+  --mono:'JetBrains Mono','Menlo',monospace;
+  --max-w:780px;--toc-w:240px;
+}
+[data-theme="dark"]{
+  --text-primary:#e8e4de;--text-secondary:#b8b0a4;--text-tertiary:#7a7268;
+  --bg:var(--navy);--bg-card:var(--navy-mid);--bg-code:var(--navy-light);
+  --border:#2a3a52;--shadow:rgba(0,0,0,.3);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;font-size:17px}
+body{font-family:var(--sans);background:var(--bg);color:var(--text-primary);line-height:1.78;font-weight:400;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+.site-header{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:.7rem 2rem;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(14px);transition:background .3s}
+.brand{text-decoration:none;display:flex;align-items:baseline;gap:.4rem}
+.brand-name{font-family:var(--mono);font-weight:500;font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;color:var(--teal)}
+.header-controls{display:flex;gap:.75rem;align-items:center}
+.header-link{font-family:var(--mono);font-size:.68rem;color:var(--text-tertiary);text-decoration:none;letter-spacing:.06em;transition:color .2s}.header-link:hover{color:var(--teal)}
+.theme-toggle{background:none;border:1px solid var(--border);border-radius:6px;padding:.3rem .6rem;cursor:pointer;font-size:.82rem;color:var(--text-tertiary);transition:all .2s;font-family:var(--sans)}
+.theme-toggle:hover{border-color:var(--teal);color:var(--teal)}
+.page-wrapper{display:flex;margin-top:3.2rem;min-height:calc(100vh - 3.2rem)}
+.toc-rail{position:fixed;top:3.2rem;left:0;width:var(--toc-w);height:calc(100vh - 3.2rem);overflow-y:auto;padding:2rem 1.2rem 2rem 1.5rem;border-right:1px solid var(--border);background:var(--bg);transition:background .3s}
+.toc-rail h3{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:1rem}
+.toc-rail a{display:block;padding:.28rem 0;font-size:.8rem;color:var(--text-tertiary);text-decoration:none;border-left:2px solid transparent;padding-left:.7rem;margin-left:-.7rem;transition:all .2s;line-height:1.5}
+.toc-rail a:hover,.toc-rail a.active{color:var(--teal);border-left-color:var(--teal)}
+.main-content{margin-left:var(--toc-w);flex:1;padding:3rem 3.5rem 6rem;max-width:calc(var(--max-w) + 7rem)}
+h1{font-family:var(--serif);font-size:2.6rem;font-weight:600;line-height:1.15;color:var(--text-primary);margin-bottom:.5rem;letter-spacing:-.01em}
+h2{font-family:var(--serif);font-size:1.65rem;font-weight:400;line-height:1.28;margin:3.5rem 0 1.1rem;padding-top:2.2rem;border-top:1px solid var(--border);color:var(--text-primary)}
+h3{font-family:var(--sans);font-size:1.05rem;font-weight:700;margin:2rem 0 .7rem;color:var(--text-primary)}
+p{margin-bottom:1.15rem;color:var(--text-secondary);text-align:justify}
+strong{color:var(--text-primary);font-weight:600}
+.hero{margin-bottom:3rem;padding-bottom:2.5rem;border-bottom:1px solid var(--border)}
+.hero-eyebrow{font-family:var(--mono);font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);margin-bottom:.6rem}
+.hero-subtitle{font-size:1.12rem;color:var(--text-secondary);line-height:1.68;max-width:620px;margin-bottom:1.8rem}
+.hero-author{font-size:.92rem;color:var(--text-secondary);line-height:1.65;max-width:600px;margin-bottom:1.4rem;border-left:2px solid var(--teal);padding-left:1rem}
+.hero-meta{display:flex;gap:2rem;flex-wrap:wrap;font-size:.75rem;color:var(--text-tertiary);font-family:var(--mono)}
+.arch-card{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:1.6rem 1.75rem;margin:1.5rem 0;box-shadow:0 1px 4px var(--shadow);transition:background .3s,border .3s}
+.arch-card h4{font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);margin-bottom:.8rem}
+.layer-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.layer-item{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:1.2rem 1.3rem;border-left:3px solid var(--teal);transition:all .2s}
+.layer-item:hover{border-left-color:var(--teal-light);transform:translateY(-1px);box-shadow:0 3px 8px var(--shadow)}
+.layer-item h4{font-family:var(--sans);font-size:.92rem;font-weight:700;color:var(--text-primary);margin-bottom:.35rem}
+.layer-item p{font-size:.87rem;margin-bottom:0;line-height:1.6}
+.layer-num{font-family:var(--serif);font-size:1.6rem;color:var(--teal);opacity:.4;float:right;margin-top:-.2rem}
+.diagram-wrapper{margin:2rem 0;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:1.8rem;overflow-x:auto}
+.diagram-wrapper svg{width:100%;height:auto;display:block}
+.diagram-caption{font-family:var(--mono);font-size:.68rem;color:var(--text-tertiary);text-align:center;margin-top:.9rem;letter-spacing:.04em}
+code{font-family:var(--mono);font-size:.86em;background:var(--bg-code);padding:.12em .38em;border-radius:3px;color:var(--teal-dim)}
+[data-theme="dark"] code{color:var(--teal-light)}
+.callout{border-left:3px solid var(--teal);padding:1rem 1.3rem;margin:1.8rem 0;background:var(--bg-card);border-radius:0 6px 6px 0;font-size:.94rem;box-shadow:0 1px 3px var(--shadow)}
+.callout p{margin-bottom:0}
+.ref-table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:.88rem}
+.ref-table th{text-align:left;font-family:var(--mono);font-size:.67rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-tertiary);padding:.55rem .7rem;border-bottom:2px solid var(--border)}
+.ref-table td{padding:.6rem .7rem;border-bottom:1px solid var(--border);color:var(--text-secondary);vertical-align:top;line-height:1.55}
+.ref-table td:first-child{color:var(--text-primary);font-weight:600}
+.site-footer{margin-left:var(--toc-w);padding:3rem 3.5rem;border-top:1px solid var(--border);font-size:.76rem;color:var(--text-tertiary);line-height:1.85}
+.disclaimer{margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);font-size:.7rem;font-style:italic}
+@media print{
+  .site-header,.toc-rail,.theme-toggle,.header-controls{display:none!important}
+  .main-content{margin-left:0!important;padding:0!important;max-width:100%}
+  .site-footer{margin-left:0}
+  body{font-size:11pt;background:#fff;color:#111}
+  h1{font-size:22pt}h2{font-size:15pt;border-top:none;padding-top:0}
+  .arch-card,.layer-item{break-inside:avoid}
+}
+@media(max-width:900px){
+  .toc-rail{display:none}
+  .main-content{margin-left:0;padding:1.5rem 1.2rem 4rem}
+  .site-footer{margin-left:0;padding:2rem 1.2rem}
+  .layer-grid{grid-template-columns:1fr}
+  h1{font-size:1.9rem}
+  .site-header{padding:.7rem 1.2rem}
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="brand" href="/"><span class="brand-name">Tawhid Rahman</span></a>
+  <div class="header-controls">
+    <a class="header-link" href="/">&larr; All Work</a>
+    <a class="header-link" href="https://www.linkedin.com/in/tawhidurr/" target="_blank" rel="noopener">LinkedIn</a>
+    <a class="header-link" href="https://substack.com/@tawhidr" target="_blank" rel="noopener">Substack</a>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">&#9685; Theme</button>
+  </div>
+</header>
+
+<div class="page-wrapper">
+
+<nav class="toc-rail" aria-label="Table of contents">
+  <h3>Contents</h3>
+  <a href="#failure-rate">The 44% Problem</a>
+  <a href="#structural-diagnosis">Structural Diagnosis</a>
+  <a href="#topology">Operational Topology</a>
+  <a href="#readiness">Composition Readiness</a>
+  <a href="#boundaries">Human-Judgment Boundaries</a>
+  <a href="#misplacement">Boundary Misplacement</a>
+  <a href="#point-vs-composed">Point Solutions vs Composed</a>
+  <a href="#evaluation">The Evaluation Framework</a>
+  <a href="#preconditions">Preconditions for Composition</a>
+  <a href="#application">Applying the Diagnostic</a>
+</nav>
+
+<main class="main-content">
+
+  <section class="hero">
+    <p class="hero-eyebrow">Diagnostic Methodology</p>
+    <h1>AI Composition Architecture</h1>
+    <p class="hero-subtitle">
+      Why most AI orchestration fails at the structural level &mdash; and what the diagnostic looks like before any tool is touched. A methodology for evaluating whether an organisation&rsquo;s operations are composition-ready.
+    </p>
+    <p class="hero-author">
+      Tawhid Rahman has spent the past twelve months building, deploying, and iterating on composed AI systems for enterprise operations. This piece documents the evaluation methodology that precedes every implementation &mdash; the reasoning that determines whether an organisation is ready for composition, or whether it needs something else entirely.
+    </p>
+    <div class="hero-meta">
+      <span>Tawhid Rahman</span>
+      <span>2026</span>
+      <span>~20 min read</span>
+    </div>
+  </section>
+
+  <!-- THE 44% PROBLEM -->
+  <h2 id="failure-rate">The 44% Problem</h2>
+  <p>
+    The data on AI implementation failure has become difficult to ignore. Across industries, roughly four in ten AI projects fail to reach production &mdash; not because the models are inadequate, not because the teams are uncommitted, but because the projects were structurally misconceived from the beginning. The technology works. The deployment architecture does not.
+  </p>
+  <p>
+    The pattern is remarkably consistent. An organisation identifies a process that seems amenable to AI. A team builds or procures a solution. The solution performs well in isolation &mdash; it can draft emails, summarise documents, score leads, generate reports. It gets deployed. And then, within three to six months, usage plateaus, the ROI case evaporates, and leadership moves on to the next initiative. The tool sits in the stack, technically functional, operationally inert.
+  </p>
+  <p>
+    What went wrong is rarely visible in the post-mortem. The model performed as specified. The integration worked. The team was trained. The failure happened upstream of all of that &mdash; in the decision about <strong>what kind of system to build</strong> and whether the organisation&rsquo;s operational structure could support it.
+  </p>
+  <p>
+    Most AI implementations fail because they deploy point solutions into environments that require composed systems &mdash; or, equally destructive, they attempt composed systems in environments that lack the structural prerequisites. The diagnostic that distinguishes these two scenarios is the subject of this piece. It runs before any tool is selected, before any workflow is designed, before any model is fine-tuned. It evaluates the organisation, not the technology.
+  </p>
+
+  <!-- STRUCTURAL DIAGNOSIS -->
+  <h2 id="structural-diagnosis">Structural Diagnosis Before Technical Design</h2>
+  <p>
+    The instinct in most AI initiatives is to start with the tool. Which model? Which platform? Which integration framework? This instinct is precisely backwards. The tool question is the last question, not the first. The first question is structural: <strong>what kind of operational environment am I deploying into, and what does that environment require?</strong>
+  </p>
+  <p>
+    A structural diagnosis evaluates the organisation along three dimensions: the shape of its operational workflows (topology), the nature of the decisions embedded in those workflows (judgment boundaries), and the degree to which its processes are already documented, repeatable, and measurable (composition readiness). Each dimension produces a different signal, and the combination determines whether the organisation is a candidate for composed AI &mdash; or whether it needs to do foundational work first.
+  </p>
+  <p>
+    The distinction matters because the cost of a wrong classification is not symmetric. Deploying a point solution when you need composition produces waste &mdash; an isolated tool that never compounds. Deploying a composed system when the organisation lacks readiness produces chaos &mdash; automated pipelines that amplify existing dysfunction at machine speed. The second failure mode is significantly more expensive than the first, and significantly harder to recover from.
+  </p>
+
+  <div class="diagram-wrapper">
+    <svg viewBox="0 0 740 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three dimensions of structural diagnosis">
+      <defs>
+        <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2ec4b6" stop-opacity=".12"/><stop offset="100%" stop-color="#2ec4b6" stop-opacity=".02"/></linearGradient>
+      </defs>
+      <text x="370" y="28" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#1a9e8f" letter-spacing=".12em">THREE DIMENSIONS OF STRUCTURAL DIAGNOSIS</text>
+
+      <!-- Dimension 1 -->
+      <rect x="30" y="50" width="210" height="260" rx="8" fill="url(#g1)" stroke="#1a9e8f" stroke-width="1.5"/>
+      <text x="135" y="80" text-anchor="middle" font-family="Fraunces,serif" font-size="16" fill="currentColor">Topology</text>
+      <text x="135" y="100" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#1a9e8f" letter-spacing=".08em">WORKFLOW SHAPE</text>
+      <text x="55" y="130" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">How do processes flow?</text>
+      <text x="55" y="150" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Are outputs consumed</text>
+      <text x="55" y="166" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">downstream?</text>
+      <text x="55" y="196" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">What is linear vs what</text>
+      <text x="55" y="212" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">feeds back?</text>
+      <text x="55" y="242" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Where are the handoffs</text>
+      <text x="55" y="258" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">between functions?</text>
+      <line x="55" y1="280" x2="215" y2="280" stroke="#1a9e8f" stroke-width="1" stroke-opacity=".3"/>
+      <text x="55" y="298" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#1a9e8f">Signal: composability</text>
+
+      <!-- Dimension 2 -->
+      <rect x="265" y="50" width="210" height="260" rx="8" fill="url(#g1)" stroke="#1a9e8f" stroke-width="1" stroke-opacity=".65"/>
+      <text x="370" y="80" text-anchor="middle" font-family="Fraunces,serif" font-size="16" fill="currentColor">Boundaries</text>
+      <text x="370" y="100" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#1a9e8f" letter-spacing=".08em">JUDGMENT PLACEMENT</text>
+      <text x="290" y="130" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Which decisions require</text>
+      <text x="290" y="146" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">human context?</text>
+      <text x="290" y="176" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Where does consequence</text>
+      <text x="290" y="192" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">change magnitude?</text>
+      <text x="290" y="222" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">What is the cost of a</text>
+      <text x="290" y="238" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">wrong autonomous action?</text>
+      <line x="290" y1="264" x2="450" y2="264" stroke="#1a9e8f" stroke-width="1" stroke-opacity=".3"/>
+      <text x="290" y="282" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#1a9e8f">Signal: governance fit</text>
+
+      <!-- Dimension 3 -->
+      <rect x="500" y="50" width="210" height="260" rx="8" fill="url(#g1)" stroke="#1a9e8f" stroke-width="1" stroke-opacity=".4"/>
+      <text x="605" y="80" text-anchor="middle" font-family="Fraunces,serif" font-size="16" fill="currentColor">Readiness</text>
+      <text x="605" y="100" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#1a9e8f" letter-spacing=".08em">PREREQUISITE STATE</text>
+      <text x="525" y="130" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Are processes documented</text>
+      <text x="525" y="146" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">and repeatable?</text>
+      <text x="525" y="176" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Do quality standards</text>
+      <text x="525" y="192" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">exist and get enforced?</text>
+      <text x="525" y="222" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Can outcomes be</text>
+      <text x="525" y="238" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">measured today?</text>
+      <line x="525" y1="264" x2="685" y2="264" stroke="#1a9e8f" stroke-width="1" stroke-opacity=".3"/>
+      <text x="525" y="282" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#1a9e8f">Signal: foundation</text>
+
+      <text x="680" y="345" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#6e6e88" text-anchor="end" opacity=".4">&copy; 2026 Tawhid Rahman</text>
+    </svg>
+    <p class="diagram-caption">The three dimensions of structural diagnosis: each produces a distinct signal that informs the deployment strategy.</p>
+  </div>
+
+  <!-- OPERATIONAL TOPOLOGY -->
+  <h2 id="topology">Operational Topology</h2>
+  <p>
+    The first dimension examines how work actually moves through an organisation. Not the org chart &mdash; the flow of information, decisions, and outputs from one function to the next. Topology determines whether AI can be deployed as isolated capabilities or whether it needs to be woven into the connective tissue between functions.
+  </p>
+  <p>
+    Most organisations operate one of three topological patterns, and each has profoundly different implications for AI deployment.
+  </p>
+  <h3>Linear chains</h3>
+  <p>
+    Work moves in a sequence: marketing generates leads, sales qualifies them, delivery serves them, finance invoices them. Each step receives input from exactly one predecessor and passes output to exactly one successor. Linear chains are the easiest to automate and the hardest to make compound. You can place AI at any node in the chain, but the output dies at the boundary of that node &mdash; it does not feed forward in a way that teaches the system anything or enriches the next step.
+  </p>
+  <h3>Feedback loops</h3>
+  <p>
+    Work moves in cycles: sales intelligence informs marketing positioning, which generates new leads, which produce new sales intelligence. The output of one function modifies the input of a function that preceded it in the chain. Feedback loops are where composition becomes essential. An AI system deployed in a feedback loop must be aware of its own downstream effects &mdash; the outreach that generates responses that modify the scoring that shapes the next outreach. Point solutions cannot operate in feedback loops because they have no mechanism for receiving the consequences of their own outputs.
+  </p>
+  <h3>Hub-and-spoke</h3>
+  <p>
+    A central function &mdash; typically executive leadership or a project management office &mdash; consumes the output of every other function and distributes decisions back. Hub-and-spoke topologies create a natural observation point: the hub sees everything but modifies nothing directly. This is the topology most conducive to an intelligence layer &mdash; a system that aggregates signals from across the organisation and synthesises them into actionable decisions.
+  </p>
+
+  <div class="callout">
+    <p><strong>Diagnostic signal:</strong> If the organisation&rsquo;s critical workflows are primarily linear chains, point solutions will deliver value. If the workflows contain feedback loops or hub-and-spoke patterns, composed systems are required &mdash; and point solutions will produce diminishing returns within months.</p>
+  </div>
+
+  <!-- COMPOSITION READINESS -->
+  <h2 id="readiness">Composition Readiness Assessment</h2>
+  <p>
+    The most dangerous assumption in AI deployment is that any process can be automated if you throw a sufficiently capable model at it. In practice, AI composition has prerequisites &mdash; structural conditions that must exist in the organisation before composition becomes viable. Deploying a composed system without these prerequisites does not produce a failed automation. It produces an automated version of dysfunction.
+  </p>
+  <p>
+    The readiness assessment evaluates five conditions. Each is binary: either it exists or it does not. There is no partial credit.
+  </p>
+
+  <div class="arch-card">
+    <h4>Composition readiness checklist</h4>
+    <table class="ref-table">
+      <tr><th>Condition</th><th>What It Means</th><th>If Absent</th></tr>
+      <tr><td>Process documentation</td><td>The workflow has been written down, step by step, by someone who actually does the work &mdash; not by a consultant who interviewed them once</td><td>The AI will encode assumptions, not reality. Every error will be structural and invisible.</td></tr>
+      <tr><td>Repeatable execution</td><td>The process runs the same way each time. Different operators produce comparable outputs given comparable inputs. Variance is within defined tolerances.</td><td>The AI will produce consistent outputs from an inconsistent process, creating a false confidence that masks underlying disorder.</td></tr>
+      <tr><td>Measurable outcomes</td><td>There is a number &mdash; response rate, time-to-close, error frequency, throughput volume &mdash; that the process currently produces and that can serve as a baseline.</td><td>You cannot evaluate whether the automation is better, worse, or neutral. Improvement becomes an article of faith, not a fact.</td></tr>
+      <tr><td>Defined quality standard</td><td>Someone has articulated what &ldquo;good&rdquo; looks like for this process. Not a vague aspiration &mdash; a concrete standard that can be checked.</td><td>Quality gates cannot be built because there is nothing to gate against. The system produces whatever the model produces, and nobody can determine whether that is acceptable.</td></tr>
+      <tr><td>Ownership clarity</td><td>One person or one team owns this process end to end. When it fails, there is a name, not a committee.</td><td>Accountability for the automated version will be diffused across the same committee that could not manage the manual version. Errors will be reported slowly and resolved never.</td></tr>
+    </table>
+  </div>
+
+  <p>
+    Organisations that fail three or more of these conditions are not composition candidates. They are process maturity candidates. The correct intervention is not AI &mdash; it is operational discipline: document the processes, assign ownership, establish measurement, define quality. Then revisit composition. Attempting to skip this step is the single most common source of AI implementation failure, and no amount of model capability compensates for its absence.
+  </p>
+  <p>
+    Organisations that pass all five are composition-ready. But readiness is necessary, not sufficient. The next question is where to place the boundary between human judgment and autonomous execution.
+  </p>
+
+  <!-- HUMAN-JUDGMENT BOUNDARIES -->
+  <h2 id="boundaries">Human-Judgment Boundary Placement</h2>
+  <p>
+    Every composed system requires a deliberate answer to this question: where does the machine decide, and where does the human decide? The answer is not a philosophical position. It is an engineering decision with measurable consequences, and getting it wrong produces two distinct and equally expensive failure modes.
+  </p>
+  <p>
+    The boundary placement framework operates on a single variable: <strong>consequence magnitude</strong>. For any action the system might take, what is the cost of that action being wrong? The cost is evaluated along three axes: reversibility (can the action be undone?), audience (who sees the result?), and financial exposure (what does a mistake cost in currency?).
+  </p>
+
+  <div class="arch-card">
+    <h4>Consequence magnitude assessment</h4>
+    <table class="ref-table">
+      <tr><th>Axis</th><th>Low Consequence</th><th>High Consequence</th></tr>
+      <tr><td>Reversibility</td><td>Internal draft, unpublished analysis, staging environment, internal notification</td><td>Sent email, published content, modified production data, financial transaction</td></tr>
+      <tr><td>Audience</td><td>The operator, the immediate team, an internal system</td><td>A prospect, a client, the public, a regulator, a partner</td></tr>
+      <tr><td>Financial exposure</td><td>No direct cost if wrong. Time lost, not money lost.</td><td>Revenue impact, contractual liability, reputational damage, compliance penalty</td></tr>
+    </table>
+  </div>
+
+  <p>
+    Actions that score low on all three axes run autonomously. Research compilation, data enrichment, internal summarisation, draft generation, pipeline health monitoring &mdash; these are high-volume, low-consequence activities where machine speed and consistency outperform human attention. The boundary principle: <strong>let the machine handle everything that is repetitive, reversible, and internal.</strong>
+  </p>
+  <p>
+    Actions that score high on any single axis require an approval gate &mdash; a point where the system presents its output and a human authorises the next step before it executes. Sending outreach to a high-value prospect. Publishing content under the company&rsquo;s name. Executing a financial workflow. Modifying a client-facing system. These are low-volume, high-consequence actions where the cost of a wrong autonomous decision exceeds the cost of the friction introduced by human review.
+  </p>
+  <p>
+    The design of the approval gate matters as much as its placement. An approval gate that requires the human to open a laptop, log into a platform, review a multi-page document, and click through three confirmation screens will be abandoned within weeks. The gate must be frictionless: a summary delivered to a mobile device, a single-tap approval, an automatic resumption of the workflow. Seconds of friction, not minutes. The human stays in the loop because staying in the loop costs nothing.
+  </p>
+
+  <!-- BOUNDARY MISPLACEMENT -->
+  <h2 id="misplacement">The Failure Modes of Boundary Misplacement</h2>
+  <p>
+    Getting the boundary wrong is not a minor calibration error. It produces structural failures that compound over time, and the two directions of error manifest in completely different ways.
+  </p>
+  <h3>Failure Mode 1: Boundary too low (excessive autonomy)</h3>
+  <p>
+    When the boundary is set too low, the system takes consequential actions without human review. The immediate symptom is speed &mdash; the system runs fast because nothing slows it down. The downstream symptom is damage that accumulates silently. Outreach emails with subtle errors go to prospects who never respond. Content with tonal misjudgments gets published and erodes brand trust at a rate too slow to trigger any alarm. Data modifications in production systems create inconsistencies that surface weeks later in unrelated reports.
+  </p>
+  <p>
+    The insidious quality of this failure mode is that it feels like success during deployment. The system is fast, the throughput is high, and the errors are individually small enough to dismiss. But they compound. By the time the pattern becomes visible &mdash; declining response rates, rising customer complaints, unexplained data discrepancies &mdash; the root cause is buried under months of autonomous decisions that nobody reviewed.
+  </p>
+  <h3>Failure Mode 2: Boundary too high (excessive gatekeeping)</h3>
+  <p>
+    When the boundary is set too high, the system requires human approval for actions that carry no meaningful consequence. The immediate symptom is bottleneck &mdash; the human becomes the rate-limiting step in every workflow. The downstream symptom is abandonment. Faced with dozens of approval requests per day for trivial actions, the human begins ignoring them. First selectively, then entirely. The approval gate becomes a rubber stamp, and then it becomes a dead notification channel that nobody monitors.
+  </p>
+  <p>
+    This failure mode is more visible than the first, which makes it slightly less dangerous. But it produces a second-order effect that is equally destructive: the organisation concludes that AI automation &ldquo;doesn&rsquo;t work&rdquo; because it created more overhead than it eliminated. The problem was never the AI. The problem was the boundary.
+  </p>
+
+  <div class="diagram-wrapper">
+    <svg viewBox="0 0 740 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Boundary misplacement failure modes">
+      <defs>
+        <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2ec4b6" stop-opacity=".10"/><stop offset="100%" stop-color="#2ec4b6" stop-opacity=".02"/></linearGradient>
+      </defs>
+      <text x="370" y="28" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#1a9e8f" letter-spacing=".12em">BOUNDARY MISPLACEMENT FAILURE MODES</text>
+
+      <!-- Left: Too Low -->
+      <rect x="30" y="50" width="325" height="230" rx="8" fill="url(#g2)" stroke="#1a9e8f" stroke-width="1.5"/>
+      <text x="192" y="78" text-anchor="middle" font-family="Fraunces,serif" font-size="15" fill="currentColor">Boundary Too Low</text>
+      <text x="192" y="96" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#1a9e8f">EXCESSIVE AUTONOMY</text>
+
+      <text x="55" y="126" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Symptom: High speed, silent errors</text>
+      <text x="55" y="152" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Week 1: Everything runs fast</text>
+      <text x="55" y="172" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Month 1: Small errors accumulate</text>
+      <text x="55" y="192" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Month 3: Patterns become visible</text>
+      <text x="55" y="212" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Month 6: Root cause is untraceable</text>
+
+      <line x1="55" y1="232" x2="330" y2="232" stroke="#1a9e8f" stroke-width="1" stroke-opacity=".3"/>
+      <text x="55" y="256" font-family="JetBrains Mono,monospace" font-size="9" fill="currentColor" font-weight="600">Result: Compounding damage</text>
+      <text x="55" y="270" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88">Feels like success. Is erosion.</text>
+
+      <!-- Right: Too High -->
+      <rect x="385" y="50" width="325" height="230" rx="8" fill="url(#g2)" stroke="#1a9e8f" stroke-width="1" stroke-opacity=".65"/>
+      <text x="547" y="78" text-anchor="middle" font-family="Fraunces,serif" font-size="15" fill="currentColor">Boundary Too High</text>
+      <text x="547" y="96" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#1a9e8f">EXCESSIVE GATEKEEPING</text>
+
+      <text x="410" y="126" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Symptom: Bottleneck, then abandonment</text>
+      <text x="410" y="152" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Week 1: Human reviews everything</text>
+      <text x="410" y="172" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Week 3: Review fatigue sets in</text>
+      <text x="410" y="192" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Month 2: Approvals become rubber stamps</text>
+      <text x="410" y="212" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Month 4: System is abandoned</text>
+
+      <line x1="410" y1="232" x2="685" y2="232" stroke="#1a9e8f" stroke-width="1" stroke-opacity=".3"/>
+      <text x="410" y="256" font-family="JetBrains Mono,monospace" font-size="9" fill="currentColor" font-weight="600">Result: Rejection of automation</text>
+      <text x="410" y="270" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88">Feels like overhead. Is misclassification.</text>
+
+      <text x="680" y="308" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#6e6e88" text-anchor="end" opacity=".4">&copy; 2026 Tawhid Rahman</text>
+    </svg>
+    <p class="diagram-caption">Both failure modes feel rational at the time. Both produce structural damage that takes months to diagnose.</p>
+  </div>
+
+  <!-- POINT VS COMPOSED -->
+  <h2 id="point-vs-composed">Point Solutions vs Composed Systems</h2>
+  <p>
+    The AI market has spent the last three years selling point solutions: a tool that drafts emails, a tool that summarises meetings, a tool that scores leads, a tool that generates marketing copy. Each tool performs its task competently. And each tool, deployed in isolation, hits the same ceiling: it optimises a single node in a workflow but does nothing for the connections between nodes.
+  </p>
+  <p>
+    The failure rate data maps directly onto this deployment pattern. Point solutions deliver initial value &mdash; the time saved on that one task is real and measurable. But the value does not compound. The email-drafting tool does not learn from the responses those emails generate. The lead-scoring tool does not adjust its criteria based on which leads actually converted. The meeting summariser does not feed its outputs into the project tracker that determines next actions. Each tool is an island, and islands do not build continents.
+  </p>
+  <p>
+    Composed systems operate on a different principle. Every capability is designed to produce outputs that feed the next capability. Research produces intelligence that shapes outreach. Outreach produces responses that refine scoring. Scoring produces prioritisation that informs scheduling. Scheduling produces meetings that generate intelligence. The system is circular, not linear &mdash; and each cycle is better than the last because the data from every previous cycle is available to every subsequent one.
+  </p>
+  <p>
+    The structural difference is not incremental. A composed system running for six months operates at a qualitatively different level than the same capabilities deployed as point solutions for six months. The point solutions have produced six months of isolated outputs. The composed system has produced six months of compounding intelligence.
+  </p>
+
+  <div class="arch-card">
+    <h4>Point solution vs composed system characteristics</h4>
+    <table class="ref-table">
+      <tr><th>Dimension</th><th>Point Solution</th><th>Composed System</th></tr>
+      <tr><td>Output destination</td><td>A human inbox, a document, a dashboard</td><td>The input of the next capability in the pipeline</td></tr>
+      <tr><td>Learning mechanism</td><td>None. Each invocation is independent.</td><td>Outputs from downstream capabilities feed back to upstream capabilities.</td></tr>
+      <tr><td>Value trajectory</td><td>Linear: the same value in month six as in month one</td><td>Compounding: each cycle improves on the previous one</td></tr>
+      <tr><td>Failure pattern</td><td>Plateau and abandonment</td><td>Cascade failure if governance is missing; compounding gain if governance is present</td></tr>
+      <tr><td>Appropriate when</td><td>The task is isolated, the workflow is linear, the organisation needs a quick win</td><td>The workflows have feedback loops, cross-functional dependencies, or strategic consequence</td></tr>
+    </table>
+  </div>
+
+  <div class="callout">
+    <p><strong>The diagnostic question:</strong> Does the output of this capability need to be consumed by another capability to produce its full value? If yes, you are building a composed system whether you intended to or not &mdash; and deploying it as a point solution guarantees that the full value will never materialise.</p>
+  </div>
+
+  <!-- EVALUATION FRAMEWORK -->
+  <h2 id="evaluation">The Evaluation Framework</h2>
+  <p>
+    The evaluation runs as a structured sequence of questions, each building on the previous one. The sequence is designed to produce a clear recommendation: compose, deploy point solutions, or do foundational work first. Skipping steps or reversing the order invalidates the assessment.
+  </p>
+
+  <div class="diagram-wrapper">
+    <svg viewBox="0 0 740 440" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Composition readiness evaluation flow">
+      <defs>
+        <linearGradient id="g3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2ec4b6" stop-opacity=".10"/><stop offset="100%" stop-color="#2ec4b6" stop-opacity=".02"/></linearGradient>
+      </defs>
+      <text x="370" y="28" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#1a9e8f" letter-spacing=".12em">COMPOSITION READINESS EVALUATION FLOW</text>
+
+      <!-- Step 1 -->
+      <rect x="220" y="50" width="300" height="48" rx="6" fill="url(#g3)" stroke="#1a9e8f" stroke-width="1.5"/>
+      <text x="370" y="70" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="11" fill="currentColor" font-weight="600">1. Pass readiness checklist?</text>
+      <text x="370" y="88" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88">5 conditions: documentation, repeatability, measurement, quality, ownership</text>
+
+      <!-- No branch -->
+      <line x1="520" y1="74" x2="620" y2="74" stroke="#1a9e8f" stroke-width="1"/>
+      <text x="556" y="66" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#6e6e88">NO</text>
+      <rect x="620" y="56" width="95" height="36" rx="4" fill="var(--bg-card)" stroke="#1a9e8f" stroke-width="1"/>
+      <text x="667" y="78" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#1a9e8f">Foundation</text>
+      <text x="667" y="66" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#6e6e88">RECOMMENDATION</text>
+
+      <!-- Yes down -->
+      <line x1="370" y1="98" x2="370" y2="130" stroke="#1a9e8f" stroke-width="1"/>
+      <text x="380" y="118" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#6e6e88">YES</text>
+
+      <!-- Step 2 -->
+      <rect x="220" y="130" width="300" height="48" rx="6" fill="url(#g3)" stroke="#1a9e8f" stroke-width="1"/>
+      <text x="370" y="150" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="11" fill="currentColor" font-weight="600">2. Map operational topology</text>
+      <text x="370" y="168" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88">Linear chains? Feedback loops? Hub-and-spoke?</text>
+
+      <!-- Linear branch -->
+      <line x1="520" y1="154" x2="620" y2="154" stroke="#1a9e8f" stroke-width="1"/>
+      <text x="550" y="146" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#6e6e88">LINEAR</text>
+      <rect x="620" y="136" width="95" height="36" rx="4" fill="var(--bg-card)" stroke="#1a9e8f" stroke-width="1"/>
+      <text x="667" y="158" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#1a9e8f">Point solutions</text>
+      <text x="667" y="146" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#6e6e88">RECOMMENDATION</text>
+
+      <!-- Loops/Hub down -->
+      <line x1="370" y1="178" x2="370" y2="210" stroke="#1a9e8f" stroke-width="1"/>
+      <text x="380" y="198" font-family="JetBrains Mono,monospace" font-size="8" fill="#6e6e88">LOOPS / HUB</text>
+
+      <!-- Step 3 -->
+      <rect x="220" y="210" width="300" height="48" rx="6" fill="url(#g3)" stroke="#1a9e8f" stroke-width="1"/>
+      <text x="370" y="230" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="11" fill="currentColor" font-weight="600">3. Assess consequence boundaries</text>
+      <text x="370" y="248" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88">Reversibility, audience, financial exposure per action</text>
+
+      <line x1="370" y1="258" x2="370" y2="290" stroke="#1a9e8f" stroke-width="1"/>
+
+      <!-- Step 4 -->
+      <rect x="220" y="290" width="300" height="48" rx="6" fill="url(#g3)" stroke="#1a9e8f" stroke-width="1"/>
+      <text x="370" y="310" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="11" fill="currentColor" font-weight="600">4. Place approval gates</text>
+      <text x="370" y="328" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88">High-consequence actions gated; low-consequence autonomous</text>
+
+      <line x1="370" y1="338" x2="370" y2="370" stroke="#1a9e8f" stroke-width="1"/>
+
+      <!-- Result -->
+      <rect x="220" y="370" width="300" height="42" rx="6" fill="url(#g3)" stroke="#1a9e8f" stroke-width="1.5"/>
+      <text x="370" y="388" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#1a9e8f">RECOMMENDATION</text>
+      <text x="370" y="404" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="11" fill="currentColor" font-weight="600">Compose: build the governed pipeline</text>
+
+      <text x="680" y="432" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#6e6e88" text-anchor="end" opacity=".4">&copy; 2026 Tawhid Rahman</text>
+    </svg>
+    <p class="diagram-caption">The evaluation flow: each step narrows the recommendation. Skipping steps invalidates the assessment.</p>
+  </div>
+
+  <!-- PRECONDITIONS -->
+  <h2 id="preconditions">Preconditions That Cannot Be Skipped</h2>
+  <p>
+    The strongest temptation in AI implementation is to skip the foundational work and proceed directly to the exciting part &mdash; the model, the workflow, the automation. This temptation is expensive. Every organisation that has attempted composition without readiness has produced the same result: a system that runs fast, amplifies existing problems faster, and eventually gets shut down not because the technology failed but because the foundation was never there.
+  </p>
+  <p>
+    There are three foundational capabilities that cannot be substituted with technology:
+  </p>
+  <h3>Operational documentation</h3>
+  <p>
+    If the process exists only in the heads of the people who run it, it cannot be composed. Composition requires explicit knowledge of inputs, transformations, outputs, exceptions, and quality criteria. Tacit knowledge is the enemy of automation &mdash; not because tacit knowledge is bad, but because a machine that encodes tacit knowledge produces outputs that nobody can audit, debug, or improve.
+  </p>
+  <h3>Measurement infrastructure</h3>
+  <p>
+    If the organisation cannot measure the current performance of a process, it cannot determine whether the automated version is better. And without that determination, there is no feedback loop &mdash; no mechanism for the system to improve over time. Measurement does not need to be sophisticated. A spreadsheet tracking cycle time and error rate is sufficient. But it must exist before the automation does.
+  </p>
+  <h3>Quality culture</h3>
+  <p>
+    If the organisation does not enforce quality standards on its manual processes, it will not enforce them on its automated ones. Quality gates in a composed system work only when someone cares about the standards they enforce. In organisations where &ldquo;good enough&rdquo; is the operating standard and rework is accepted as normal, automated quality gates will be configured loosely, ignored frequently, and eventually disabled entirely.
+  </p>
+
+  <div class="callout">
+    <p><strong>The uncomfortable recommendation:</strong> Some organisations are not ready for AI composition. The diagnostic should be willing to say so. The correct output of the evaluation is sometimes &ldquo;do not build this yet&rdquo; &mdash; an answer that every vendor will avoid and every honest consultant must occasionally deliver.</p>
+  </div>
+
+  <!-- APPLICATION -->
+  <h2 id="application">Applying the Diagnostic</h2>
+  <p>
+    The diagnostic methodology described in this piece is not theoretical. It was developed through iterative application across a B2B software company&rsquo;s full operational stack &mdash; sales, marketing, engineering, design, executive intelligence, content production &mdash; and refined through the failures and recoveries that each deployment produced. The methodology exists because the failures came first.
+  </p>
+  <p>
+    Every deployment began with the same temptation: skip the evaluation and start building. Every deployment that yielded to that temptation required rework. The prospect research system that launched without defined quality standards produced leads that were technically scored but strategically useless. The content pipeline that launched without process documentation produced content that was grammatically correct and tonally wrong. The intelligence layer that launched without measurement infrastructure produced briefings that were comprehensive and unactionable.
+  </p>
+  <p>
+    In each case, the fix was not a better model or a more sophisticated workflow. The fix was going back to the diagnostic and doing the foundational work that had been skipped. Document the process. Define the standard. Measure the baseline. Only then design the automation.
+  </p>
+  <p>
+    The diagnostic is not a one-time assessment. It is a recurring evaluation that should be applied before every new capability is added to the system. An organisation that was not ready for composition six months ago may be ready now. A process that was a strong composition candidate last quarter may have changed. The diagnostic runs at the speed of the organisation&rsquo;s evolution, and the architecture evolves with it.
+  </p>
+  <p>
+    The most important output of the diagnostic is clarity. Clarity about what the organisation can support. Clarity about where the boundaries belong. Clarity about whether to compose or to wait. That clarity is worth more than any model, any platform, or any workflow &mdash; because without it, every subsequent decision is built on assumptions that the market will eventually test and the market is not kind to assumptions.
+  </p>
+
+  <div class="callout">
+    <p>If you are evaluating AI composition for your organisation &mdash; or working through the foundational work that precedes it &mdash; I would welcome a conversation. <strong>tawhid@softograph.com</strong></p>
+  </div>
+
+</main>
+</div>
+
+<footer class="site-footer">
+  <p>&copy; 2026 Tawhid Rahman. All rights reserved.</p>
+  <p>Licensed under <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" style="color:var(--teal);text-decoration:none">CC BY-NC-ND 4.0</a>. Share with attribution. Do not modify or use commercially without permission.</p>
+  <div class="disclaimer">
+    <p>This document describes a diagnostic methodology and evaluation framework provided for informational purposes. It does not constitute professional advice. Results described reflect a specific implementation context and should not be assumed to be directly replicable in other environments.</p>
+  </div>
+</footer>
+
+<script>
+function toggleTheme(){var h=document.documentElement,c=h.getAttribute('data-theme');h.setAttribute('data-theme',c==='dark'?'light':'dark');localStorage.setItem('theme',h.getAttribute('data-theme'))}
+(function(){var s=localStorage.getItem('theme');if(s)document.documentElement.setAttribute('data-theme',s)})();
+(function(){var secs=document.querySelectorAll('h2[id]'),links=document.querySelectorAll('.toc-rail a');var obs=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){links.forEach(function(l){l.classList.remove('active')});var t=document.querySelector('.toc-rail a[href="#'+e.target.id+'"]');if(t)t.classList.add('active')}})},{rootMargin:'-15% 0px -75% 0px'});secs.forEach(function(s){obs.observe(s)})})();
+</script>
+
+</body>
+</html>
