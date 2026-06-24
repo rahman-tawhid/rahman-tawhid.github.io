@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Reasoning Topology — What Sits Above the Loop | Tawhid Rahman</title>
+<meta name="description" content="AI engineering hit four paradigm ceilings in eighteen months. The coordination layer above loops — where multi-agent systems interact — doesn't have a name yet.">
+<meta name="author" content="Tawhid Rahman">
+<meta name="keywords" content="AI engineering, loop engineering, harness engineering, multi-agent coordination, reasoning topology, agent orchestration, AI architecture">
+<meta property="og:title" content="The Reasoning Topology — What Sits Above the Loop">
+<meta property="og:description" content="Four paradigm shifts in eighteen months. The layer above loops — where agents coordinate across an organisation — is the ceiling the industry hasn't named.">
+<meta property="og:type" content="article">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,400&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0b1426;--navy-mid:#162033;--navy-light:#1e2d47;
+  --cream:#f8f5f0;--cream-dark:#ebe5dc;
+  --teal:#1a9e8f;--teal-light:#2ec4b6;--teal-dim:#145c54;
+  --text-primary:#1a1a2e;--text-secondary:#3d3d56;--text-tertiary:#6e6e88;
+  --bg:var(--cream);--bg-card:#ffffff;--bg-code:#f0ebe4;
+  --border:#d4cdc2;--shadow:rgba(10,20,38,.06);
+  --serif:'Fraunces',Georgia,serif;
+  --sans:'Instrument Sans',-apple-system,sans-serif;
+  --mono:'JetBrains Mono','Menlo',monospace;
+  --max-w:780px;--toc-w:240px;
+}
+[data-theme="dark"]{
+  --text-primary:#e8e4de;--text-secondary:#b8b0a4;--text-tertiary:#7a7268;
+  --bg:var(--navy);--bg-card:var(--navy-mid);--bg-code:var(--navy-light);
+  --border:#2a3a52;--shadow:rgba(0,0,0,.3);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;font-size:17px}
+body{font-family:var(--sans);background:var(--bg);color:var(--text-primary);line-height:1.78;font-weight:400;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+.site-header{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:.7rem 2rem;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(14px);transition:background .3s}
+.brand{text-decoration:none;display:flex;align-items:baseline;gap:.4rem}
+.brand-name{font-family:var(--mono);font-weight:500;font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;color:var(--teal)}
+.header-controls{display:flex;gap:.75rem;align-items:center}
+.theme-toggle{background:none;border:1px solid var(--border);border-radius:6px;padding:.3rem .6rem;cursor:pointer;font-size:.82rem;color:var(--text-tertiary);transition:all .2s;font-family:var(--sans)}
+.theme-toggle:hover{border-color:var(--teal);color:var(--teal)}
+.page-wrapper{display:flex;margin-top:3.2rem;min-height:calc(100vh - 3.2rem)}
+.toc-rail{position:fixed;top:3.2rem;left:0;width:var(--toc-w);height:calc(100vh - 3.2rem);overflow-y:auto;padding:2rem 1.2rem 2rem 1.5rem;border-right:1px solid var(--border);background:var(--bg);transition:background .3s}
+.toc-rail h3{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:1rem}
+.toc-rail a{display:block;padding:.28rem 0;font-size:.8rem;color:var(--text-tertiary);text-decoration:none;border-left:2px solid transparent;padding-left:.7rem;margin-left:-.7rem;transition:all .2s;line-height:1.5}
+.toc-rail a:hover,.toc-rail a.active{color:var(--teal);border-left-color:var(--teal)}
+.main-content{margin-left:var(--toc-w);flex:1;padding:3rem 3.5rem 6rem;max-width:calc(var(--max-w) + 7rem)}
+h1{font-family:var(--serif);font-size:2.6rem;font-weight:600;line-height:1.15;color:var(--text-primary);margin-bottom:.5rem;letter-spacing:-.01em}
+h2{font-family:var(--serif);font-size:1.65rem;font-weight:400;line-height:1.28;margin:3.5rem 0 1.1rem;padding-top:2.2rem;border-top:1px solid var(--border);color:var(--text-primary)}
+h3{font-family:var(--sans);font-size:1.05rem;font-weight:700;margin:2rem 0 .7rem;color:var(--text-primary)}
+p{margin-bottom:1.15rem;color:var(--text-secondary);text-align:justify}
+strong{color:var(--text-primary);font-weight:600}
+.hero{margin-bottom:3rem;padding-bottom:2.5rem;border-bottom:1px solid var(--border)}
+.hero-eyebrow{font-family:var(--mono);font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);margin-bottom:.6rem}
+.hero-subtitle{font-size:1.12rem;color:var(--text-secondary);line-height:1.68;max-width:620px;margin-bottom:1.8rem}
+.hero-author{font-size:.92rem;color:var(--text-secondary);line-height:1.65;max-width:600px;margin-bottom:1.4rem;border-left:2px solid var(--teal);padding-left:1rem}
+.hero-meta{display:flex;gap:2rem;flex-wrap:wrap;font-size:.75rem;color:var(--text-tertiary);font-family:var(--mono)}
+.diagram-wrapper{margin:2rem 0;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:1.8rem;overflow-x:auto}
+.diagram-wrapper img{width:100%;height:auto;display:block;border-radius:4px}
+.diagram-caption{font-family:var(--mono);font-size:.68rem;color:var(--text-tertiary);text-align:center;margin-top:.9rem;letter-spacing:.04em}
+.callout{border-left:3px solid var(--teal);padding:1rem 1.3rem;margin:1.8rem 0;background:var(--bg-card);border-radius:0 6px 6px 0;font-size:.94rem;box-shadow:0 1px 3px var(--shadow)}
+.callout p{margin-bottom:0}
+code{font-family:var(--mono);font-size:.86em;background:var(--bg-code);padding:.12em .38em;border-radius:3px;color:var(--teal-dim)}
+[data-theme="dark"] code{color:var(--teal-light)}
+.sources{margin-top:3rem;padding-top:2rem;border-top:1px solid var(--border);font-size:.82rem;color:var(--text-tertiary);line-height:1.7}
+.sources p{text-align:left;color:var(--text-tertiary);font-size:.82rem}
+.site-footer{margin-left:var(--toc-w);padding:3rem 3.5rem;border-top:1px solid var(--border);font-size:.76rem;color:var(--text-tertiary);line-height:1.85}
+.disclaimer{margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);font-size:.7rem;font-style:italic}
+@media print{
+  .site-header,.toc-rail,.theme-toggle,.header-controls{display:none!important}
+  .main-content{margin-left:0!important;padding:0!important;max-width:100%}
+  .site-footer{margin-left:0}
+  body{font-size:11pt;background:#fff;color:#111}
+  h1{font-size:22pt}h2{font-size:15pt;border-top:none;padding-top:0}
+}
+@media(max-width:900px){
+  .toc-rail{display:none}
+  .main-content{margin-left:0;padding:1.5rem 1.2rem 4rem}
+  .site-footer{margin-left:0;padding:2rem 1.2rem}
+  h1{font-size:1.9rem}
+  .site-header{padding:.7rem 1.2rem}
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <a href="https://rahman-tawhid.github.io/" class="brand">
+    <span class="brand-name">The Reasoning Topology</span>
+  </a>
+  <div class="header-controls">
+    <button class="theme-toggle" onclick="toggleTheme()">&#9681; Theme</button>
+  </div>
+</header>
+
+<div class="page-wrapper">
+
+<aside class="toc-rail">
+  <h3>Contents</h3>
+  <a href="#discipline">The Discipline Boundary</a>
+  <a href="#harness">The Harness Response</a>
+  <a href="#loops">The Loop Shift</a>
+  <a href="#ceiling">The Unnamed Ceiling</a>
+  <a href="#practice">What a Topology Looks Like</a>
+  <a href="#sources">Sources</a>
+</aside>
+
+<main class="main-content">
+
+  <div class="hero">
+    <div class="hero-eyebrow">Thought Leadership</div>
+    <h1>The Reasoning Topology</h1>
+    <p class="hero-subtitle">What sits above the loop &mdash; and why the AI engineering conversation is stuck one layer below the ceiling that matters.</p>
+    <p class="hero-author">Tawhid Rahman is the CEO of Softograph, a software company he founded in 2012. He has spent the past year building and operating a multi-agent production system that coordinates composable skills, function-specific agents, and autonomous workflows across an entire company&rsquo;s operations.</p>
+    <div class="hero-meta">
+      <span>Tawhid Rahman</span>
+      <span>2026</span>
+      <span>~10 min read</span>
+    </div>
+  </div>
+
+  <p>The AI engineering discipline has cycled through four named paradigm shifts in eighteen months, each one arriving with enough force to make the previous vocabulary feel quaint before the ink on the blog posts had dried. Prompt engineering gave way to context engineering, which yielded to harness engineering, which is currently being superseded by loop engineering. The speed of this progression tells you less about the field&rsquo;s confusion or its appetite for naming things (though both are real) than about a structural pattern underneath: each paradigm solved the problem it was designed to solve and, in doing so, exposed a harder problem one layer up that the previous paradigm&rsquo;s tools couldn&rsquo;t reach.</p>
+
+  <p>There&rsquo;s a pattern in this progression, and it has a ceiling that the current conversation hasn&rsquo;t reached yet, because the conversation is still dominated by people building for a single developer and a single codebase.</p>
+
+  <h2 id="discipline">The Discipline Boundary</h2>
+
+  <p>In January 2026, Andrej Karpathy published a thread describing his shift from 80% manual coding to 80% agent-driven coding in roughly two months. The thread accumulated over 40,000 reposts, largely because every practitioner who read it recognised the same catalogue of failures in their own work: agents that made silent assumptions without surfacing them, overcomplicated simple solutions with speculative abstractions, and edited adjacent code without authorisation. The problems Karpathy was cataloguing weren&rsquo;t capability failures in the traditional sense; the agents were brilliant at producing code and equally brilliant at producing the wrong code with the same confidence.</p>
+
+  <p>The community&rsquo;s response was to operationalise these observations into behavioural checklists, chief among them the Karpathy Guidelines, which were published as a CLAUDE.md file that coding agents read at session start. The four principles (state assumptions explicitly, prefer minimal implementations, make surgical changes, define success criteria before writing) crossed 220,000 GitHub stars by May. The insight was that the boundary agents kept failing at wasn&rsquo;t the intelligence boundary but the discipline boundary, and the fix was architectural: bake the behavioural constraints into the agent&rsquo;s environment rather than hoping the model would develop judgment it structurally can&rsquo;t possess.</p>
+
+  <p>The observation had a longer reach than the checklist it produced, because Karpathy had surfaced the first serious evidence that the bottleneck in AI-assisted development wasn&rsquo;t the model at all but everything the model operated inside.</p>
+
+  <div class="diagram-wrapper">
+    <img src="img/reasoning-topology-fig1.png" alt="The Engineering Progression &mdash; four paradigm shifts from prompt engineering to loop engineering, with a question mark for the coordination topology layer above">
+    <div class="diagram-caption">The engineering progression: four paradigm shifts in eighteen months, each solving one ceiling and exposing the next.</div>
+  </div>
+
+  <h2 id="harness">The Harness Response</h2>
+
+  <p>Six weeks after Karpathy&rsquo;s thread, two things happened in the same week of February 2026 that gave the next layer its name. Mitchell Hashimoto, the creator of Terraform and Ghostty, described a practice he had developed while working with AI coding agents: every time an agent made a mistake, he would engineer a permanent fix into the agent&rsquo;s environment so that the specific mistake became structurally impossible to repeat. Six days later, Ryan Lopopolo at OpenAI published a case study in which a small team had shipped a production application with zero manually written lines of code &mdash; roughly a million lines generated by Codex agents, 1,500 pull requests merged by three engineers averaging 3.5 PRs per day. The formula Hashimoto gave the field was five words long: Agent = Model + Harness.</p>
+
+  <p>The harness, in the vocabulary that rapidly consolidated around this insight, means everything in an AI agent that isn&rsquo;t the model itself: the context pipelines, the constraint documents, the verification loops, the observability infrastructure, the memory systems, and the tool interfaces that collectively determine whether an intelligent model produces useful work or confident wreckage. Birgitta B&ouml;ckeler at Thoughtworks structured this into a framework published on Martin Fowler&rsquo;s site in April, introducing the distinction between guides (feedforward controls that steer the agent before it acts) and sensors (feedback controls that observe after the agent acts and enable self-correction). The framework identified five industry-standard layers: orchestration, verification, context and memory, guardrails, and observability.</p>
+
+  <p>The evidence that the harness matters more than the model arrived in the form of a controlled experiment that the field has been quoting ever since. The LangChain engineering team, without changing the underlying model at all, redesigned their coding agent&rsquo;s harness and climbed from the 30th to the 5th position on Terminal Bench 2.0, improving accuracy from 52.8% to 66.5%. Same brain, different body, radically different results. Faros AI&rsquo;s 2026 Engineering Report provided the structural explanation for why this mattered: AI-assisted code changes are larger, more complex, and carry wider blast radius than their human-written equivalents, while the surface quality of the code makes errors cognitively expensive to detect during review. The harness is where reliability is won.</p>
+
+  <p>The limitation of the harness paradigm, which became visible almost immediately to anyone operating multi-agent systems, is that its entire vocabulary assumes a single agent, a single codebase, and a single developer. The harness has no language for what happens when 40 agents each operate within their own harness and those harnesses need to compose.</p>
+
+  <div class="diagram-wrapper">
+    <img src="img/reasoning-topology-fig2.png" alt="The Harness Architecture &mdash; five layers wrapping a single model, with guides as feedforward controls and sensors as feedback controls">
+    <div class="diagram-caption">The harness architecture: five layers wrapping a single model. Designed for one developer, one codebase, one agent.</div>
+  </div>
+
+  <h2 id="loops">The Loop Shift</h2>
+
+  <p>On June 7, 2026, Peter Steinberger &mdash; creator of OpenClaw, then at OpenAI &mdash; posted two sentences that accumulated 6.5 million views on X: &ldquo;Here&rsquo;s your monthly reminder that you shouldn&rsquo;t be prompting coding agents anymore. You should be designing loops that prompt your agents.&rdquo; The same week, Boris Cherny, the head of Claude Code at Anthropic, told interviewers that his job had changed: &ldquo;I don&rsquo;t prompt Claude anymore. I have loops running that prompt Claude and figuring out what to do. My job is to write loops.&rdquo; On the Sunday, Addy Osmani at Google published the essay that gave the pattern its name &mdash; &ldquo;Loop Engineering&rdquo; &mdash; and described a five-part architecture: discovery, task decomposition, orchestration, verification, and persistent memory.</p>
+
+  <p>The core observation is that the old workflow, with the human holding the tool the entire time, had been replaced by designing small autonomous control systems that use the agents instead. A loop finds work, assigns it, verifies the result, writes down what happened, and decides the next step, all without the developer sitting at the keyboard. Claude Code shipped the native primitives in the same period: <code>/loop</code> for recurring tasks, <code>/goal</code> for run-until-a-condition-is-met with a separate fast model grading completion so the worker doesn&rsquo;t grade its own homework, and <code>/schedule</code> for durable cron-style automation.</p>
+
+  <p>The shift was real and not, as some of the more jaded commentators suggested, a rebranding of cron jobs. The scheduling layer of a loop is a traditional scheduler, but the decision logic in the middle is categorically different: a cron job runs a fixed script, while a loop runs a model that reads the current state and chooses its next action. The distinction matters because it relocates the bottleneck. In the harness paradigm, the bottleneck was the system around the model. In the loop paradigm, the bottleneck was identified as the human who&rsquo;d been manually operating that system one turn at a time. Loops remove the human from the execution path and relocate them to the design path.</p>
+
+  <p>Osmani, to his credit, included the warning that the discussion he triggered was careful to transmit: an unattended loop without a verifier is a machine that ships bugs with high confidence. Token costs in autonomous agent loops compound faster than almost any developer expects. And there&rsquo;s what he called comprehension debt, the gap that widens when a system ships code you never read.</p>
+
+  <h2 id="ceiling">The Unnamed Ceiling</h2>
+
+  <p>Loop engineering is the right abstraction for a single developer orchestrating a single autonomous workflow. The question that it doesn&rsquo;t answer, because the question doesn&rsquo;t arise in the single-developer context that dominates the current conversation, is what happens when loops interact.</p>
+
+  <p>Consider a production environment where a content research loop discovers opportunities, feeds its output into a publishing loop, which triggers a distribution loop, which generates performance signals that feed back into the research loop. Each of these is a well-harnessed, goal-conditioned loop running autonomously. Each has its own verification sub-agent, its own memory, its own scheduling. By every measure the current paradigm cares about, each loop is well-engineered.</p>
+
+  <p>The system&rsquo;s behaviour, though, depends less on how well each loop is engineered than on the relationships between loops: which loop&rsquo;s output constrains which other loop&rsquo;s input, what happens when two loops produce contradictory signals about the same resource, and how the collective behaviour of the system changes when a loop that used to run daily starts running hourly. These are coordination problems, and the coordination layer sits above any individual loop the way a loop sits above any individual prompt.</p>
+
+  <div class="diagram-wrapper">
+    <img src="img/reasoning-topology-fig3.png" alt="Single Loop vs Coordination Topology &mdash; a clean single loop on the left compared to multiple interconnected loops forming a directed dependency graph on the right">
+    <div class="diagram-caption">Single loop vs. coordination topology. Loops don&rsquo;t compose &mdash; they form a topology.</div>
+  </div>
+
+  <p>Three problems emerge at organisational scale that none of the existing layers address.</p>
+
+  <p>The first is <strong>inter-agent dependency management</strong>. When a system contains dozens of specialist agents organised into multiple autonomous loops, the output of one agent routinely constrains the input of another. In a well-designed system, these dependencies are explicit and directional; in most systems, they&rsquo;re implicit and discovered only when something breaks three loops downstream from the original error. The harness framework has no concept of cross-agent dependencies because it was designed for a single agent. The loop framework has no concept of cross-loop dependencies because it was designed for a single loop. The dependency graph of a multi-agent production system is a coordination topology, and managing it is an architectural discipline that the field hasn&rsquo;t yet named because the field hasn&rsquo;t yet needed to name it at scale.</p>
+
+  <p>The second is <strong>human-judgment boundary placement</strong>. In a single-agent system, the boundary between autonomous operation and human decision-making is simple: the human reviews the output. In a single loop, it&rsquo;s more complex but still tractable: the human designs the loop and reviews aggregate results. In a multi-loop system operating across an entire organisation&rsquo;s functions, the question of where autonomous operation stops and human judgment begins graduates from a per-loop decision into a system-wide design problem that must account for the interactions between loops, the cascading consequences of autonomous decisions, and the practical reality that humans can&rsquo;t review the output of 40 agents running across 12 loops any more than they can personally review every line of code those agents produce. The boundary must be placed architecturally, with clear escalation paths that route specific categories of uncertainty to human decision-makers without requiring those decision-makers to understand the internal state of every loop in the system.</p>
+
+  <p>The third is <strong>collective intelligence</strong>. Every paradigm from prompt engineering to loop engineering treats improvement as a per-agent or per-loop concern: make this agent better, make this loop more reliable. In a multi-agent production system, the more interesting question is whether the system&rsquo;s aggregate behaviour improves over time, whether the lessons learned by one loop propagate to others, whether the system compounds instead of just executing, and whether the collective output is more than the sum of its parts. The problem is architectural rather than statistical in the machine-learning sense &mdash; it concerns how state flows between components and how feedback from one part of the system informs the behaviour of others.</p>
+
+  <h2 id="practice">What a Topology Looks Like in Practice</h2>
+
+  <p>The reason I can describe these three problems with specificity rather than speculation is that I have been operating a multi-agent production system across an entire company&rsquo;s functions for the past year. The system coordinates composable skills, function-specific agents, autonomous workflows with schedule-conditioned orchestration, and an intelligence layer that governs cross-agent state. It runs prospect research, content production, quality assurance, executive intelligence, and operational automation as an integrated architecture where the output of one workflow feeds the input of the next, rather than as separate tools that happen to share a server.</p>
+
+  <p>Every lesson in this article was learned by hitting a ceiling and building through it. The harness framework describes five layers; a production multi-agent system operating across a company&rsquo;s functions contains all five and encounters a sixth that the framework has no vocabulary for. The loop paradigm correctly identifies that the human should design loops rather than operate agents manually; what it doesn&rsquo;t yet account for is that 12 well-designed loops running simultaneously will produce coordination failures that have nothing to do with how well each individual loop is engineered.</p>
+
+  <p>The coordination topology is the layer that governs three questions simultaneously: which agent&rsquo;s output constrains which other agent&rsquo;s input, where the boundary sits between autonomous execution and human judgment, and how the system&rsquo;s collective intelligence compounds over time. It doesn&rsquo;t have a name in the industry yet, because the industry is still building for the single-developer, single-codebase case where the question doesn&rsquo;t arise.</p>
+
+  <p>It will have a name within a year. The teams that figure it out first will have an architectural advantage that is difficult to replicate, because the lessons of coordination topology are learned in production under load, not in design documents or conference talks.</p>
+
+  <div class="callout">
+    <p>If you are building multi-agent AI systems &mdash; or beginning to think about what coordination looks like at organisational scale &mdash; I would welcome a conversation. <strong>tawhid@softograph.com</strong></p>
+  </div>
+
+  <div class="sources" id="sources">
+    <h3>Sources</h3>
+    <p>Karpathy, X thread (January 26, 2026). Hashimoto, personal blog (February 2026). Lopopolo, OpenAI (February 11, 2026). B&ouml;ckeler, &ldquo;Harness engineering for coding agent users,&rdquo; martinfowler.com (April 2, 2026). Faros AI, &ldquo;AI Engineering Report 2026.&rdquo; LangChain, Terminal Bench 2.0 results (March 2026). Steinberger, X post (June 7, 2026). Cherny, CNBC/Business Insider interview (June 2026). Osmani, &ldquo;Loop Engineering,&rdquo; addyosmani.com (June 2026). Claude Code documentation, Anthropic.</p>
+  </div>
+
+</main>
+</div>
+
+<footer class="site-footer">
+  <p>&copy; 2026 Tawhid Rahman. All rights reserved.</p>
+  <p>Licensed under <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" style="color:var(--teal);text-decoration:none">CC BY-NC-ND 4.0</a>. Share with attribution. Do not modify or use commercially without permission.</p>
+  <div class="disclaimer">
+    <p>This document describes architectural observations and practitioner analysis provided for informational purposes. It does not constitute professional advice. Patterns described reflect a specific implementation context and should not be assumed to be directly replicable in other environments.</p>
+  </div>
+</footer>
+
+<script>
+function toggleTheme(){const h=document.documentElement,c=h.getAttribute('data-theme');h.setAttribute('data-theme',c==='dark'?'light':'dark');localStorage.setItem('theme',h.getAttribute('data-theme'))}
+(function(){const s=localStorage.getItem('theme');if(s)document.documentElement.setAttribute('data-theme',s)})();
+(function(){const secs=document.querySelectorAll('h2[id]'),links=document.querySelectorAll('.toc-rail a');const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.remove('active'));const t=document.querySelector('.toc-rail a[href="#'+e.target.id+'"]');if(t)t.classList.add('active')}})},{rootMargin:'-15% 0px -75% 0px'});secs.forEach(s=>obs.observe(s))})();
+</script>
+
+</body>
+</html>
