@@ -64,8 +64,10 @@ main{max-width:1000px;margin:0 auto;padding:3.5rem 2rem 5rem}
 .work-card .card-meta{font-size:.74rem;color:var(--text-t);font-family:var(--mono)}
 .work-card.wide{grid-column:1 / -1}
 .work-card.wide p{max-width:640px}
-.pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
-.pair .grid{grid-template-columns:1fr}
+.pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;align-items:stretch}
+.pair .shelf{display:flex;flex-direction:column}
+.pair .grid{grid-template-columns:1fr;flex:1}
+.pair .grid .work-card{height:100%}
 .pair .shelf-note{display:none}
 
 .cta-band{margin-top:3.5rem;padding:2rem 0;border-top:1px solid var(--border);max-width:720px}

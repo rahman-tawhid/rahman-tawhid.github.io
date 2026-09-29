@@ -30,6 +30,19 @@ code{font-family:var(--mono);font-size:.86em;background:var(--bg-code);padding:.
 .site-footer{margin-left:var(--toc-w);padding:3rem 3.5rem;border-top:1px solid var(--border);font-size:.76rem;color:var(--text-tertiary);line-height:1.85}.disclaimer{margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);font-size:.7rem;font-style:italic}
 @media print{.site-header,.toc-rail,.theme-toggle,.header-controls{display:none!important}.main-content{margin-left:0!important;padding:0!important;max-width:100%}.site-footer{margin-left:0}body{font-size:11pt;background:#fff;color:#111}h1{font-size:22pt}h2{font-size:15pt;border-top:none;padding-top:0}.arch-card,.layer-item{break-inside:avoid}}
 @media(max-width:900px){.toc-rail{display:none}.main-content{margin-left:0;padding:1.5rem 1.2rem 4rem}.site-footer{margin-left:0;padding:2rem 1.2rem}.layer-grid{grid-template-columns:1fr}h1{font-size:1.9rem}.site-header{padding:.7rem 1.2rem}}
+
+/* LAYOUT v2: centre the reading column in the space right of the rail; let figures and tables run wider on large screens */
+@media(min-width:901px){
+  .page-wrapper{padding-left:var(--toc-w)}
+  .main-content{margin-left:auto;margin-right:auto;min-width:0;width:100%;max-width:1160px}
+  .main-content > *:not(.diagram-wrapper):not(.table-wrap):not(.ref-table):not(.wide){max-width:780px;margin-left:auto;margin-right:auto}
+  .main-content > .diagram-wrapper,.main-content > .table-wrap,.main-content > .ref-table,.main-content > .wide{max-width:1000px;margin-left:auto;margin-right:auto}
+  .site-footer > *{max-width:780px;margin-left:auto;margin-right:auto}
+}
+
+/* LAYOUT v2.1: no flex overflow on narrow screens; single rule between hero and first section */
+.main-content{min-width:0}
+.hero + h2{border-top:none;padding-top:0;margin-top:2.2rem}
 </style>
 </head>
 <body>
