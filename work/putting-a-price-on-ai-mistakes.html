@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Putting a Price on AI Mistakes | Tawhid Rahman</title>
+<meta name="description" content="Why the most accurate classification model is often not the most profitable one. Cost-sensitive thresholds explained on a public churn dataset, with the break-even formula and who in the business should own it.">
+<meta name="author" content="Tawhid Rahman">
+<meta name="keywords" content="cost-sensitive classification, decision threshold, churn model, false positives, false negatives, AI business value, calibration">
+<meta property="og:title" content="Putting a Price on AI Mistakes">
+<meta property="og:description" content="An 81% accurate churn model, an unowned threshold, and the $20,000 between them. Cost-sensitive thresholds explained on real data.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://rahman-tawhid.github.io/work/putting-a-price-on-ai-mistakes.html">
+<meta property="og:image" content="https://rahman-tawhid.github.io/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body class="fig-scroll">
+<header class="site-header">
+  <a class="brand" href="/"><span class="brand-name">Tawhid Rahman</span></a>
+  <div class="header-controls">
+    <a class="header-link" href="/">All work</a>
+    <a class="header-link" href="https://www.linkedin.com/in/tawhidurr/" target="_blank" rel="noopener">LinkedIn</a>
+    <a class="header-link" href="https://substack.com/@tawhidr" target="_blank" rel="noopener">Substack</a>
+  </div>
+</header>
+<div class="page-wrapper">
+<nav class="toc-rail" aria-label="Table of contents"><h3>Contents</h3>
+<a href="#classifier">What a classifier returns</a><a href="#errors">Two ways to be wrong</a><a href="#example">Worked example</a><a href="#pricing">Pricing the four outcomes</a><a href="#results">Results</a><a href="#ownership">Who should own the threshold</a><a href="#limits">Where this stops being enough</a><a href="#method">Method</a>
+</nav>
+<main class="main-content">
+
+<section class="hero">
+  <p class="hero-eyebrow">Data Science &middot; Decision Analysis</p>
+  <h1>Putting a Price on AI Mistakes</h1>
+  <p class="hero-subtitle">What an 81% accurate model leaves on the table. A churn model on public data, the four outcomes priced in dollars, and the break-even arithmetic that tells a business where its model should draw the line.</p>
+  <p class="hero-author">The dataset is the public IBM Telco Customer Churn sample. The cost figures are illustrative assumptions, stated where they are used, and the method section at the end is enough to reproduce every number on this page.</p>
+  <div class="hero-meta"><span>Tawhid Rahman</span><span>2026</span><span>~9 min read</span><span>Python &middot; pandas &middot; scikit-learn</span></div>
+</section>
+
+<div class="stat-row wide">
+  <div class="stat"><b>0.845</b><span>AUC of a plain logistic regression on 2,113 held-out customers</span></div>
+  <div class="stat"><b>0.19</b><span>break-even threshold from the campaign&rsquo;s prices, against a default of 0.5</span></div>
+  <div class="stat"><b>&minus;11 pts</b><span>accuracy lost by moving the threshold to 0.19</span></div>
+  <div class="stat"><b>+$20.1K</b><span>net value gained by the same move, about 22%</span></div>
+</div>
+
+<p>Most model review meetings I sit in open with the same slide, and the largest number on it is accuracy. Someone from the data team says 81%, someone from the business side nods, and the meeting moves to greenlight a rollout date. The cost of the remaining 19% rarely comes up in that meeting, although it is the figure the finance team will eventually see.</p>
+<p>I work through that question below with a public dataset, a plain model and a spreadsheet's worth of arithmetic. The technique is called cost-sensitive thresholding, and the idea behind it is simple enough to explain to a board. The aim is to show where the decision sits, who should own it, and how much money moves when it is made well.</p>
+<h2 id="classifier">What a classifier returns</h2>
+<p>A large share of the AI used in business answers yes-or-no questions, such as whether a customer will leave, whether a transaction is fraud, whether a bottle on a production line is counterfeit, or whether a borrower will default. Models that answer these questions are called classifiers, and their direct output is a probability. A churn model looks at a customer and says 0.34, meaning a 34% chance this person leaves in the coming period. Somebody then has to decide at what probability the company takes action - calls the customer, blocks the card, pulls the bottle off the line. That cut-off is the decision threshold.</p>
+<p>In most software libraries the default threshold is 0.5. Above it the model says yes, below it the model says no. The number has a mathematical rationale, since it is the point where yes becomes more likely than no. It also assumes that being wrong in one direction costs exactly as much as being wrong in the other. In business that assumption rarely holds. The default stays entrenched anyway, because changing it is on no one's job description.</p>
+<h2 id="errors">Two ways to be wrong</h2>
+<p>Every yes-or-no model makes two kinds of mistake. It can raise an alarm about something harmless, which statisticians call a false positive, and it can stay silent about something harmful, which they call a false negative.</p>
+<p>The costs of these two mistakes rarely match. A few familiar cases show what each one can entail. A bank's fraud model that blocks a legitimate card costs one irritated customer and a phone call to the service centre. The same model missing a fraudulent transaction can cost the full amount stolen plus the chargeback fees. A counterfeit detector that flags an authentic product wastes an inspector's ten minutes, while one that passes a fake puts a dangerous product on a shelf with the brand's name on it. A lender that rejects a good borrower loses the interest income, and a lender that approves a bad one loses the principal.</p>
+<p>The model has no access to these prices. It produces probabilities. The business holds the prices, and the threshold is where the two are combined.</p>
+<h2 id="example">A worked example: customer churn</h2>
+<p>For the example I used the IBM Telco Customer Churn sample, a public dataset of 7,043 customers of a fictional telecom provider. For each customer it records contract type, tenure, services used, monthly charges and whether they left. 26.5% of them did.</p>
+<p>I trained a logistic regression on 70% of the customers and kept the remaining 2,113 aside to test it. Logistic regression is one of the oldest and plainest models in the toolkit. I chose it on purpose. It is fast, it is explainable to a non-technical manager, and its probabilities tend to be reliable, which matters later. On the test set it scored an AUC of 0.845. If you pick one customer who left and one who stayed, the model ranks the leaver as riskier about 85% of the time. That is a solid result for this kind of data, and an ordinary one.</p>
+<p>At the default 0.5 threshold, it is 80.9% accurate. For comparison, a model that predicts every customer will stay would be 73.5% accurate on the same customers, because 73.5% of them stayed. Accuracy tends to subsume both kinds of mistake into one number, and it flatters every model on imbalanced data, including useless ones. It says nothing about money.</p>
+<h2 id="pricing">Pricing the four outcomes</h2>
+<p>To put money on the model's decisions I need three business inputs. For this example I set them as follows, and every reader can substitute their own:</p>
+<ul>
+<li>A retention offer, a discount plus the agent's time, costs <strong>$60</strong> per customer contacted.</li>
+<li>The offer persuades <strong>40%</strong> of customers who were going to leave to stay.</li>
+<li>A customer's value is <strong>twelve months of their current monthly charge</strong>. The average in the test set is $772.</li>
+</ul>
+<p>With those three inputs, each of the four possible outcomes gets a price, measured against the option of doing nothing:</p>
+<div class="table-wrap"><table class="ref-table">
+<thead>
+<tr>
+<th></th>
+<th>Customer was going to leave</th>
+<th>Customer was going to stay</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>We call them</strong></td>
+<td>Pay $60, keep 40% of $772 on average: <strong>+$249</strong></td>
+<td>Pay $60 for nothing: <strong>&minus;$60</strong></td>
+</tr>
+<tr>
+<td><strong>We don't call</strong></td>
+<td>Lose them, same as doing nothing: <strong>$0</strong></td>
+<td>Nothing happens: <strong>$0</strong></td>
+</tr>
+</tbody>
+</table></div>
+<p>The data team can estimate which customers are likely to leave. Only the business team can fill in the dollar amounts, so the table needs both. The top row is the only place the campaign can make or lose money, and the arithmetic of that row tells you when a call pays for itself.</p>
+<p>A call is justified when the expected saving is enough to defray the cost of the offer. Written out, that means the churn probability times 40% times the customer's value has to exceed $60. For the average customer, that break-even probability is $60 divided by 0.4 × $772, which comes to about <strong>0.19</strong>.</p>
+<p>The right threshold for this campaign is therefore 0.19, and every input to it came from the price list rather than from the model.</p>
+<h2 id="results">Results</h2>
+<p>I ran five policies over the same 2,113 test customers:</p>
+<div class="table-wrap"><table class="ref-table">
+<thead>
+<tr>
+<th>Policy</th>
+<th>Customers called</th>
+<th>Leavers caught</th>
+<th>Wasted calls</th>
+<th>Accuracy</th>
+<th>Net value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Call no one</td>
+<td class="num">0</td>
+<td class="num">0</td>
+<td class="num">0</td>
+<td class="num">73.5%</td>
+<td class="num">$0</td>
+</tr>
+<tr>
+<td>Call everyone</td>
+<td class="num">2,113</td>
+<td class="num">561</td>
+<td class="num">1,552</td>
+<td class="num">26.5%</td>
+<td class="num">$70,160</td>
+</tr>
+<tr>
+<td>Default threshold, 0.5</td>
+<td class="num">474</td>
+<td class="num">316</td>
+<td class="num">158</td>
+<td class="num">80.9%</td>
+<td class="num">$91,547</td>
+</tr>
+<tr>
+<td>Cost-based threshold, 0.19</td>
+<td class="num">1,052</td>
+<td class="num">488</td>
+<td class="num">564</td>
+<td class="num">69.9%</td>
+<td class="num">$111,661</td>
+</tr>
+<tr>
+<td>Per-customer threshold</td>
+<td class="num">1,002</td>
+<td class="num">469</td>
+<td class="num">533</td>
+<td class="num">70.4%</td>
+<td class="num">$116,511</td>
+</tr>
+</tbody>
+</table></div>
+<div class="diagram-wrapper"><svg viewBox="0 0 760 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Net value and accuracy of a churn retention campaign across decision thresholds"><text x="70" y="24" font-family="Geist Mono,monospace" font-size="9.5" fill="#1F4FE0">NET VALUE AND ACCURACY BY DECISION THRESHOLD · 2,113 HELD-OUT CUSTOMERS</text><line x1="70" y1="330.0" x2="690" y2="330.0" stroke="currentColor" stroke-opacity=".08"/><text x="62" y="333.0" font-family="Geist Mono,monospace" font-size="9" fill="#1F4FE0" text-anchor="end">$0K</text><line x1="70" y1="283.3" x2="690" y2="283.3" stroke="currentColor" stroke-opacity=".08"/><text x="62" y="286.3" font-family="Geist Mono,monospace" font-size="9" fill="#1F4FE0" text-anchor="end">$20K</text><line x1="70" y1="236.7" x2="690" y2="236.7" stroke="currentColor" stroke-opacity=".08"/><text x="62" y="239.7" font-family="Geist Mono,monospace" font-size="9" fill="#1F4FE0" text-anchor="end">$40K</text><line x1="70" y1="190.0" x2="690" y2="190.0" stroke="currentColor" stroke-opacity=".08"/><text x="62" y="193.0" font-family="Geist Mono,monospace" font-size="9" fill="#1F4FE0" text-anchor="end">$60K</text><line x1="70" y1="143.3" x2="690" y2="143.3" stroke="currentColor" stroke-opacity=".08"/><text x="62" y="146.3" font-family="Geist Mono,monospace" font-size="9" fill="#1F4FE0" text-anchor="end">$80K</text><line x1="70" y1="96.7" x2="690" y2="96.7" stroke="currentColor" stroke-opacity=".08"/><text x="62" y="99.7" font-family="Geist Mono,monospace" font-size="9" fill="#1F4FE0" text-anchor="end">$100K</text><line x1="70" y1="50.0" x2="690" y2="50.0" stroke="currentColor" stroke-opacity=".08"/><text x="62" y="53.0" font-family="Geist Mono,monospace" font-size="9" fill="#1F4FE0" text-anchor="end">$120K</text><text x="698" y="333.0" font-family="Geist Mono,monospace" font-size="9" fill="#b85c38" text-anchor="start">40%</text><text x="698" y="270.8" font-family="Geist Mono,monospace" font-size="9" fill="#b85c38" text-anchor="start">50%</text><text x="698" y="208.6" font-family="Geist Mono,monospace" font-size="9" fill="#b85c38" text-anchor="start">60%</text><text x="698" y="146.3" font-family="Geist Mono,monospace" font-size="9" fill="#b85c38" text-anchor="start">70%</text><text x="698" y="84.1" font-family="Geist Mono,monospace" font-size="9" fill="#b85c38" text-anchor="start">80%</text><text x="70.0" y="346" font-family="Geist Mono,monospace" font-size="9" fill="#5E6A7D" text-anchor="middle">0.0</text><text x="200.5" y="346" font-family="Geist Mono,monospace" font-size="9" fill="#5E6A7D" text-anchor="middle">0.2</text><text x="331.1" y="346" font-family="Geist Mono,monospace" font-size="9" fill="#5E6A7D" text-anchor="middle">0.4</text><text x="461.6" y="346" font-family="Geist Mono,monospace" font-size="9" fill="#5E6A7D" text-anchor="middle">0.6</text><text x="592.1" y="346" font-family="Geist Mono,monospace" font-size="9" fill="#5E6A7D" text-anchor="middle">0.8</text><line x1="70" y1="330" x2="690" y2="330" stroke="currentColor" stroke-opacity=".4"/><text x="380.0" y="366" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D" text-anchor="middle">Decision threshold: predicted churn probability required before a customer is called</text><polyline points="83.1,320.7 89.6,291.4 96.1,267.8 102.6,252.2 109.2,239.8 115.7,226.7 122.2,214.9 128.7,204.9 135.3,196.8 141.8,189.4 148.3,182.5 154.8,174.4 161.4,165.7 167.9,161.4 174.4,157.6 180.9,153.3 187.5,150.2 194.0,144.0 200.5,139.6 207.1,137.7 213.6,130.3 220.1,127.2 226.6,124.7 233.2,121.6 239.7,116.6 246.2,114.1 252.7,111.6 259.3,108.5 265.8,107.2 272.3,107.2 278.8,104.1 285.4,103.5 291.9,102.3 298.4,99.8 304.9,98.5 311.5,96.0 318.0,95.4 324.5,94.2 331.1,92.3 337.6,90.4 344.1,88.6 350.6,88.6 357.2,86.1 363.7,84.8 370.2,85.5 376.7,81.1 383.3,79.2 389.8,76.8 396.3,75.5 402.8,75.5 409.4,76.1 415.9,78.6 422.4,78.6 428.9,78.6 435.5,79.9 442.0,80.5 448.5,82.4 455.1,82.4 461.6,84.2 468.1,84.8 474.6,86.7 481.2,86.7 487.7,88.6 494.2,91.1 500.7,94.2 507.3,96.0 513.8,97.9 520.3,99.8 526.8,100.4 533.4,103.5 539.9,106.6 546.4,109.7 552.9,112.2 559.5,113.5 566.0,115.3 572.5,116.6 579.1,117.2 585.6,118.4 592.1,119.1 598.6,120.3 605.2,121.6 611.7,121.6 618.2,121.6 624.7,121.6 631.3,121.6 637.8,121.6 644.3,121.6 650.8,121.6 657.4,121.6 663.9,121.6 670.4,121.6 676.9,121.6 683.5,121.6 690.0,121.6" fill="none" stroke="#b85c38" stroke-width="1.6" stroke-dasharray="5,3"/><polyline points="83.1,123.7 89.6,109.9 96.1,98.7 102.6,93.0 109.2,90.5 115.7,84.6 122.2,82.8 128.7,78.6 135.3,77.4 141.8,76.7 148.3,74.6 154.8,71.1 161.4,68.3 167.9,67.1 174.4,66.1 180.9,66.3 187.5,69.0 194.0,69.5 200.5,67.1 207.1,68.6 213.6,66.5 220.1,66.8 226.6,67.6 233.2,68.5 239.7,67.0 246.2,67.4 252.7,67.6 259.3,67.3 265.8,71.5 272.3,75.2 278.8,76.5 285.4,78.4 291.9,80.8 298.4,81.1 304.9,84.1 311.5,85.1 318.0,87.3 324.5,90.6 331.1,90.3 337.6,91.6 344.1,92.4 350.6,97.9 357.2,99.5 363.7,103.1 370.2,109.4 376.7,109.7 383.3,112.5 389.8,115.9 396.3,116.4 402.8,123.3 409.4,128.4 415.9,136.9 422.4,141.6 428.9,145.4 435.5,152.0 442.0,157.8 448.5,164.6 455.1,170.4 461.6,179.4 468.1,186.9 474.6,194.7 481.2,198.7 487.7,205.8 494.2,215.4 500.7,223.6 507.3,230.5 513.8,237.9 520.3,245.7 526.8,251.7 533.4,262.8 539.9,274.9 546.4,284.0 552.9,293.8 559.5,299.1 566.0,304.2 572.5,308.8 579.1,312.0 585.6,317.0 592.1,320.0 598.6,323.8 605.2,327.5 611.7,329.1 618.2,329.1 624.7,330.0 631.3,330.0 637.8,330.0 644.3,330.0 650.8,330.0 657.4,330.0 663.9,330.0 670.4,330.0 676.9,330.0 683.5,330.0 690.0,330.0" fill="none" stroke="#1F4FE0" stroke-width="2.4"/><rect x="154.8" y="50" width="110.9" height="280" fill="#1F4FE0" fill-opacity=".06"/><text x="210.3" y="44" font-family="Geist Mono,monospace" font-size="8" fill="#1F4FE0" text-anchor="middle">FLAT TOP 0.13–0.30</text><line x1="194.0" y1="50" x2="194.0" y2="330" stroke="#1F4FE0" stroke-dasharray="3,3"/><rect x="202.0" y="136" width="150" height="36" rx="4" style="fill:var(--bg-card,#fff)" stroke="#1F4FE0" stroke-opacity=".6"/><text x="210.0" y="150" font-family="Geist,sans-serif" font-size="10" fill="#1F4FE0" font-weight="600">Cost-based 0.19</text><text x="210.0" y="164" font-family="Geist Mono,monospace" font-size="9" fill="#1F4FE0">$111.7K · 69.9% accurate</text><line x1="396.3" y1="50" x2="396.3" y2="330" stroke="#5E6A7D" stroke-dasharray="3,3"/><rect x="404.3" y="236" width="150" height="36" rx="4" style="fill:var(--bg-card,#fff)" stroke="#5E6A7D" stroke-opacity=".6"/><text x="412.3" y="250" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D" font-weight="600">Default 0.5</text><text x="412.3" y="264" font-family="Geist Mono,monospace" font-size="9" fill="#5E6A7D">$91.5K · 80.9% accurate</text><line x1="70" y1="380" x2="94" y2="380" stroke="#1F4FE0" stroke-width="2.4"/><text x="100" y="384" font-family="Geist,sans-serif" font-size="9.5" fill="currentColor">Net value of campaign, left axis</text><line x1="300" y1="380" x2="324" y2="380" stroke="#b85c38" stroke-width="1.6" stroke-dasharray="5,3"/><text x="330" y="384" font-family="Geist,sans-serif" font-size="9.5" fill="currentColor">Model accuracy, right axis</text></svg><p class="diagram-caption">Figure 1. Net value of the retention campaign and model accuracy at every threshold from 0.02 to 0.95. Accuracy peaks at the default 0.5, while net value peaks on a flat stretch between 0.13 and 0.30. Assumptions: $60 per offer, 40% of contacted leavers retained, customer value of twelve months of charges.</p></div>
+<p>Moving the threshold from 0.5 to 0.19 drops accuracy by 11 points and raises net value by about $20,000, roughly 22%, on just over two thousand customers. The cost-based version makes more mistakes, but most of the extra ones are cheap. It accepts 564 wasted calls at $60 each, which deplete the budget by about $34,000, to catch 172 more leavers worth an average of $249 each in expected value. A dashboard that tracks accuracy would report this change as a failure. That alone should disabuse a reader of treating accuracy as a business metric.</p>
+<p>Calling every customer is still better than calling none. At these prices, a blanket campaign clears $70,160, because a $60 offer is cheap against a $772 customer. The campaign already works. The model's job in this setting is to cut the waste out of it. That matters when you decide how much to bankroll the model itself. Its value is the gap between $70,160 and $111,661.</p>
+<p>The top of the value curve is flat. Net value barely moves anywhere between thresholds of about 0.13 and 0.30. Getting the threshold into the right region matters far more than tuning it to two decimal places. The default of 0.5 sits well down the slope, outside that region, and loses about $20,000 because it is the setting the software shipped with.</p>
+<p>Customers also do not need to share one threshold. A customer paying $110 a month is worth more than one paying $25, so the company should be willing to call them at a lower probability. When the break-even formula is applied customer by customer, the threshold ranges from about 0.11 for the most valuable customers to 0.69 for the least valuable. That policy makes fewer calls than the single 0.19 cut-off and still earns the most, $116,511, because it spends its calls where the value is.</p>
+<p>Finally, the threshold moves when the business moves. If the retention offer doubles to $120, the best threshold rises to about 0.42. If the save rate falls from 40% to 20%, it also rises to about 0.42. The model is identical in both cases. The marketing team changed a discount or the market got harder, and the correct operating point shifted by more than twenty points of probability. A model deployed with a fixed threshold goes stale the day the offer changes, and the data team has no way of learning that it happened.</p>
+<h2 id="ownership">Who should own the threshold</h2>
+<p>The break-even formula is simple arithmetic. The difficulty in practice is organisational. The threshold is usually set by the engineer who deployed the model, because it looks like a technical parameter and it lives in a configuration file. The engineer is left to gatekeep a pricing decision. The inputs that determine it - offer cost, save rate, customer value - sit enmeshed in marketing plans and finance spreadsheets the engineer does not see.</p>
+<p>When I work across that line, I start with three questions.</p>
+<p>The first is to write the four-cell price table before anyone trains a model. It forces the business side to say what a false alarm and a miss cost, and it often shows that marketing and finance use different figures for customer value. That disagreement is worth settling whether or not the model ever ships.</p>
+<p>The second is to ask the data team or vendor to deliver probabilities along with the labels. A vendor or internal team that delivers only yes-and-no outputs has already chosen your threshold for you, usually at 0.5. With probabilities, the business keeps the decision and can move it when prices change.</p>
+<p>The third is to ask whether the probabilities are trustworthy, since a well-priced threshold on a misleading probability is unavailing. The break-even logic assumes that when the model says 20%, about 20% of those customers leave. Statisticians call this calibration, and it can be checked with a simple table. In this dataset the model is reasonably calibrated: customers scored between 0.15 and 0.25 left at a rate of 23%, and those scored between 0.5 and 0.7 left at 63%. Boosted tree ensembles and deep neural networks are often less well behaved, and they usually need a calibration step before their outputs can be priced.</p>
+<h2 id="limits">Where this stops being enough</h2>
+<p>The analysis has two limits. My prices are assumptions, and a 40% save rate is a guess that a real campaign would have to measure with a control group. The ranking of policies is stable across the reasonable ranges I tested, while the dollar figures are not, and should not be quoted as forecasts.</p>
+<p>The deeper limit is that a churn model predicts who will leave, and the campaign needs to know who can be persuaded. A customer who is leaving for a competitor's fibre network may not respond to any discount, and a loyal customer might accept a discount they did not need. The technique that addresses this, uplift modelling, estimates the effect of the call on each customer rather than the risk of leaving, and it requires experimental data the Telco sample does not contain. Uplift modelling will eventually supersede the approach in this piece. Cost-sensitive thresholding is a prerequisite for it, and it is where most companies can start with the data they already have.</p>
+<p>The model in this example was sound. The $20,000 sat in a single number in a configuration file, a 0.5 that marketing did not know existed and engineering did not have the prices to change.</p>
+<h2 id="method">Method</h2>
+<p>Data: the IBM Telco Customer Churn sample, 7,043 customers and 21 fields, with <code>TotalCharges</code> coerced to numeric and missing values set to zero. Categorical fields were one-hot encoded. The split was 70/30, stratified on churn, <code>random_state=42</code>, leaving 2,113 customers for testing. The model is scikit-learn&rsquo;s <code>LogisticRegression</code> on standardised features. Net value for any policy is the sum, over contacted customers who churned, of 0.4 &times; twelve months of their monthly charge, minus $60 for every customer contacted. The 0.19 threshold comes from the break-even formula and was not tuned on the test set. The sensitivity figures for a $120 offer and a 20% save rate are the value-maximising thresholds on the test set and are indicative only.</p>
+
+</main>
+</div>
+
+<footer class="site-footer">
+  <p>&copy; 2026 Tawhid Rahman. All rights reserved.</p>
+  <p>Licensed under <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" style="color:var(--teal);text-decoration:none">CC BY-NC-ND 4.0</a>. Share with attribution. Do not modify or use commercially without permission.</p>
+  <div class="disclaimer">
+    <p>This article uses a public sample dataset and illustrative cost assumptions for explanatory purposes. It does not constitute professional or financial advice, and the dollar figures should not be read as forecasts for any real business.</p>
+  </div>
+</footer>
+
+<script>
+(function(){var s=localStorage.getItem('theme');if(s)document.documentElement.setAttribute('data-theme',s)})();
+(function(){var secs=document.querySelectorAll('h2[id]'),links=document.querySelectorAll('.toc-rail a');var obs=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){links.forEach(function(l){l.classList.remove('active')});var t=document.querySelector('.toc-rail a[href="#'+e.target.id+'"]');if(t)t.classList.add('active')}})},{rootMargin:'-15% 0px -75% 0px'});secs.forEach(function(s){obs.observe(s)})})();
+</script>
+</body>
+</html>
