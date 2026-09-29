@@ -47,7 +47,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text-primary);line
 .toc-rail h3{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:1rem}
 .toc-rail a{display:block;padding:.28rem 0;font-size:.8rem;color:var(--text-tertiary);text-decoration:none;border-left:2px solid transparent;padding-left:.7rem;margin-left:-.7rem;transition:all .2s;line-height:1.5}
 .toc-rail a:hover,.toc-rail a.active{color:var(--teal);border-left-color:var(--teal)}
-.main-content{margin-left:var(--toc-w);flex:1;padding:3rem 3.5rem 6rem;max-width:calc(var(--max-w) + 7rem)}
+.main-content{margin-left:var(--toc-w);flex:1;min-width:0;padding:3rem 3.5rem 6rem;max-width:calc(var(--max-w) + 7rem)}
 h1{font-family:var(--serif);font-size:2.6rem;font-weight:600;line-height:1.15;color:var(--text-primary);margin-bottom:.5rem;letter-spacing:-.01em}
 h2{font-family:var(--serif);font-size:1.65rem;font-weight:400;line-height:1.28;margin:3.5rem 0 1.1rem;padding-top:2.2rem;border-top:1px solid var(--border);color:var(--text-primary)}
 h3{font-family:var(--sans);font-size:1.05rem;font-weight:700;margin:2rem 0 .7rem;color:var(--text-primary)}
@@ -134,7 +134,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--teal);outline-offse
       A three-tier state architecture for keeping several AI agent contexts consistent when there is no single writer, no transaction, and every session starts cold. Schemas, a promotion state machine, tombstone write-sets, and the failure behind each rule.
     </p>
     <p class="hero-author">
-      Tawhid Rahman is the CEO of Softograph, a software company he founded in 2012. He runs seven long-lived AI project contexts across sales, delivery, content, automation and research, and built this protocol after the contexts started disagreeing with each other about what was true.
+      Tawhid Rahman is the CEO of Softograph, a software company he founded in 2012. He runs eight long-lived AI project contexts across sales, publishing, content, automation, research and product ideation, and built this protocol after the contexts started disagreeing with each other about what was true.
     </p>
     <div class="hero-meta">
       <span>Tawhid Rahman</span>
@@ -170,41 +170,21 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--teal);outline-offse
   </p>
 
   <div class="diagram-wrapper">
-    <svg viewBox="0 0 760 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Topology of the three-tier memory system: seven project contexts, a shared active state page, a decision archive, a promotion queue and a spine.">
+    <svg viewBox="0 0 760 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Topology of the three-tier memory system: eight project contexts, a shared active state page, a decision archive, a promotion queue and a spine.">
       <defs>
         <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1a9e8f"/></marker>
         <marker id="a1g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6e6e88"/></marker>
         <linearGradient id="tg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2ec4b6" stop-opacity=".16"/><stop offset="100%" stop-color="#2ec4b6" stop-opacity=".03"/></linearGradient>
       </defs>
       <text x="30" y="22" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#1a9e8f" letter-spacing=".12em">PROJECT CONTEXTS (REPLICAS)</text>
-      <g font-family="Instrument Sans,sans-serif" font-size="10.5" fill="currentColor" text-anchor="middle">
-        <rect x="30" y="32" width="88" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="74" y="51">Sales</text><text x="74" y="65" font-size="9" fill="#6e6e88">context</text>
-        <rect x="128" y="32" width="88" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="172" y="51">Delivery</text><text x="172" y="65" font-size="9" fill="#6e6e88">context</text>
-        <rect x="226" y="32" width="88" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="270" y="51">Content</text><text x="270" y="65" font-size="9" fill="#6e6e88">context</text>
-        <rect x="324" y="32" width="88" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="368" y="51">Automation</text><text x="368" y="65" font-size="9" fill="#6e6e88">context</text>
-        <rect x="422" y="32" width="88" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="466" y="51">Platform</text><text x="466" y="65" font-size="9" fill="#6e6e88">context</text>
-        <rect x="520" y="32" width="88" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="564" y="51">Research</text><text x="564" y="65" font-size="9" fill="#6e6e88">context</text>
-        <rect x="618" y="32" width="88" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="662" y="51">Publication</text><text x="662" y="65" font-size="9" fill="#6e6e88">context</text>
-      </g>
-      <g stroke="#1a9e8f" stroke-width="1.2" marker-end="url(#a1)">
-        <line x1="74" y1="76" x2="74" y2="124"/><line x1="172" y1="76" x2="172" y2="124"/><line x1="270" y1="76" x2="270" y2="124"/><line x1="368" y1="76" x2="368" y2="124"/><line x1="466" y1="76" x2="466" y2="124"/><line x1="564" y1="76" x2="564" y2="124"/><line x1="662" y1="76" x2="662" y2="124"/>
-      </g>
+      <g font-family="Instrument Sans,sans-serif" font-size="10.5" fill="currentColor" text-anchor="middle"><rect x="30" y="32" width="78" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="69" y="51">Automation</text><text x="69" y="65" font-size="9" fill="#6e6e88">context</text><rect x="116" y="32" width="78" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="155" y="51">Publication</text><text x="155" y="65" font-size="9" fill="#6e6e88">context</text><rect x="202" y="32" width="78" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="241" y="51">Content</text><text x="241" y="65" font-size="9" fill="#6e6e88">context</text><rect x="288" y="32" width="78" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="327" y="51">Sales</text><text x="327" y="65" font-size="9" fill="#6e6e88">context</text><rect x="374" y="32" width="78" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="413" y="51">Counsel</text><text x="413" y="65" font-size="9" fill="#6e6e88">context</text><rect x="460" y="32" width="78" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="499" y="51">Ideas</text><text x="499" y="65" font-size="9" fill="#6e6e88">context</text><rect x="546" y="32" width="78" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="585" y="51">Research</text><text x="585" y="65" font-size="9" fill="#6e6e88">context</text><rect x="632" y="32" width="78" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="671" y="51">Relations</text><text x="671" y="65" font-size="9" fill="#6e6e88">context</text></g>
+      <g stroke="#1a9e8f" stroke-width="1.2" marker-end="url(#a1)"><line x1="69" y1="76" x2="69" y2="124"/><line x1="155" y1="76" x2="155" y2="124"/><line x1="241" y1="76" x2="241" y2="124"/><line x1="327" y1="76" x2="327" y2="124"/><line x1="413" y1="76" x2="413" y2="124"/><line x1="499" y1="76" x2="499" y2="124"/><line x1="585" y1="76" x2="585" y2="124"/><line x1="671" y1="76" x2="671" y2="124"/></g>
       
 
       <rect x="24" y="116" width="690" height="90" rx="6" fill="url(#tg)" stroke="#1a9e8f" stroke-width="1.5"/>
-      <text x="40" y="195" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#1a9e8f" letter-spacing=".12em">TIER 2 · ACTIVE STATE</text><text x="700" y="195" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88" text-anchor="end">each context overwrites only its own section, reads all seven</text>
-      <g fill="none" stroke="#1a9e8f" stroke-opacity=".6">
-        <rect x="33" y="128" width="82" height="42" rx="3"/><rect x="131" y="128" width="82" height="42" rx="3"/><rect x="229" y="128" width="82" height="42" rx="3"/><rect x="327" y="128" width="82" height="42" rx="3"/><rect x="425" y="128" width="82" height="42" rx="3"/><rect x="523" y="128" width="82" height="42" rx="3"/><rect x="621" y="128" width="82" height="42" rx="3"/>
-      </g>
-      <g font-family="JetBrains Mono,monospace" font-size="8.5" fill="#6e6e88" text-anchor="middle">
-        <text x="74" y="146">§ sales</text><text x="74" y="160">≤1,500 ch</text>
-        <text x="172" y="146">§ delivery</text><text x="172" y="160">≤1,500 ch</text>
-        <text x="270" y="146">§ content</text><text x="270" y="160">≤1,500 ch</text>
-        <text x="368" y="146">§ automation</text><text x="368" y="160">≤1,500 ch</text>
-        <text x="466" y="146">§ platform</text><text x="466" y="160">≤1,500 ch</text>
-        <text x="564" y="146">§ research</text><text x="564" y="160">≤1,500 ch</text>
-        <text x="662" y="146">§ publication</text><text x="662" y="160">≤1,500 ch</text>
-      </g>
+      <text x="40" y="195" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#1a9e8f" letter-spacing=".12em">TIER 2 · ACTIVE STATE</text><text x="700" y="195" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88" text-anchor="end">each context overwrites only its own section, reads all eight</text>
+      <g fill="none" stroke="#1a9e8f" stroke-opacity=".6"><rect x="33" y="128" width="72" height="42" rx="3"/><rect x="119" y="128" width="72" height="42" rx="3"/><rect x="205" y="128" width="72" height="42" rx="3"/><rect x="291" y="128" width="72" height="42" rx="3"/><rect x="377" y="128" width="72" height="42" rx="3"/><rect x="463" y="128" width="72" height="42" rx="3"/><rect x="549" y="128" width="72" height="42" rx="3"/><rect x="635" y="128" width="72" height="42" rx="3"/></g>
+      <g font-family="JetBrains Mono,monospace" font-size="8" fill="#6e6e88" text-anchor="middle"><text x="69" y="146">§ automation</text><text x="69" y="160">≤1,500 ch</text><text x="155" y="146">§ publication</text><text x="155" y="160">≤1,500 ch</text><text x="241" y="146">§ content</text><text x="241" y="160">≤1,500 ch</text><text x="327" y="146">§ sales</text><text x="327" y="160">≤1,500 ch</text><text x="413" y="146">§ counsel</text><text x="413" y="160">≤1,500 ch</text><text x="499" y="146">§ ideas</text><text x="499" y="160">≤1,500 ch</text><text x="585" y="146">§ research</text><text x="585" y="160">≤1,500 ch</text><text x="671" y="146">§ relations</text><text x="671" y="160">≤1,500 ch</text></g>
 
       <g stroke="#1a9e8f" stroke-width="1.2" marker-end="url(#a1)">
         <line x1="130" y1="208" x2="130" y2="290"/>
@@ -242,7 +222,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--teal);outline-offse
       <path d="M716,340 L740,340 L740,53 L710,53" fill="none" stroke="#6e6e88" stroke-width="1.1" stroke-dasharray="5,3" marker-end="url(#a1g)"/>
       <text x="747" y="200" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88" transform="rotate(90 747 200)" text-anchor="middle">conditional read before any channel or tool recommendation</text>
     </svg>
-    <p class="diagram-caption">Figure 1. Seven replicas, three tiers, one queue. Solid arrows are writes; the dashed arrow is a read.</p>
+    <p class="diagram-caption">Figure 1. Eight replicas, three tiers, one queue. Solid arrows are writes; the dashed arrow is a read.</p>
   </div>
 
   <div class="table-wrap">
@@ -258,12 +238,12 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--teal);outline-offse
   </div>
 
   <p>
-    The tiers are ordered by how expensive a wrong value is. A stale Tier 2 section costs one context a slightly wrong picture of another's week. A wrong Tier 1 line gets read by all seven contexts and acted on for months. So the write discipline tightens as you go up: Tier 3 accepts anything that qualifies, Tier 2 accepts anything its owner writes, and Tier 1 accepts nothing without a person saying yes.
+    The tiers are ordered by how expensive a wrong value is. A stale Tier 2 section costs one context a slightly wrong picture of another's week. A wrong Tier 1 line gets read by all eight contexts and acted on for months. So the write discipline tightens as you go up: Tier 3 accepts anything that qualifies, Tier 2 accepts anything its owner writes, and Tier 1 accepts nothing without a person saying yes.
   </p>
 
   <h2 id="tier2">Tier 2: active state</h2>
   <p>
-    Tier 2 is a single page with one section per context. Every context reads the whole page at session start, which is the entire mechanism for preventing stale reads: one fetch, seven sections, and a context knows what the other six are doing before it does anything. The schema is fixed and deliberately small.
+    Tier 2 is a single page with one section per context. Every context reads the whole page at session start, which is the entire mechanism for preventing stale reads: one fetch, eight sections, and a context knows what the other seven are doing before it does anything. The schema is fixed and deliberately small.
   </p>
 
 <pre><code><span class="k">## Content</span>
@@ -285,7 +265,7 @@ POINTERS: <span class="c">&lt;tracker IDs, database IDs&gt;</span></code></pre>
     <strong>Overwrite, never append.</strong> An appended section grows until it stops being read. A section that must be rewritten in full forces the writer to decide what still matters, and the three-decision window drops the oldest decision automatically. The history is not lost, because every decision that qualifies has already gone to Tier 3.
   </p>
   <p>
-    <strong>Pointers, not narrative.</strong> The <code>POINTERS</code> line holds identifiers, not explanations. A context that needs the explanation follows the pointer. Keeping narrative out is what keeps seven sections inside a single cheap read.
+    <strong>Pointers, not narrative.</strong> The <code>POINTERS</code> line holds identifiers, not explanations. A context that needs the explanation follows the pointer. Keeping narrative out is what keeps eight sections inside a single cheap read.
   </p>
   <p>
     <strong>Conditional write.</strong> A context rewrites its section only if <code>FOCUS</code>, <code>DECISIONS</code>, <code>NEXT ACTION</code> or <code>BLOCKED ON</code> actually changed. If nothing moved, the section and its date stay as they were. This rule looks like a detail and is the most useful signal in the system. An agent's instinct at the end of a session is to refresh the timestamp to show it was diligent. A refreshed timestamp on unchanged content destroys information: an old date tells every other context where attention has not been, and a context that touched the page without changing anything has erased that fact.
@@ -518,7 +498,7 @@ POINTERS: <span class="c">&lt;tracker IDs, database IDs&gt;</span></code></pre>
       <text x="20" y="26" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#1a9e8f" letter-spacing=".12em">SESSION START · READ</text>
       <g font-family="Instrument Sans,sans-serif" font-size="10" fill="currentColor">
         <rect x="20" y="38" width="160" height="78" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/>
-        <text x="32" y="58" font-weight="600">Read Tier 2</text><text x="32" y="76" fill="#6e6e88" font-size="9.5">all seven sections</text><text x="32" y="90" fill="#6e6e88" font-size="9.5">one call, always</text>
+        <text x="32" y="58" font-weight="600">Read Tier 2</text><text x="32" y="76" fill="#6e6e88" font-size="9.5">all eight sections</text><text x="32" y="90" fill="#6e6e88" font-size="9.5">one call, always</text>
         <rect x="196" y="38" width="160" height="78" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/>
         <text x="208" y="58" font-weight="600">Check the queue</text><text x="208" y="76" fill="#6e6e88" font-size="9.5">Pending rows for owned</text><text x="208" y="90" fill="#6e6e88" font-size="9.5">sections shown as diffs;</text><text x="208" y="104" fill="#6e6e88" font-size="9.5">nag &gt;14d, halt &gt;30d</text>
         <rect x="372" y="38" width="170" height="78" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/>
@@ -580,7 +560,7 @@ POINTERS: <span class="c">&lt;tracker IDs, database IDs&gt;</span></code></pre>
     <tbody>
       <tr><td>Drift</td><td>Static project files still referencing marketplaces after they were eliminated</td><td>Mandatory Tier 1 read before any channel, tool or platform recommendation</td></tr>
       <tr><td>Zombie records</td><td>14 backlog rows for an eliminated marketplace, 10 Validating, 1 Ready</td><td>Tombstone write-set: queue row, record deprecation, archive entry, same session</td></tr>
-      <tr><td>Stale reads</td><td>A context acting on state another context changed the day before</td><td>Every session reads all seven Tier 2 sections in one call</td></tr>
+      <tr><td>Stale reads</td><td>A context acting on state another context changed the day before</td><td>Every session reads all eight Tier 2 sections in one call</td></tr>
       <tr><td>Erased staleness</td><td>A refreshed timestamp on an unchanged section hides that nobody is working on it</td><td>Conditional Tier 2 write; an old date is information</td></tr>
       <tr><td>Proposal flood</td><td>More suggested rule changes than anyone reviews</td><td>Two-condition promotion test; 14-day nag; 30-day backpressure per section</td></tr>
       <tr><td>Relitigation</td><td>The same rejected idea proposed again with the same arguments</td><td><code>REJECTION</code> entries searched before any proposal</td></tr>
