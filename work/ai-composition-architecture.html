@@ -10,114 +10,21 @@
 <meta property="og:title" content="AI Composition Architecture — Why Most Orchestration Fails and What the Diagnostic Looks Like">
 <meta property="og:description" content="The methodology for evaluating whether an organisation's operations are composition-ready. Where human-judgment boundaries belong, why most orchestration fails, and what the diagnostic looks like.">
 <meta property="og:type" content="article">
+<meta property="og:image" content="https://rahman-tawhid.github.io/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,400&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-:root{
-  --navy:#0b1426;--navy-mid:#162033;--navy-light:#1e2d47;
-  --cream:#f8f5f0;--cream-dark:#ebe5dc;
-  --teal:#1a9e8f;--teal-light:#2ec4b6;--teal-dim:#145c54;
-  --text-primary:#1a1a2e;--text-secondary:#3d3d56;--text-tertiary:#6e6e88;
-  --bg:var(--cream);--bg-card:#ffffff;--bg-code:#f0ebe4;
-  --border:#d4cdc2;--shadow:rgba(10,20,38,.06);
-  --serif:'Fraunces',Georgia,serif;
-  --sans:'Instrument Sans',-apple-system,sans-serif;
-  --mono:'JetBrains Mono','Menlo',monospace;
-  --max-w:780px;--toc-w:240px;
-}
-[data-theme="dark"]{
-  --text-primary:#e8e4de;--text-secondary:#b8b0a4;--text-tertiary:#7a7268;
-  --bg:var(--navy);--bg-card:var(--navy-mid);--bg-code:var(--navy-light);
-  --border:#2a3a52;--shadow:rgba(0,0,0,.3);
-}
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth;font-size:17px}
-body{font-family:var(--sans);background:var(--bg);color:var(--text-primary);line-height:1.78;font-weight:400;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
-.site-header{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:.7rem 2rem;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(14px);transition:background .3s}
-.brand{text-decoration:none;display:flex;align-items:baseline;gap:.4rem}
-.brand-name{font-family:var(--mono);font-weight:500;font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;color:var(--teal)}
-.header-controls{display:flex;gap:.75rem;align-items:center}
-.header-link{font-family:var(--mono);font-size:.68rem;color:var(--text-tertiary);text-decoration:none;letter-spacing:.06em;transition:color .2s}.header-link:hover{color:var(--teal)}
-.theme-toggle{background:none;border:1px solid var(--border);border-radius:6px;padding:.3rem .6rem;cursor:pointer;font-size:.82rem;color:var(--text-tertiary);transition:all .2s;font-family:var(--sans)}
-.theme-toggle:hover{border-color:var(--teal);color:var(--teal)}
-.page-wrapper{display:flex;margin-top:3.2rem;min-height:calc(100vh - 3.2rem)}
-.toc-rail{position:fixed;top:3.2rem;left:0;width:var(--toc-w);height:calc(100vh - 3.2rem);overflow-y:auto;padding:2rem 1.2rem 2rem 1.5rem;border-right:1px solid var(--border);background:var(--bg);transition:background .3s}
-.toc-rail h3{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:1rem}
-.toc-rail a{display:block;padding:.28rem 0;font-size:.8rem;color:var(--text-tertiary);text-decoration:none;border-left:2px solid transparent;padding-left:.7rem;margin-left:-.7rem;transition:all .2s;line-height:1.5}
-.toc-rail a:hover,.toc-rail a.active{color:var(--teal);border-left-color:var(--teal)}
-.main-content{margin-left:var(--toc-w);flex:1;padding:3rem 3.5rem 6rem;max-width:calc(var(--max-w) + 7rem)}
-h1{font-family:var(--serif);font-size:2.6rem;font-weight:600;line-height:1.15;color:var(--text-primary);margin-bottom:.5rem;letter-spacing:-.01em}
-h2{font-family:var(--serif);font-size:1.65rem;font-weight:400;line-height:1.28;margin:3.5rem 0 1.1rem;padding-top:2.2rem;border-top:1px solid var(--border);color:var(--text-primary)}
-h3{font-family:var(--sans);font-size:1.05rem;font-weight:700;margin:2rem 0 .7rem;color:var(--text-primary)}
-p{margin-bottom:1.15rem;color:var(--text-secondary);text-align:justify}
-strong{color:var(--text-primary);font-weight:600}
-.hero{margin-bottom:3rem;padding-bottom:2.5rem;border-bottom:1px solid var(--border)}
-.hero-eyebrow{font-family:var(--mono);font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);margin-bottom:.6rem}
-.hero-subtitle{font-size:1.12rem;color:var(--text-secondary);line-height:1.68;max-width:620px;margin-bottom:1.8rem}
-.hero-author{font-size:.92rem;color:var(--text-secondary);line-height:1.65;max-width:600px;margin-bottom:1.4rem;border-left:2px solid var(--teal);padding-left:1rem}
-.hero-meta{display:flex;gap:2rem;flex-wrap:wrap;font-size:.75rem;color:var(--text-tertiary);font-family:var(--mono)}
-.arch-card{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:1.6rem 1.75rem;margin:1.5rem 0;box-shadow:0 1px 4px var(--shadow);transition:background .3s,border .3s}
-.arch-card h4{font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);margin-bottom:.8rem}
-.layer-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
-.layer-item{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:1.2rem 1.3rem;border-left:3px solid var(--teal);transition:all .2s}
-.layer-item:hover{border-left-color:var(--teal-light);transform:translateY(-1px);box-shadow:0 3px 8px var(--shadow)}
-.layer-item h4{font-family:var(--sans);font-size:.92rem;font-weight:700;color:var(--text-primary);margin-bottom:.35rem}
-.layer-item p{font-size:.87rem;margin-bottom:0;line-height:1.6}
-.layer-num{font-family:var(--serif);font-size:1.6rem;color:var(--teal);opacity:.4;float:right;margin-top:-.2rem}
-.diagram-wrapper{margin:2rem 0;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:1.8rem;overflow-x:auto}
-.diagram-wrapper svg{width:100%;height:auto;display:block}
-.diagram-caption{font-family:var(--mono);font-size:.68rem;color:var(--text-tertiary);text-align:center;margin-top:.9rem;letter-spacing:.04em}
-code{font-family:var(--mono);font-size:.86em;background:var(--bg-code);padding:.12em .38em;border-radius:3px;color:var(--teal-dim)}
-[data-theme="dark"] code{color:var(--teal-light)}
-.callout{border-left:3px solid var(--teal);padding:1rem 1.3rem;margin:1.8rem 0;background:var(--bg-card);border-radius:0 6px 6px 0;font-size:.94rem;box-shadow:0 1px 3px var(--shadow)}
-.callout p{margin-bottom:0}
-.ref-table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:.88rem}
-.ref-table th{text-align:left;font-family:var(--mono);font-size:.67rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-tertiary);padding:.55rem .7rem;border-bottom:2px solid var(--border)}
-.ref-table td{padding:.6rem .7rem;border-bottom:1px solid var(--border);color:var(--text-secondary);vertical-align:top;line-height:1.55}
-.ref-table td:first-child{color:var(--text-primary);font-weight:600}
-.site-footer{margin-left:var(--toc-w);padding:3rem 3.5rem;border-top:1px solid var(--border);font-size:.76rem;color:var(--text-tertiary);line-height:1.85}
-.disclaimer{margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);font-size:.7rem;font-style:italic}
-@media print{
-  .site-header,.toc-rail,.theme-toggle,.header-controls{display:none!important}
-  .main-content{margin-left:0!important;padding:0!important;max-width:100%}
-  .site-footer{margin-left:0}
-  body{font-size:11pt;background:#fff;color:#111}
-  h1{font-size:22pt}h2{font-size:15pt;border-top:none;padding-top:0}
-  .arch-card,.layer-item{break-inside:avoid}
-}
-@media(max-width:900px){
-  .toc-rail{display:none}
-  .main-content{margin-left:0;padding:1.5rem 1.2rem 4rem}
-  .site-footer{margin-left:0;padding:2rem 1.2rem}
-  .layer-grid{grid-template-columns:1fr}
-  h1{font-size:1.9rem}
-  .site-header{padding:.7rem 1.2rem}
-}
-
-/* LAYOUT v2: centre the reading column in the space right of the rail; let figures and tables run wider on large screens */
-@media(min-width:901px){
-  .page-wrapper{padding-left:var(--toc-w)}
-  .main-content{margin-left:auto;margin-right:auto;min-width:0;width:100%;max-width:1160px}
-  .main-content > *:not(.diagram-wrapper):not(.table-wrap):not(.ref-table):not(.wide){max-width:780px;margin-left:auto;margin-right:auto}
-  .main-content > .diagram-wrapper,.main-content > .table-wrap,.main-content > .ref-table,.main-content > .wide{max-width:1000px;margin-left:auto;margin-right:auto}
-  .site-footer > *{max-width:780px;margin-left:auto;margin-right:auto}
-}
-
-/* LAYOUT v2.1: no flex overflow on narrow screens; single rule between hero and first section */
-.main-content{min-width:0}
-.hero + h2{border-top:none;padding-top:0;margin-top:2.2rem}
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
 </head>
 <body>
 
 <header class="site-header">
   <a class="brand" href="/"><span class="brand-name">Tawhid Rahman</span></a>
   <div class="header-controls">
-    <a class="header-link" href="/">&larr; All Work</a>
+    <a class="header-link" href="/">All work</a>
     <a class="header-link" href="https://www.linkedin.com/in/tawhidurr/" target="_blank" rel="noopener">LinkedIn</a>
     <a class="header-link" href="https://substack.com/@tawhidr" target="_blank" rel="noopener">Substack</a>
-    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">&#9685; Theme</button>
   </div>
 </header>
 
@@ -185,51 +92,51 @@ code{font-family:var(--mono);font-size:.86em;background:var(--bg-code);padding:.
   <div class="diagram-wrapper">
     <svg viewBox="0 0 740 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three dimensions of structural diagnosis">
       <defs>
-        <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2ec4b6" stop-opacity=".12"/><stop offset="100%" stop-color="#2ec4b6" stop-opacity=".02"/></linearGradient>
+        <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#5B84F0" stop-opacity=".12"/><stop offset="100%" stop-color="#5B84F0" stop-opacity=".02"/></linearGradient>
       </defs>
-      <text x="370" y="28" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#1a9e8f" letter-spacing=".12em">THREE DIMENSIONS OF STRUCTURAL DIAGNOSIS</text>
+      <text x="370" y="28" text-anchor="middle" font-family="Geist Mono,monospace" font-size="9.5" fill="#1F4FE0" letter-spacing=".12em">THREE DIMENSIONS OF STRUCTURAL DIAGNOSIS</text>
 
       <!-- Dimension 1 -->
-      <rect x="30" y="50" width="210" height="260" rx="8" fill="url(#g1)" stroke="#1a9e8f" stroke-width="1.5"/>
-      <text x="135" y="80" text-anchor="middle" font-family="Fraunces,serif" font-size="16" fill="currentColor">Topology</text>
-      <text x="135" y="100" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#1a9e8f" letter-spacing=".08em">WORKFLOW SHAPE</text>
-      <text x="55" y="130" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">How do processes flow?</text>
-      <text x="55" y="150" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Are outputs consumed</text>
-      <text x="55" y="166" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">downstream?</text>
-      <text x="55" y="196" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">What is linear vs what</text>
-      <text x="55" y="212" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">feeds back?</text>
-      <text x="55" y="242" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Where are the handoffs</text>
-      <text x="55" y="258" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">between functions?</text>
-      <line x="55" y1="280" x2="215" y2="280" stroke="#1a9e8f" stroke-width="1" stroke-opacity=".3"/>
-      <text x="55" y="298" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#1a9e8f">Signal: composability</text>
+      <rect x="30" y="50" width="210" height="260" rx="8" fill="url(#g1)" stroke="#1F4FE0" stroke-width="1.5"/>
+      <text x="135" y="80" text-anchor="middle" font-family="Geist,serif" font-size="16" fill="currentColor">Topology</text>
+      <text x="135" y="100" text-anchor="middle" font-family="Geist Mono,monospace" font-size="8.5" fill="#1F4FE0" letter-spacing=".08em">WORKFLOW SHAPE</text>
+      <text x="55" y="130" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">How do processes flow?</text>
+      <text x="55" y="150" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Are outputs consumed</text>
+      <text x="55" y="166" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">downstream?</text>
+      <text x="55" y="196" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">What is linear vs what</text>
+      <text x="55" y="212" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">feeds back?</text>
+      <text x="55" y="242" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Where are the handoffs</text>
+      <text x="55" y="258" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">between functions?</text>
+      <line x="55" y1="280" x2="215" y2="280" stroke="#1F4FE0" stroke-width="1" stroke-opacity=".3"/>
+      <text x="55" y="298" font-family="Geist Mono,monospace" font-size="8.5" fill="#1F4FE0">Signal: composability</text>
 
       <!-- Dimension 2 -->
-      <rect x="265" y="50" width="210" height="260" rx="8" fill="url(#g1)" stroke="#1a9e8f" stroke-width="1" stroke-opacity=".65"/>
-      <text x="370" y="80" text-anchor="middle" font-family="Fraunces,serif" font-size="16" fill="currentColor">Boundaries</text>
-      <text x="370" y="100" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#1a9e8f" letter-spacing=".08em">JUDGMENT PLACEMENT</text>
-      <text x="290" y="130" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Which decisions require</text>
-      <text x="290" y="146" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">human context?</text>
-      <text x="290" y="176" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Where does consequence</text>
-      <text x="290" y="192" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">change magnitude?</text>
-      <text x="290" y="222" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">What is the cost of a</text>
-      <text x="290" y="238" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">wrong autonomous action?</text>
-      <line x="290" y1="264" x2="450" y2="264" stroke="#1a9e8f" stroke-width="1" stroke-opacity=".3"/>
-      <text x="290" y="282" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#1a9e8f">Signal: governance fit</text>
+      <rect x="265" y="50" width="210" height="260" rx="8" fill="url(#g1)" stroke="#1F4FE0" stroke-width="1" stroke-opacity=".65"/>
+      <text x="370" y="80" text-anchor="middle" font-family="Geist,serif" font-size="16" fill="currentColor">Boundaries</text>
+      <text x="370" y="100" text-anchor="middle" font-family="Geist Mono,monospace" font-size="8.5" fill="#1F4FE0" letter-spacing=".08em">JUDGMENT PLACEMENT</text>
+      <text x="290" y="130" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Which decisions require</text>
+      <text x="290" y="146" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">human context?</text>
+      <text x="290" y="176" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Where does consequence</text>
+      <text x="290" y="192" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">change magnitude?</text>
+      <text x="290" y="222" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">What is the cost of a</text>
+      <text x="290" y="238" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">wrong autonomous action?</text>
+      <line x="290" y1="264" x2="450" y2="264" stroke="#1F4FE0" stroke-width="1" stroke-opacity=".3"/>
+      <text x="290" y="282" font-family="Geist Mono,monospace" font-size="8.5" fill="#1F4FE0">Signal: governance fit</text>
 
       <!-- Dimension 3 -->
-      <rect x="500" y="50" width="210" height="260" rx="8" fill="url(#g1)" stroke="#1a9e8f" stroke-width="1" stroke-opacity=".4"/>
-      <text x="605" y="80" text-anchor="middle" font-family="Fraunces,serif" font-size="16" fill="currentColor">Readiness</text>
-      <text x="605" y="100" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#1a9e8f" letter-spacing=".08em">PREREQUISITE STATE</text>
-      <text x="525" y="130" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Are processes documented</text>
-      <text x="525" y="146" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">and repeatable?</text>
-      <text x="525" y="176" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Do quality standards</text>
-      <text x="525" y="192" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">exist and get enforced?</text>
-      <text x="525" y="222" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Can outcomes be</text>
-      <text x="525" y="238" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">measured today?</text>
-      <line x="525" y1="264" x2="685" y2="264" stroke="#1a9e8f" stroke-width="1" stroke-opacity=".3"/>
-      <text x="525" y="282" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#1a9e8f">Signal: foundation</text>
+      <rect x="500" y="50" width="210" height="260" rx="8" fill="url(#g1)" stroke="#1F4FE0" stroke-width="1" stroke-opacity=".4"/>
+      <text x="605" y="80" text-anchor="middle" font-family="Geist,serif" font-size="16" fill="currentColor">Readiness</text>
+      <text x="605" y="100" text-anchor="middle" font-family="Geist Mono,monospace" font-size="8.5" fill="#1F4FE0" letter-spacing=".08em">PREREQUISITE STATE</text>
+      <text x="525" y="130" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Are processes documented</text>
+      <text x="525" y="146" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">and repeatable?</text>
+      <text x="525" y="176" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Do quality standards</text>
+      <text x="525" y="192" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">exist and get enforced?</text>
+      <text x="525" y="222" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Can outcomes be</text>
+      <text x="525" y="238" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">measured today?</text>
+      <line x="525" y1="264" x2="685" y2="264" stroke="#1F4FE0" stroke-width="1" stroke-opacity=".3"/>
+      <text x="525" y="282" font-family="Geist Mono,monospace" font-size="8.5" fill="#1F4FE0">Signal: foundation</text>
 
-      <text x="680" y="345" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#6e6e88" text-anchor="end" opacity=".4">&copy; 2026 Tawhid Rahman</text>
+      <text x="680" y="345" font-family="Geist Mono,monospace" font-size="8.5" fill="#5E6A7D" text-anchor="end" opacity=".4">&copy; 2026 Tawhid Rahman</text>
     </svg>
     <p class="diagram-caption">The three dimensions of structural diagnosis: each produces a distinct signal that informs the deployment strategy.</p>
   </div>
@@ -339,41 +246,41 @@ code{font-family:var(--mono);font-size:.86em;background:var(--bg-code);padding:.
   <div class="diagram-wrapper">
     <svg viewBox="0 0 740 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Boundary misplacement failure modes">
       <defs>
-        <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2ec4b6" stop-opacity=".10"/><stop offset="100%" stop-color="#2ec4b6" stop-opacity=".02"/></linearGradient>
+        <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#5B84F0" stop-opacity=".10"/><stop offset="100%" stop-color="#5B84F0" stop-opacity=".02"/></linearGradient>
       </defs>
-      <text x="370" y="28" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#1a9e8f" letter-spacing=".12em">BOUNDARY MISPLACEMENT FAILURE MODES</text>
+      <text x="370" y="28" text-anchor="middle" font-family="Geist Mono,monospace" font-size="9.5" fill="#1F4FE0" letter-spacing=".12em">BOUNDARY MISPLACEMENT FAILURE MODES</text>
 
       <!-- Left: Too Low -->
-      <rect x="30" y="50" width="325" height="230" rx="8" fill="url(#g2)" stroke="#1a9e8f" stroke-width="1.5"/>
-      <text x="192" y="78" text-anchor="middle" font-family="Fraunces,serif" font-size="15" fill="currentColor">Boundary Too Low</text>
-      <text x="192" y="96" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#1a9e8f">EXCESSIVE AUTONOMY</text>
+      <rect x="30" y="50" width="325" height="230" rx="8" fill="url(#g2)" stroke="#1F4FE0" stroke-width="1.5"/>
+      <text x="192" y="78" text-anchor="middle" font-family="Geist,serif" font-size="15" fill="currentColor">Boundary Too Low</text>
+      <text x="192" y="96" text-anchor="middle" font-family="Geist Mono,monospace" font-size="8.5" fill="#1F4FE0">EXCESSIVE AUTONOMY</text>
 
-      <text x="55" y="126" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Symptom: High speed, silent errors</text>
-      <text x="55" y="152" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Week 1: Everything runs fast</text>
-      <text x="55" y="172" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Month 1: Small errors accumulate</text>
-      <text x="55" y="192" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Month 3: Patterns become visible</text>
-      <text x="55" y="212" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Month 6: Root cause is untraceable</text>
+      <text x="55" y="126" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Symptom: High speed, silent errors</text>
+      <text x="55" y="152" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Week 1: Everything runs fast</text>
+      <text x="55" y="172" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Month 1: Small errors accumulate</text>
+      <text x="55" y="192" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Month 3: Patterns become visible</text>
+      <text x="55" y="212" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Month 6: Root cause is untraceable</text>
 
-      <line x1="55" y1="232" x2="330" y2="232" stroke="#1a9e8f" stroke-width="1" stroke-opacity=".3"/>
-      <text x="55" y="256" font-family="JetBrains Mono,monospace" font-size="9" fill="currentColor" font-weight="600">Result: Compounding damage</text>
-      <text x="55" y="270" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88">Feels like success. Is erosion.</text>
+      <line x1="55" y1="232" x2="330" y2="232" stroke="#1F4FE0" stroke-width="1" stroke-opacity=".3"/>
+      <text x="55" y="256" font-family="Geist Mono,monospace" font-size="9" fill="currentColor" font-weight="600">Result: Compounding damage</text>
+      <text x="55" y="270" font-family="Geist,sans-serif" font-size="9.5" fill="#5E6A7D">Feels like success. Is erosion.</text>
 
       <!-- Right: Too High -->
-      <rect x="385" y="50" width="325" height="230" rx="8" fill="url(#g2)" stroke="#1a9e8f" stroke-width="1" stroke-opacity=".65"/>
-      <text x="547" y="78" text-anchor="middle" font-family="Fraunces,serif" font-size="15" fill="currentColor">Boundary Too High</text>
-      <text x="547" y="96" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#1a9e8f">EXCESSIVE GATEKEEPING</text>
+      <rect x="385" y="50" width="325" height="230" rx="8" fill="url(#g2)" stroke="#1F4FE0" stroke-width="1" stroke-opacity=".65"/>
+      <text x="547" y="78" text-anchor="middle" font-family="Geist,serif" font-size="15" fill="currentColor">Boundary Too High</text>
+      <text x="547" y="96" text-anchor="middle" font-family="Geist Mono,monospace" font-size="8.5" fill="#1F4FE0">EXCESSIVE GATEKEEPING</text>
 
-      <text x="410" y="126" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Symptom: Bottleneck, then abandonment</text>
-      <text x="410" y="152" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Week 1: Human reviews everything</text>
-      <text x="410" y="172" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Week 3: Review fatigue sets in</text>
-      <text x="410" y="192" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Month 2: Approvals become rubber stamps</text>
-      <text x="410" y="212" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Month 4: System is abandoned</text>
+      <text x="410" y="126" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Symptom: Bottleneck, then abandonment</text>
+      <text x="410" y="152" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Week 1: Human reviews everything</text>
+      <text x="410" y="172" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Week 3: Review fatigue sets in</text>
+      <text x="410" y="192" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Month 2: Approvals become rubber stamps</text>
+      <text x="410" y="212" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Month 4: System is abandoned</text>
 
-      <line x1="410" y1="232" x2="685" y2="232" stroke="#1a9e8f" stroke-width="1" stroke-opacity=".3"/>
-      <text x="410" y="256" font-family="JetBrains Mono,monospace" font-size="9" fill="currentColor" font-weight="600">Result: Rejection of automation</text>
-      <text x="410" y="270" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88">Feels like overhead. Is misclassification.</text>
+      <line x1="410" y1="232" x2="685" y2="232" stroke="#1F4FE0" stroke-width="1" stroke-opacity=".3"/>
+      <text x="410" y="256" font-family="Geist Mono,monospace" font-size="9" fill="currentColor" font-weight="600">Result: Rejection of automation</text>
+      <text x="410" y="270" font-family="Geist,sans-serif" font-size="9.5" fill="#5E6A7D">Feels like overhead. Is misclassification.</text>
 
-      <text x="680" y="308" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#6e6e88" text-anchor="end" opacity=".4">&copy; 2026 Tawhid Rahman</text>
+      <text x="680" y="308" font-family="Geist Mono,monospace" font-size="8.5" fill="#5E6A7D" text-anchor="end" opacity=".4">&copy; 2026 Tawhid Rahman</text>
     </svg>
     <p class="diagram-caption">Both failure modes feel rational at the time. Both produce structural damage that takes months to diagnose.</p>
   </div>
@@ -418,62 +325,62 @@ code{font-family:var(--mono);font-size:.86em;background:var(--bg-code);padding:.
   <div class="diagram-wrapper">
     <svg viewBox="0 0 740 440" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Composition readiness evaluation flow">
       <defs>
-        <linearGradient id="g3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2ec4b6" stop-opacity=".10"/><stop offset="100%" stop-color="#2ec4b6" stop-opacity=".02"/></linearGradient>
+        <linearGradient id="g3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#5B84F0" stop-opacity=".10"/><stop offset="100%" stop-color="#5B84F0" stop-opacity=".02"/></linearGradient>
       </defs>
-      <text x="370" y="28" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#1a9e8f" letter-spacing=".12em">COMPOSITION READINESS EVALUATION FLOW</text>
+      <text x="370" y="28" text-anchor="middle" font-family="Geist Mono,monospace" font-size="9.5" fill="#1F4FE0" letter-spacing=".12em">COMPOSITION READINESS EVALUATION FLOW</text>
 
       <!-- Step 1 -->
-      <rect x="220" y="50" width="300" height="48" rx="6" fill="url(#g3)" stroke="#1a9e8f" stroke-width="1.5"/>
-      <text x="370" y="70" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="11" fill="currentColor" font-weight="600">1. Pass readiness checklist?</text>
-      <text x="370" y="88" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88">5 conditions: documentation, repeatability, measurement, quality, ownership</text>
+      <rect x="220" y="50" width="300" height="48" rx="6" fill="url(#g3)" stroke="#1F4FE0" stroke-width="1.5"/>
+      <text x="370" y="70" text-anchor="middle" font-family="Geist,sans-serif" font-size="11" fill="currentColor" font-weight="600">1. Pass readiness checklist?</text>
+      <text x="370" y="88" text-anchor="middle" font-family="Geist,sans-serif" font-size="9.5" fill="#5E6A7D">5 conditions: documentation, repeatability, measurement, quality, ownership</text>
 
       <!-- No branch -->
-      <line x1="520" y1="74" x2="620" y2="74" stroke="#1a9e8f" stroke-width="1"/>
-      <text x="556" y="66" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#6e6e88">NO</text>
-      <rect x="620" y="56" width="95" height="36" rx="4" fill="var(--bg-card)" stroke="#1a9e8f" stroke-width="1"/>
-      <text x="667" y="78" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#1a9e8f">Foundation</text>
-      <text x="667" y="66" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#6e6e88">RECOMMENDATION</text>
+      <line x1="520" y1="74" x2="620" y2="74" stroke="#1F4FE0" stroke-width="1"/>
+      <text x="556" y="66" font-family="Geist Mono,monospace" font-size="8.5" fill="#5E6A7D">NO</text>
+      <rect x="620" y="56" width="95" height="36" rx="4" fill="var(--bg-card)" stroke="#1F4FE0" stroke-width="1"/>
+      <text x="667" y="78" text-anchor="middle" font-family="Geist Mono,monospace" font-size="9" fill="#1F4FE0">Foundation</text>
+      <text x="667" y="66" text-anchor="middle" font-family="Geist Mono,monospace" font-size="7" fill="#5E6A7D">RECOMMENDATION</text>
 
       <!-- Yes down -->
-      <line x1="370" y1="98" x2="370" y2="130" stroke="#1a9e8f" stroke-width="1"/>
-      <text x="380" y="118" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#6e6e88">YES</text>
+      <line x1="370" y1="98" x2="370" y2="130" stroke="#1F4FE0" stroke-width="1"/>
+      <text x="380" y="118" font-family="Geist Mono,monospace" font-size="8.5" fill="#5E6A7D">YES</text>
 
       <!-- Step 2 -->
-      <rect x="220" y="130" width="300" height="48" rx="6" fill="url(#g3)" stroke="#1a9e8f" stroke-width="1"/>
-      <text x="370" y="150" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="11" fill="currentColor" font-weight="600">2. Map operational topology</text>
-      <text x="370" y="168" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88">Linear chains? Feedback loops? Hub-and-spoke?</text>
+      <rect x="220" y="130" width="300" height="48" rx="6" fill="url(#g3)" stroke="#1F4FE0" stroke-width="1"/>
+      <text x="370" y="150" text-anchor="middle" font-family="Geist,sans-serif" font-size="11" fill="currentColor" font-weight="600">2. Map operational topology</text>
+      <text x="370" y="168" text-anchor="middle" font-family="Geist,sans-serif" font-size="9.5" fill="#5E6A7D">Linear chains? Feedback loops? Hub-and-spoke?</text>
 
       <!-- Linear branch -->
-      <line x1="520" y1="154" x2="620" y2="154" stroke="#1a9e8f" stroke-width="1"/>
-      <text x="550" y="146" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#6e6e88">LINEAR</text>
-      <rect x="620" y="136" width="95" height="36" rx="4" fill="var(--bg-card)" stroke="#1a9e8f" stroke-width="1"/>
-      <text x="667" y="158" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#1a9e8f">Point solutions</text>
-      <text x="667" y="146" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#6e6e88">RECOMMENDATION</text>
+      <line x1="520" y1="154" x2="620" y2="154" stroke="#1F4FE0" stroke-width="1"/>
+      <text x="550" y="146" font-family="Geist Mono,monospace" font-size="8.5" fill="#5E6A7D">LINEAR</text>
+      <rect x="620" y="136" width="95" height="36" rx="4" fill="var(--bg-card)" stroke="#1F4FE0" stroke-width="1"/>
+      <text x="667" y="158" text-anchor="middle" font-family="Geist Mono,monospace" font-size="9" fill="#1F4FE0">Point solutions</text>
+      <text x="667" y="146" text-anchor="middle" font-family="Geist Mono,monospace" font-size="7" fill="#5E6A7D">RECOMMENDATION</text>
 
       <!-- Loops/Hub down -->
-      <line x1="370" y1="178" x2="370" y2="210" stroke="#1a9e8f" stroke-width="1"/>
-      <text x="380" y="198" font-family="JetBrains Mono,monospace" font-size="8" fill="#6e6e88">LOOPS / HUB</text>
+      <line x1="370" y1="178" x2="370" y2="210" stroke="#1F4FE0" stroke-width="1"/>
+      <text x="380" y="198" font-family="Geist Mono,monospace" font-size="8" fill="#5E6A7D">LOOPS / HUB</text>
 
       <!-- Step 3 -->
-      <rect x="220" y="210" width="300" height="48" rx="6" fill="url(#g3)" stroke="#1a9e8f" stroke-width="1"/>
-      <text x="370" y="230" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="11" fill="currentColor" font-weight="600">3. Assess consequence boundaries</text>
-      <text x="370" y="248" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88">Reversibility, audience, financial exposure per action</text>
+      <rect x="220" y="210" width="300" height="48" rx="6" fill="url(#g3)" stroke="#1F4FE0" stroke-width="1"/>
+      <text x="370" y="230" text-anchor="middle" font-family="Geist,sans-serif" font-size="11" fill="currentColor" font-weight="600">3. Assess consequence boundaries</text>
+      <text x="370" y="248" text-anchor="middle" font-family="Geist,sans-serif" font-size="9.5" fill="#5E6A7D">Reversibility, audience, financial exposure per action</text>
 
-      <line x1="370" y1="258" x2="370" y2="290" stroke="#1a9e8f" stroke-width="1"/>
+      <line x1="370" y1="258" x2="370" y2="290" stroke="#1F4FE0" stroke-width="1"/>
 
       <!-- Step 4 -->
-      <rect x="220" y="290" width="300" height="48" rx="6" fill="url(#g3)" stroke="#1a9e8f" stroke-width="1"/>
-      <text x="370" y="310" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="11" fill="currentColor" font-weight="600">4. Place approval gates</text>
-      <text x="370" y="328" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88">High-consequence actions gated; low-consequence autonomous</text>
+      <rect x="220" y="290" width="300" height="48" rx="6" fill="url(#g3)" stroke="#1F4FE0" stroke-width="1"/>
+      <text x="370" y="310" text-anchor="middle" font-family="Geist,sans-serif" font-size="11" fill="currentColor" font-weight="600">4. Place approval gates</text>
+      <text x="370" y="328" text-anchor="middle" font-family="Geist,sans-serif" font-size="9.5" fill="#5E6A7D">High-consequence actions gated; low-consequence autonomous</text>
 
-      <line x1="370" y1="338" x2="370" y2="370" stroke="#1a9e8f" stroke-width="1"/>
+      <line x1="370" y1="338" x2="370" y2="370" stroke="#1F4FE0" stroke-width="1"/>
 
       <!-- Result -->
-      <rect x="220" y="370" width="300" height="42" rx="6" fill="url(#g3)" stroke="#1a9e8f" stroke-width="1.5"/>
-      <text x="370" y="388" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#1a9e8f">RECOMMENDATION</text>
-      <text x="370" y="404" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="11" fill="currentColor" font-weight="600">Compose: build the governed pipeline</text>
+      <rect x="220" y="370" width="300" height="42" rx="6" fill="url(#g3)" stroke="#1F4FE0" stroke-width="1.5"/>
+      <text x="370" y="388" text-anchor="middle" font-family="Geist Mono,monospace" font-size="9" fill="#1F4FE0">RECOMMENDATION</text>
+      <text x="370" y="404" text-anchor="middle" font-family="Geist,sans-serif" font-size="11" fill="currentColor" font-weight="600">Compose: build the governed pipeline</text>
 
-      <text x="680" y="432" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#6e6e88" text-anchor="end" opacity=".4">&copy; 2026 Tawhid Rahman</text>
+      <text x="680" y="432" font-family="Geist Mono,monospace" font-size="8.5" fill="#5E6A7D" text-anchor="end" opacity=".4">&copy; 2026 Tawhid Rahman</text>
     </svg>
     <p class="diagram-caption">The evaluation flow: each step narrows the recommendation. Skipping steps invalidates the assessment.</p>
   </div>
@@ -537,7 +444,7 @@ code{font-family:var(--mono);font-size:.86em;background:var(--bg-code);padding:.
 </footer>
 
 <script>
-function toggleTheme(){var h=document.documentElement,c=h.getAttribute('data-theme');h.setAttribute('data-theme',c==='dark'?'light':'dark');localStorage.setItem('theme',h.getAttribute('data-theme'))}
+
 (function(){var s=localStorage.getItem('theme');if(s)document.documentElement.setAttribute('data-theme',s)})();
 (function(){var secs=document.querySelectorAll('h2[id]'),links=document.querySelectorAll('.toc-rail a');var obs=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){links.forEach(function(l){l.classList.remove('active')});var t=document.querySelector('.toc-rail a[href="#'+e.target.id+'"]');if(t)t.classList.add('active')}})},{rootMargin:'-15% 0px -75% 0px'});secs.forEach(function(s){obs.observe(s)})})();
 </script>

@@ -1,225 +1,109 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tawhid Rahman &mdash; AI Architecture &amp; Enterprise Automation</title>
-<meta name="description" content="Tawhid Rahman designs and builds AI-powered operational automation systems for enterprises. CEO of Softograph. Explore architecture references, diagnostic methodologies, and frameworks.">
+<meta name="description" content="Tawhid Rahman designs and builds AI-powered operational automation systems for enterprises. CEO of Softograph. Architecture references, diagnostic methodologies, and frameworks.">
 <meta name="author" content="Tawhid Rahman">
 <meta property="og:title" content="Tawhid Rahman — AI Architecture & Enterprise Automation">
 <meta property="og:description" content="Architecture references, diagnostic methodologies, and frameworks for building AI-powered operational automation systems.">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://rahman-tawhid.github.io/">
+<meta property="og:image" content="https://rahman-tawhid.github.io/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,400&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-:root{
-  --teal:#1a9e8f;--teal-light:#2ec4b6;
-  --text-p:#1a1a2e;--text-s:#3d3d56;--text-t:#6e6e88;
-  --bg:#f8f5f0;--bg-card:#ffffff;--border:#d4cdc2;--shadow:rgba(10,20,38,.06);
-  --serif:'Fraunces',Georgia,serif;
-  --sans:'Instrument Sans',-apple-system,sans-serif;
-  --mono:'JetBrains Mono','Menlo',monospace;
-}
-[data-theme="dark"]{
-  --text-p:#e8e4de;--text-s:#b8b0a4;--text-t:#7a7268;
-  --bg:#0b1426;--bg-card:#162033;--border:#2a3a52;--shadow:rgba(0,0,0,.3);
-}
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth;font-size:17px}
-body{font-family:var(--sans);background:var(--bg);color:var(--text-p);line-height:1.78;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
-
-header{padding:.7rem 2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg);position:sticky;top:0;z-index:50;backdrop-filter:blur(14px)}
-.brand{font-family:var(--mono);font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;color:var(--teal);text-decoration:none;font-weight:500}
-.header-right{display:flex;gap:.75rem;align-items:center}
-.header-link{font-family:var(--mono);font-size:.68rem;color:var(--text-t);text-decoration:none;letter-spacing:.06em;transition:color .2s}.header-link:hover{color:var(--teal)}
-.theme-toggle{background:none;border:1px solid var(--border);border-radius:6px;padding:.3rem .6rem;cursor:pointer;font-size:.82rem;color:var(--text-t);font-family:var(--sans);transition:all .2s}
-.theme-toggle:hover{border-color:var(--teal);color:var(--teal)}
-
-main{max-width:1000px;margin:0 auto;padding:3.5rem 2rem 5rem}
-
-.intro{max-width:720px;margin-bottom:2.2rem}
-.intro h1{font-family:var(--serif);font-size:2.4rem;font-weight:600;line-height:1.18;margin-bottom:.8rem;letter-spacing:-.01em}
-.intro p{font-size:1.05rem;color:var(--text-s);max-width:640px;line-height:1.72}
-.intro-links{display:flex;flex-wrap:wrap;gap:1.5rem;margin-top:1.2rem;font-family:var(--mono);font-size:.76rem}
-.intro-links a{color:var(--teal);text-decoration:none;letter-spacing:.04em;transition:opacity .2s}.intro-links a:hover{opacity:.7}
-
-.jump{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem;padding:1rem 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-.jump a{font-size:.8rem;color:var(--text-s);text-decoration:none;border:1px solid var(--border);border-radius:999px;padding:.28rem .85rem;transition:border-color .2s,color .2s}
-.jump a:hover{border-color:var(--teal);color:var(--teal)}
-.jump a span{font-family:var(--mono);font-size:.68rem;color:var(--text-t);margin-left:.35rem}
-
-.shelf{padding-top:2.2rem;scroll-margin-top:4rem}
-.shelf-head{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;margin-bottom:1rem}
-.section-label{font-family:var(--mono);font-size:.65rem;letter-spacing:.16em;text-transform:uppercase;color:var(--teal)}
-.shelf-note{font-size:.82rem;color:var(--text-t)}
-
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
-.work-card{display:flex;flex-direction:column;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:1.35rem 1.45rem;text-decoration:none;transition:border-color .2s,box-shadow .2s;box-shadow:0 1px 4px var(--shadow)}
-.work-card:hover{box-shadow:0 6px 16px var(--shadow);border-color:var(--teal)}
-.work-card:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
-.work-card .card-eyebrow{font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);margin-bottom:.4rem}
-.work-card h3{font-family:var(--serif);font-size:1.22rem;font-weight:400;color:var(--text-p);margin-bottom:.45rem;line-height:1.3}
-.work-card p{font-size:.86rem;color:var(--text-s);margin-bottom:.8rem;line-height:1.6;flex:1}
-.work-card .card-meta{font-size:.74rem;color:var(--text-t);font-family:var(--mono)}
-.work-card.wide{grid-column:1 / -1}
-.work-card.wide p{max-width:640px}
-.pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;align-items:stretch}
-.pair .shelf{display:flex;flex-direction:column}
-.pair .grid{grid-template-columns:1fr;flex:1}
-.pair .grid .work-card{height:100%}
-.pair .shelf-note{display:none}
-
-.cta-band{margin-top:3.5rem;padding:2rem 0;border-top:1px solid var(--border);max-width:720px}
-.cta-band p{font-size:.95rem;color:var(--text-s);line-height:1.72}
-.cta-band a{color:var(--teal);font-weight:600;text-decoration:none}.cta-band a:hover{text-decoration:underline}
-
-footer{max-width:1000px;margin:0 auto;padding:2rem 2rem 3rem;font-size:.74rem;color:var(--text-t);border-top:1px solid var(--border)}
-
-@media(max-width:760px){
-  .grid,.pair{grid-template-columns:1fr}
-  .shelf-note{display:none}
-}
-@media(max-width:640px){
-  main{padding:2.5rem 1.2rem 4rem}
-  .intro h1{font-size:1.8rem}
-  header{padding:.7rem 1.2rem}
-  footer{padding:2rem 1.2rem}
-}
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
 </head>
 <body>
 
-<header>
-  <a class="brand" href="/">Tawhid Rahman</a>
-  <div class="header-right">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="g-stack" viewBox="0 0 64 64"><rect class="glyph" x="8" y="9" width="48" height="12" rx="3"/><rect class="glyph" x="8" y="26" width="48" height="12" rx="3"/><rect class="glyph" x="8" y="43" width="48" height="12" rx="3"/></symbol>
+    <symbol id="g-layers" viewBox="0 0 64 64"><path class="glyph" d="M32 8 8 22l24 14 24-14z"/><path class="glyph" d="m8 32 24 14 24-14"/><path class="glyph" d="m8 42 24 14 24-14"/></symbol>
+    <symbol id="g-nodes" viewBox="0 0 64 64"><circle class="glyph" cx="14" cy="32" r="6"/><circle class="glyph" cx="50" cy="14" r="6"/><circle class="glyph" cx="50" cy="50" r="6"/><path class="glyph" d="m19 29 26-12M19 35l26 12"/></symbol>
+    <symbol id="g-steps" viewBox="0 0 64 64"><path class="glyph" d="M8 54h12V42h12V30h12V18h12"/><path class="glyph" d="M8 54h48"/></symbol>
+    <symbol id="g-net" viewBox="0 0 64 64"><circle class="glyph" cx="32" cy="32" r="6"/><circle class="glyph" cx="12" cy="16" r="4"/><circle class="glyph" cx="54" cy="18" r="4"/><circle class="glyph" cx="14" cy="50" r="4"/><circle class="glyph" cx="52" cy="50" r="4"/><path class="glyph" d="m15 19 12 9M50 21l-13 8M17 47l11-11M48 47 37 36"/></symbol>
+    <symbol id="g-loop" viewBox="0 0 64 64"><path class="glyph" d="M50 22A20 20 0 1 0 52 36"/><path class="glyph" d="M52 12v12H40"/><circle class="glyph" cx="32" cy="32" r="4"/></symbol>
+    <symbol id="g-globe" viewBox="0 0 64 64"><circle class="glyph" cx="32" cy="32" r="22"/><ellipse class="glyph" cx="32" cy="32" rx="10" ry="22"/><path class="glyph" d="M10 32h44M14 20h36M14 44h36"/></symbol>
+  </defs>
+</svg>
+
+<header class="site-header">
+  <a class="brand" href="/"><span class="brand-name">Tawhid Rahman</span></a>
+  <div class="header-controls">
+    <a class="header-link" href="#work">Work</a>
     <a class="header-link" href="https://www.linkedin.com/in/tawhidurr/" target="_blank" rel="noopener">LinkedIn</a>
     <a class="header-link" href="https://substack.com/@tawhidr" target="_blank" rel="noopener">Substack</a>
-    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#9685; Theme</button>
+    <a class="header-link" href="mailto:tawhid@softograph.com">Contact</a>
   </div>
 </header>
 
-<main>
-  <section class="intro">
-    <h1>Building AI systems that run companies.</h1>
-    <p>
-      CEO of Softograph (est. 2012). I design and build AI-powered operational automation architectures &mdash; the kind that compound across every function of a business, from prospect discovery to executive intelligence. The work below documents the thinking, the architecture, and the patterns that emerged.
-    </p>
-    <div class="intro-links">
-      <a href="https://www.linkedin.com/in/tawhidurr/" target="_blank" rel="noopener">LinkedIn &nearr;</a>
-      <a href="https://substack.com/@tawhidr" target="_blank" rel="noopener">Substack &nearr;</a>
-      <a href="mailto:tawhid@softograph.com">tawhid@softograph.com</a>
+<main class="home-main">
+
+  <section class="home-hero dots">
+    <div>
+      <h1>Building AI systems that run companies.</h1>
+      <p class="lead">I design and build AI-powered operational automation for enterprises, and I run it on my own 100-person company first. The work below documents the architecture, the failures behind each rule, and the patterns that held up.</p>
+      <div class="facts"><span><b>Founder &amp; CEO</b>, Softograph</span><span>Since <b>2012</b></span><span><b>8</b> published references</span></div>
+      <div class="home-links"><a class="primary" href="#work">Read the work</a><a href="mailto:tawhid@softograph.com">Get in touch</a></div>
     </div>
+    <img class="photo" src="/assets/profile.jpg" width="720" height="720" alt="Tawhid Rahman">
   </section>
 
-  <nav class="jump" aria-label="Sections">
-    <a href="#systems">Systems architecture<span>3</span></a>
-    <a href="#methods">Methods &amp; frameworks<span>2</span></a>
-    <a href="#data">Data science &amp; visualization<span>2</span></a>
-    <a href="#essays">Essays<span>1</span></a>
-  </nav>
+  <section id="work">
+    <a class="feat-card" href="/work/governed-agent-memory.html">
+      <div class="feat-text">
+        <span class="kind">Start here &middot; Systems architecture</span>
+        <h2>Governed Memory for Multi-Agent Systems</h2>
+        <p>A three-tier state architecture for keeping eight AI agent contexts consistent with no single writer and no transactions. Schemas, a promotion state machine, tombstone write-sets, and the failure behind each rule.</p>
+        <span class="meta">2026 &middot; ~16 min read</span>
+      </div>
+      <div class="feat-art"><svg aria-hidden="true"><use href="#g-stack"/></svg></div>
+    </a>
+  </section>
 
   <section class="shelf" id="systems">
-    <div class="shelf-head">
-      <p class="section-label">Systems Architecture</p>
-      <p class="shelf-note">How the systems are built, with diagrams and schemas</p>
-    </div>
-    <div class="grid">
-      <a class="work-card wide" href="/work/governed-agent-memory.html">
-        <span class="card-eyebrow">Systems Architecture</span>
-        <h3>Governed Memory for Multi-Agent Systems</h3>
-        <p>A three-tier state architecture for keeping eight AI agent contexts consistent with no single writer and no transactions. Schemas, a promotion state machine, tombstone write-sets, and the failure behind each rule.</p>
-        <span class="card-meta">2026 &middot; ~16 min read</span>
-      </a>
-
-      <a class="work-card" href="/work/continuum.html">
-        <span class="card-eyebrow">Architecture Reference</span>
-        <h3>Continuum</h3>
-        <p>A skill-based AI automation architecture that decomposes business operations into composable, orchestrated workflows. Four layers &mdash; Skills, Agents, Workflows, Intelligence &mdash; running a 100-person company.</p>
-        <span class="card-meta">2026 &middot; ~18 min read</span>
-      </a>
-
-      <a class="work-card" href="/work/portable-ai-orchestration.html">
-        <span class="card-eyebrow">Cross-Industry Architecture</span>
-        <h3>Portable AI Orchestration</h3>
-        <p>How one composition architecture adapts across industries. The methodology for isolating domain knowledge from orchestration substrate, and what changes when the vertical changes.</p>
-        <span class="card-meta">2026 &middot; ~20 min read</span>
-      </a>
+    <div class="shelf-head"><h2>More systems architecture</h2><p class="shelf-note">How the systems are built, with diagrams and schemas</p></div>
+    <div class="grid two">
+      <a class="item" href="/work/continuum.html"><div class="thumb"><svg aria-hidden="true"><use href="#g-layers"/></svg></div><div class="body"><span class="kind">Architecture reference</span><h3>Continuum</h3><p>A skill-based AI automation architecture that decomposes business operations into composable, orchestrated workflows. Four layers (Skills, Agents, Workflows, Intelligence) running a 100-person company.</p><span class="meta">2026 &middot; ~18 min read</span></div></a>
+      <a class="item" href="/work/portable-ai-orchestration.html"><div class="thumb"><svg aria-hidden="true"><use href="#g-nodes"/></svg></div><div class="body"><span class="kind">Cross-industry architecture</span><h3>Portable AI Orchestration</h3><p>How one composition architecture adapts across industries. The methodology for isolating domain knowledge from the orchestration substrate, and what changes when the vertical changes.</p><span class="meta">2026 &middot; ~20 min read</span></div></a>
     </div>
   </section>
 
   <section class="shelf" id="methods">
-    <div class="shelf-head">
-      <p class="section-label">Methods &amp; Frameworks</p>
-      <p class="shelf-note">How to assess and sequence the work</p>
-    </div>
-    <div class="grid">
-      <a class="work-card" href="/work/ai-composition-architecture.html">
-        <span class="card-eyebrow">Diagnostic Methodology</span>
-        <h3>AI Composition Architecture</h3>
-        <p>The methodology for evaluating whether an organisation&rsquo;s operations are composition-ready. Where human-judgment boundaries belong, why most orchestration fails, and what the diagnostic looks like before any tool is touched.</p>
-        <span class="card-meta">2026 &middot; ~20 min read</span>
-      </a>
-
-      <a class="work-card" href="/work/ai-agent-build-gradient.html">
-        <span class="card-eyebrow">Maturity Framework</span>
-        <h3>The AI Agent Build Gradient</h3>
-        <p>From first skill to autonomous operation. The decision gates between stages, the failure modes at each transition, and how build sequence determines whether a system compounds or collapses.</p>
-        <span class="card-meta">2026 &middot; ~22 min read</span>
-      </a>
+    <div class="shelf-head"><h2>Methods and frameworks</h2><p class="shelf-note">How to assess and sequence the work</p></div>
+    <div class="grid two">
+      <a class="item" href="/work/ai-composition-architecture.html"><div class="thumb"><svg aria-hidden="true"><use href="#g-layers"/></svg></div><div class="body"><span class="kind">Diagnostic methodology</span><h3>AI Composition Architecture</h3><p>The methodology for evaluating whether an organisation&rsquo;s operations are composition-ready. Where human-judgment boundaries belong, why most orchestration fails, and what the diagnostic looks like before any tool is touched.</p><span class="meta">2026 &middot; ~20 min read</span></div></a>
+      <a class="item" href="/work/ai-agent-build-gradient.html"><div class="thumb"><svg aria-hidden="true"><use href="#g-steps"/></svg></div><div class="body"><span class="kind">Maturity framework</span><h3>The AI Agent Build Gradient</h3><p>From first skill to autonomous operation. The decision gates between stages, the failure modes at each transition, and how build sequence determines whether a system compounds or collapses.</p><span class="meta">2026 &middot; ~22 min read</span></div></a>
     </div>
   </section>
 
   <section class="shelf" id="data">
-    <div class="shelf-head">
-      <p class="section-label">Data Science &amp; Visualization</p>
-      <p class="shelf-note">Analysis on real data, and interactive presentation</p>
-    </div>
-    <div class="grid">
-      <a class="work-card" href="/work/knowledge-graph-network-analysis.html">
-        <span class="card-eyebrow">Network Analysis</span>
-        <h3>Network Analysis of a Personal Knowledge Graph</h3>
-        <p>1,426 Obsidian notes parsed into a typed graph, projected, partitioned with Leiden and tested against a bipartite null model. Heavy tails, fourteen clusters of ideas, Guimer&agrave;-Amaral roles, an interactive map, and a learned decision tree for which notes get promoted.</p>
-        <span class="card-meta">2026 &middot; ~24 min read &middot; Interactive</span>
-      </a>
-
-      <a class="work-card" href="/earth-history/">
-        <span class="card-eyebrow">Interactive Visualization</span>
-        <h3>Earth History</h3>
-        <p>An experimental interactive visualization for effective communication and data presentation. 4.5 billion years of palaeogeography, climate and biosphere &mdash; from accretion to the present &mdash; reconstructed on a single scrubbable timeline. An exercise in making deep time legible without flattening the data behind it.</p>
-        <span class="card-meta">2026 &middot; Interactive &middot; Explore &rarr;</span>
-      </a>
+    <div class="shelf-head"><h2>Data science and visualization</h2><p class="shelf-note">Analysis on real data, and interactive presentation</p></div>
+    <div class="grid two">
+      <a class="item" href="/work/knowledge-graph-network-analysis.html"><div class="thumb"><svg aria-hidden="true"><use href="#g-net"/></svg></div><div class="body"><span class="kind">Network analysis</span><h3>Network Analysis of a Personal Knowledge Graph</h3><p>1,426 Obsidian notes parsed into a typed graph, projected, partitioned with Leiden and tested against a bipartite null model. Fourteen clusters of ideas, Guimer&agrave;-Amaral roles, an interactive map, and a learned decision tree for which notes get promoted.</p><span class="meta">2026 &middot; ~24 min read &middot; Interactive</span></div></a>
+      <a class="item" href="/earth-history/"><div class="thumb"><svg aria-hidden="true"><use href="#g-globe"/></svg></div><div class="body"><span class="kind">Interactive visualization</span><h3>Earth History</h3><p>An experimental interactive visualization for effective communication and data presentation. 4.5 billion years of palaeogeography, climate and biosphere on a single scrubbable timeline, without flattening the data behind it.</p><span class="meta">2026 &middot; Interactive</span></div></a>
     </div>
   </section>
 
   <section class="shelf" id="essays">
-    <div class="shelf-head">
-      <p class="section-label">Essays</p>
-      <p class="shelf-note">Arguments about where the field is heading</p>
-    </div>
-    <div class="grid">
-      <a class="work-card wide" href="/work/reasoning-topology.html">
-        <span class="card-eyebrow">Thought Leadership</span>
-        <h3>The Reasoning Topology</h3>
-        <p>What sits above the loop. AI engineering cycled through four paradigm shifts in eighteen months &mdash; discipline, harness, loop &mdash; and each one exposed a ceiling the previous layer couldn&rsquo;t reach. The coordination layer where loops interact doesn&rsquo;t have a name yet.</p>
-        <span class="card-meta">2026 &middot; ~10 min read</span>
-      </a>
+    <div class="shelf-head"><h2>Essays</h2><p class="shelf-note">Arguments about where the field is heading</p></div>
+    <div class="grid two">
+      <a class="item wide" href="/work/reasoning-topology.html"><div class="thumb"><svg aria-hidden="true"><use href="#g-loop"/></svg></div><div class="body"><span class="kind">Thought leadership</span><h3>The Reasoning Topology</h3><p>What sits above the loop. AI engineering cycled through four paradigm shifts in eighteen months (discipline, harness, loop), and each one exposed a ceiling the previous layer couldn&rsquo;t reach. The coordination layer where loops interact doesn&rsquo;t have a name yet.</p><span class="meta">2026 &middot; ~10 min read</span></div></a>
     </div>
   </section>
 
-  <div class="cta-band">
-    <p>Working through a similar challenge? If you are building AI-powered operations for your organisation &mdash; or beginning to think about what that looks like &mdash; I would welcome a conversation. <a href="mailto:tawhid@softograph.com">tawhid@softograph.com</a></p>
+  <div class="home-cta">
+    <p>Working through a similar challenge? If you are building AI-powered operations for your organisation, or beginning to think about what that looks like, I would welcome a conversation. <a href="mailto:tawhid@softograph.com">tawhid@softograph.com</a></p>
   </div>
 </main>
 
-<footer>
+<footer class="home-footer">
   <p>&copy; 2026 Tawhid Rahman. All rights reserved.</p>
 </footer>
-
-<script>
-function toggleTheme(){var h=document.documentElement,c=h.getAttribute('data-theme');h.setAttribute('data-theme',c==='dark'?'light':'dark');localStorage.setItem('theme',h.getAttribute('data-theme'))}
-(function(){var s=localStorage.getItem('theme');if(s)document.documentElement.setAttribute('data-theme',s)})();
-</script>
 
 </body>
 </html>

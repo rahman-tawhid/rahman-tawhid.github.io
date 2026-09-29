@@ -10,50 +10,21 @@
 <meta property="og:title" content="Portable AI Orchestration — One Architecture Across Industries">
 <meta property="og:description" content="How one composition architecture adapts across industries. The methodology for isolating domain knowledge from orchestration substrate.">
 <meta property="og:type" content="article">
+<meta property="og:image" content="https://rahman-tawhid.github.io/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,400&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-:root{--navy:#0b1426;--navy-mid:#162033;--navy-light:#1e2d47;--cream:#f8f5f0;--cream-dark:#ebe5dc;--teal:#1a9e8f;--teal-light:#2ec4b6;--teal-dim:#145c54;--text-primary:#1a1a2e;--text-secondary:#3d3d56;--text-tertiary:#6e6e88;--bg:var(--cream);--bg-card:#ffffff;--bg-code:#f0ebe4;--border:#d4cdc2;--shadow:rgba(10,20,38,.06);--serif:'Fraunces',Georgia,serif;--sans:'Instrument Sans',-apple-system,sans-serif;--mono:'JetBrains Mono','Menlo',monospace;--max-w:780px;--toc-w:240px}
-[data-theme="dark"]{--text-primary:#e8e4de;--text-secondary:#b8b0a4;--text-tertiary:#7a7268;--bg:var(--navy);--bg-card:var(--navy-mid);--bg-code:var(--navy-light);--border:#2a3a52;--shadow:rgba(0,0,0,.3)}
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth;font-size:17px}body{font-family:var(--sans);background:var(--bg);color:var(--text-primary);line-height:1.78;font-weight:400;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
-.site-header{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:.7rem 2rem;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(14px);transition:background .3s}.brand{text-decoration:none;display:flex;align-items:baseline;gap:.4rem}.brand-name{font-family:var(--mono);font-weight:500;font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;color:var(--teal)}.header-controls{display:flex;gap:.75rem;align-items:center}.header-link{font-family:var(--mono);font-size:.68rem;color:var(--text-tertiary);text-decoration:none;letter-spacing:.06em;transition:color .2s}.header-link:hover{color:var(--teal)}.theme-toggle{background:none;border:1px solid var(--border);border-radius:6px;padding:.3rem .6rem;cursor:pointer;font-size:.82rem;color:var(--text-tertiary);transition:all .2s;font-family:var(--sans)}.theme-toggle:hover{border-color:var(--teal);color:var(--teal)}
-.page-wrapper{display:flex;margin-top:3.2rem;min-height:calc(100vh - 3.2rem)}.toc-rail{position:fixed;top:3.2rem;left:0;width:var(--toc-w);height:calc(100vh - 3.2rem);overflow-y:auto;padding:2rem 1.2rem 2rem 1.5rem;border-right:1px solid var(--border);background:var(--bg);transition:background .3s}.toc-rail h3{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:1rem}.toc-rail a{display:block;padding:.28rem 0;font-size:.8rem;color:var(--text-tertiary);text-decoration:none;border-left:2px solid transparent;padding-left:.7rem;margin-left:-.7rem;transition:all .2s;line-height:1.5}.toc-rail a:hover,.toc-rail a.active{color:var(--teal);border-left-color:var(--teal)}.main-content{margin-left:var(--toc-w);flex:1;padding:3rem 3.5rem 6rem;max-width:calc(var(--max-w) + 7rem)}
-h1{font-family:var(--serif);font-size:2.6rem;font-weight:600;line-height:1.15;color:var(--text-primary);margin-bottom:.5rem;letter-spacing:-.01em}h2{font-family:var(--serif);font-size:1.65rem;font-weight:400;line-height:1.28;margin:3.5rem 0 1.1rem;padding-top:2.2rem;border-top:1px solid var(--border);color:var(--text-primary)}h3{font-family:var(--sans);font-size:1.05rem;font-weight:700;margin:2rem 0 .7rem;color:var(--text-primary)}p{margin-bottom:1.15rem;color:var(--text-secondary);text-align:justify}strong{color:var(--text-primary);font-weight:600}
-.hero{margin-bottom:3rem;padding-bottom:2.5rem;border-bottom:1px solid var(--border)}.hero-eyebrow{font-family:var(--mono);font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);margin-bottom:.6rem}.hero-subtitle{font-size:1.12rem;color:var(--text-secondary);line-height:1.68;max-width:620px;margin-bottom:1.8rem}.hero-author{font-size:.92rem;color:var(--text-secondary);line-height:1.65;max-width:600px;margin-bottom:1.4rem;border-left:2px solid var(--teal);padding-left:1rem}.hero-meta{display:flex;gap:2rem;flex-wrap:wrap;font-size:.75rem;color:var(--text-tertiary);font-family:var(--mono)}
-.arch-card{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:1.6rem 1.75rem;margin:1.5rem 0;box-shadow:0 1px 4px var(--shadow);transition:background .3s,border .3s}.arch-card h4{font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);margin-bottom:.8rem}
-.layer-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}.layer-item{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:1.2rem 1.3rem;border-left:3px solid var(--teal);transition:all .2s}.layer-item:hover{border-left-color:var(--teal-light);transform:translateY(-1px);box-shadow:0 3px 8px var(--shadow)}.layer-item h4{font-family:var(--sans);font-size:.92rem;font-weight:700;color:var(--text-primary);margin-bottom:.35rem}.layer-item p{font-size:.87rem;margin-bottom:0;line-height:1.6}.layer-num{font-family:var(--serif);font-size:1.6rem;color:var(--teal);opacity:.4;float:right;margin-top:-.2rem}
-.diagram-wrapper{margin:2rem 0;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:1.8rem;overflow-x:auto}.diagram-wrapper svg{width:100%;height:auto;display:block}.diagram-caption{font-family:var(--mono);font-size:.68rem;color:var(--text-tertiary);text-align:center;margin-top:.9rem;letter-spacing:.04em}
-code{font-family:var(--mono);font-size:.86em;background:var(--bg-code);padding:.12em .38em;border-radius:3px;color:var(--teal-dim)}[data-theme="dark"] code{color:var(--teal-light)}
-.callout{border-left:3px solid var(--teal);padding:1rem 1.3rem;margin:1.8rem 0;background:var(--bg-card);border-radius:0 6px 6px 0;font-size:.94rem;box-shadow:0 1px 3px var(--shadow)}.callout p{margin-bottom:0}
-.ref-table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:.88rem}.ref-table th{text-align:left;font-family:var(--mono);font-size:.67rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-tertiary);padding:.55rem .7rem;border-bottom:2px solid var(--border)}.ref-table td{padding:.6rem .7rem;border-bottom:1px solid var(--border);color:var(--text-secondary);vertical-align:top;line-height:1.55}.ref-table td:first-child{color:var(--text-primary);font-weight:600}
-.site-footer{margin-left:var(--toc-w);padding:3rem 3.5rem;border-top:1px solid var(--border);font-size:.76rem;color:var(--text-tertiary);line-height:1.85}.disclaimer{margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);font-size:.7rem;font-style:italic}
-@media print{.site-header,.toc-rail,.theme-toggle,.header-controls{display:none!important}.main-content{margin-left:0!important;padding:0!important;max-width:100%}.site-footer{margin-left:0}body{font-size:11pt;background:#fff;color:#111}h1{font-size:22pt}h2{font-size:15pt;border-top:none;padding-top:0}.arch-card,.layer-item{break-inside:avoid}}
-@media(max-width:900px){.toc-rail{display:none}.main-content{margin-left:0;padding:1.5rem 1.2rem 4rem}.site-footer{margin-left:0;padding:2rem 1.2rem}.layer-grid{grid-template-columns:1fr}h1{font-size:1.9rem}.site-header{padding:.7rem 1.2rem}}
-
-/* LAYOUT v2: centre the reading column in the space right of the rail; let figures and tables run wider on large screens */
-@media(min-width:901px){
-  .page-wrapper{padding-left:var(--toc-w)}
-  .main-content{margin-left:auto;margin-right:auto;min-width:0;width:100%;max-width:1160px}
-  .main-content > *:not(.diagram-wrapper):not(.table-wrap):not(.ref-table):not(.wide){max-width:780px;margin-left:auto;margin-right:auto}
-  .main-content > .diagram-wrapper,.main-content > .table-wrap,.main-content > .ref-table,.main-content > .wide{max-width:1000px;margin-left:auto;margin-right:auto}
-  .site-footer > *{max-width:780px;margin-left:auto;margin-right:auto}
-}
-
-/* LAYOUT v2.1: no flex overflow on narrow screens; single rule between hero and first section */
-.main-content{min-width:0}
-.hero + h2{border-top:none;padding-top:0;margin-top:2.2rem}
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
 </head>
 <body>
 
 <header class="site-header">
   <a class="brand" href="/"><span class="brand-name">Tawhid Rahman</span></a>
   <div class="header-controls">
-    <a class="header-link" href="/">&larr; All Work</a>
+    <a class="header-link" href="/">All work</a>
     <a class="header-link" href="https://www.linkedin.com/in/tawhidurr/" target="_blank" rel="noopener">LinkedIn</a>
     <a class="header-link" href="https://substack.com/@tawhidr" target="_blank" rel="noopener">Substack</a>
-    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">&#9685; Theme</button>
   </div>
 </header>
 
@@ -119,41 +90,41 @@ code{font-family:var(--mono);font-size:.86em;background:var(--bg-code);padding:.
   <div class="diagram-wrapper">
     <svg viewBox="0 0 740 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Architecture portability model">
       <defs>
-        <linearGradient id="pg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2ec4b6" stop-opacity=".12"/><stop offset="100%" stop-color="#2ec4b6" stop-opacity=".02"/></linearGradient>
+        <linearGradient id="pg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#5B84F0" stop-opacity=".12"/><stop offset="100%" stop-color="#5B84F0" stop-opacity=".02"/></linearGradient>
       </defs>
-      <text x="370" y="24" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#1a9e8f" letter-spacing=".12em">ARCHITECTURE PORTABILITY MODEL</text>
+      <text x="370" y="24" text-anchor="middle" font-family="Geist Mono,monospace" font-size="9.5" fill="#1F4FE0" letter-spacing=".12em">ARCHITECTURE PORTABILITY MODEL</text>
 
       <!-- Universal layer -->
-      <rect x="30" y="50" width="680" height="120" rx="8" fill="url(#pg1)" stroke="#1a9e8f" stroke-width="1.5"/>
-      <text x="52" y="72" font-family="JetBrains Mono,monospace" font-size="9" fill="#1a9e8f" letter-spacing=".1em">CONSTANT &mdash; REUSED ACROSS VERTICALS</text>
+      <rect x="30" y="50" width="680" height="120" rx="8" fill="url(#pg1)" stroke="#1F4FE0" stroke-width="1.5"/>
+      <text x="52" y="72" font-family="Geist Mono,monospace" font-size="9" fill="#1F4FE0" letter-spacing=".1em">CONSTANT &mdash; REUSED ACROSS VERTICALS</text>
 
-      <text x="52" y="98" font-family="Instrument Sans,sans-serif" font-size="11" fill="currentColor" font-weight="600">Orchestration Engine</text>
-      <text x="52" y="114" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Pipeline patterns, scheduling, trigger logic, error handling, retry mechanisms</text>
+      <text x="52" y="98" font-family="Geist,sans-serif" font-size="11" fill="currentColor" font-weight="600">Orchestration Engine</text>
+      <text x="52" y="114" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Pipeline patterns, scheduling, trigger logic, error handling, retry mechanisms</text>
 
-      <text x="390" y="98" font-family="Instrument Sans,sans-serif" font-size="11" fill="currentColor" font-weight="600">Governance Framework</text>
-      <text x="390" y="114" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Approval gating, consequence assessment, audit logging, version control</text>
+      <text x="390" y="98" font-family="Geist,sans-serif" font-size="11" fill="currentColor" font-weight="600">Governance Framework</text>
+      <text x="390" y="114" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Approval gating, consequence assessment, audit logging, version control</text>
 
-      <text x="52" y="140" font-family="Instrument Sans,sans-serif" font-size="11" fill="currentColor" font-weight="600">Observation Architecture</text>
-      <text x="52" y="156" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Read/write separation, synthesis cadence, delivery channels, health monitoring</text>
+      <text x="52" y="140" font-family="Geist,sans-serif" font-size="11" fill="currentColor" font-weight="600">Observation Architecture</text>
+      <text x="52" y="156" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Read/write separation, synthesis cadence, delivery channels, health monitoring</text>
 
-      <text x="390" y="140" font-family="Instrument Sans,sans-serif" font-size="11" fill="currentColor" font-weight="600">Skill Interface Contracts</text>
-      <text x="390" y="156" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Input/output schemas, error protocols, versioning, changelog standards</text>
+      <text x="390" y="140" font-family="Geist,sans-serif" font-size="11" fill="currentColor" font-weight="600">Skill Interface Contracts</text>
+      <text x="390" y="156" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Input/output schemas, error protocols, versioning, changelog standards</text>
 
       <!-- Separator -->
-      <line x1="30" y1="190" x2="710" y2="190" stroke="#1a9e8f" stroke-width="1.5" stroke-dasharray="6,4"/>
-      <text x="370" y="206" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#1a9e8f" letter-spacing=".1em">SEPARATION BOUNDARY</text>
+      <line x1="30" y1="190" x2="710" y2="190" stroke="#1F4FE0" stroke-width="1.5" stroke-dasharray="6,4"/>
+      <text x="370" y="206" text-anchor="middle" font-family="Geist Mono,monospace" font-size="8" fill="#1F4FE0" letter-spacing=".1em">SEPARATION BOUNDARY</text>
 
       <!-- Variable layer -->
-      <rect x="30" y="218" width="680" height="90" rx="8" fill="url(#pg1)" stroke="#1a9e8f" stroke-width="1" stroke-opacity=".5"/>
-      <text x="52" y="240" font-family="JetBrains Mono,monospace" font-size="9" fill="#1a9e8f" letter-spacing=".1em">VARIABLE &mdash; RECONFIGURED PER VERTICAL</text>
+      <rect x="30" y="218" width="680" height="90" rx="8" fill="url(#pg1)" stroke="#1F4FE0" stroke-width="1" stroke-opacity=".5"/>
+      <text x="52" y="240" font-family="Geist Mono,monospace" font-size="9" fill="#1F4FE0" letter-spacing=".1em">VARIABLE &mdash; RECONFIGURED PER VERTICAL</text>
 
-      <text x="52" y="266" font-family="Instrument Sans,sans-serif" font-size="10.5" fill="currentColor" font-weight="600">Domain Knowledge</text>
-      <text x="52" y="282" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Skill expertise, scoring criteria, quality thresholds, decision boundaries, terminology</text>
+      <text x="52" y="266" font-family="Geist,sans-serif" font-size="10.5" fill="currentColor" font-weight="600">Domain Knowledge</text>
+      <text x="52" y="282" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Skill expertise, scoring criteria, quality thresholds, decision boundaries, terminology</text>
 
-      <text x="390" y="266" font-family="Instrument Sans,sans-serif" font-size="10.5" fill="currentColor" font-weight="600">Vertical Configuration</text>
-      <text x="390" y="282" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Compliance requirements, approval authority, regulatory constraints, data sensitivity</text>
+      <text x="390" y="266" font-family="Geist,sans-serif" font-size="10.5" fill="currentColor" font-weight="600">Vertical Configuration</text>
+      <text x="390" y="282" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Compliance requirements, approval authority, regulatory constraints, data sensitivity</text>
 
-      <text x="680" y="332" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#6e6e88" text-anchor="end" opacity=".4">&copy; 2026 Tawhid Rahman</text>
+      <text x="680" y="332" font-family="Geist Mono,monospace" font-size="8.5" fill="#5E6A7D" text-anchor="end" opacity=".4">&copy; 2026 Tawhid Rahman</text>
     </svg>
     <p class="diagram-caption">Above the separation boundary: universal and reusable. Below: reconfigured for each vertical deployment.</p>
   </div>
@@ -213,51 +184,51 @@ code{font-family:var(--mono);font-size:.86em;background:var(--bg-code);padding:.
   <div class="diagram-wrapper">
     <svg viewBox="0 0 740 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Domain knowledge isolation pattern">
       <defs>
-        <linearGradient id="pg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2ec4b6" stop-opacity=".10"/><stop offset="100%" stop-color="#2ec4b6" stop-opacity=".02"/></linearGradient>
+        <linearGradient id="pg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#5B84F0" stop-opacity=".10"/><stop offset="100%" stop-color="#5B84F0" stop-opacity=".02"/></linearGradient>
       </defs>
-      <text x="370" y="24" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#1a9e8f" letter-spacing=".12em">DOMAIN KNOWLEDGE ISOLATION</text>
+      <text x="370" y="24" text-anchor="middle" font-family="Geist Mono,monospace" font-size="9.5" fill="#1F4FE0" letter-spacing=".12em">DOMAIN KNOWLEDGE ISOLATION</text>
 
       <!-- Skill structure -->
-      <rect x="30" y="50" width="320" height="210" rx="8" fill="url(#pg2)" stroke="#1a9e8f" stroke-width="1.5"/>
-      <text x="190" y="74" text-anchor="middle" font-family="Fraunces,serif" font-size="15" fill="currentColor">Skill Architecture</text>
+      <rect x="30" y="50" width="320" height="210" rx="8" fill="url(#pg2)" stroke="#1F4FE0" stroke-width="1.5"/>
+      <text x="190" y="74" text-anchor="middle" font-family="Geist,serif" font-size="15" fill="currentColor">Skill Architecture</text>
 
       <!-- Interface layer -->
-      <rect x="55" y="92" width="270" height="44" rx="4" fill="var(--bg-card)" stroke="#1a9e8f" stroke-width="1"/>
-      <text x="190" y="108" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#1a9e8f" letter-spacing=".06em">INTERFACE (UNIVERSAL)</text>
-      <text x="190" y="126" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88">Input contract &middot; Output contract &middot; Error protocol &middot; Version</text>
+      <rect x="55" y="92" width="270" height="44" rx="4" fill="var(--bg-card)" stroke="#1F4FE0" stroke-width="1"/>
+      <text x="190" y="108" text-anchor="middle" font-family="Geist Mono,monospace" font-size="8" fill="#1F4FE0" letter-spacing=".06em">INTERFACE (UNIVERSAL)</text>
+      <text x="190" y="126" text-anchor="middle" font-family="Geist,sans-serif" font-size="9.5" fill="#5E6A7D">Input contract &middot; Output contract &middot; Error protocol &middot; Version</text>
 
       <!-- Knowledge layer -->
-      <rect x="55" y="148" width="270" height="44" rx="4" fill="var(--bg-card)" stroke="#1a9e8f" stroke-width="1" stroke-opacity=".5"/>
-      <text x="190" y="164" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#1a9e8f" letter-spacing=".06em">KNOWLEDGE (VERTICAL-SPECIFIC)</text>
-      <text x="190" y="182" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88">Domain expertise &middot; Quality criteria &middot; Decision logic</text>
+      <rect x="55" y="148" width="270" height="44" rx="4" fill="var(--bg-card)" stroke="#1F4FE0" stroke-width="1" stroke-opacity=".5"/>
+      <text x="190" y="164" text-anchor="middle" font-family="Geist Mono,monospace" font-size="8" fill="#1F4FE0" letter-spacing=".06em">KNOWLEDGE (VERTICAL-SPECIFIC)</text>
+      <text x="190" y="182" text-anchor="middle" font-family="Geist,sans-serif" font-size="9.5" fill="#5E6A7D">Domain expertise &middot; Quality criteria &middot; Decision logic</text>
 
       <!-- Config layer -->
-      <rect x="55" y="204" width="270" height="38" rx="4" fill="var(--bg-card)" stroke="#1a9e8f" stroke-width="1" stroke-opacity=".3"/>
-      <text x="190" y="218" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#1a9e8f" letter-spacing=".06em">CONFIG (PARAMETERISED)</text>
-      <text x="190" y="234" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88">Scoring rubrics &middot; Thresholds &middot; Terminology maps</text>
+      <rect x="55" y="204" width="270" height="38" rx="4" fill="var(--bg-card)" stroke="#1F4FE0" stroke-width="1" stroke-opacity=".3"/>
+      <text x="190" y="218" text-anchor="middle" font-family="Geist Mono,monospace" font-size="8" fill="#1F4FE0" letter-spacing=".06em">CONFIG (PARAMETERISED)</text>
+      <text x="190" y="234" text-anchor="middle" font-family="Geist,sans-serif" font-size="9.5" fill="#5E6A7D">Scoring rubrics &middot; Thresholds &middot; Terminology maps</text>
 
       <!-- Deployment arrows -->
-      <text x="560" y="70" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#1a9e8f">DEPLOYMENT</text>
+      <text x="560" y="70" text-anchor="middle" font-family="Geist Mono,monospace" font-size="8.5" fill="#1F4FE0">DEPLOYMENT</text>
 
-      <rect x="420" y="88" width="260" height="34" rx="4" fill="url(#pg2)" stroke="#1a9e8f" stroke-width="1"/>
-      <text x="550" y="110" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="10" fill="currentColor">FMCG: field verification, distributor scoring</text>
+      <rect x="420" y="88" width="260" height="34" rx="4" fill="url(#pg2)" stroke="#1F4FE0" stroke-width="1"/>
+      <text x="550" y="110" text-anchor="middle" font-family="Geist,sans-serif" font-size="10" fill="currentColor">FMCG: field verification, distributor scoring</text>
 
-      <rect x="420" y="132" width="260" height="34" rx="4" fill="url(#pg2)" stroke="#1a9e8f" stroke-width="1"/>
-      <text x="550" y="154" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="10" fill="currentColor">Healthcare: compliance checks, patient flow</text>
+      <rect x="420" y="132" width="260" height="34" rx="4" fill="url(#pg2)" stroke="#1F4FE0" stroke-width="1"/>
+      <text x="550" y="154" text-anchor="middle" font-family="Geist,sans-serif" font-size="10" fill="currentColor">Healthcare: compliance checks, patient flow</text>
 
-      <rect x="420" y="176" width="260" height="34" rx="4" fill="url(#pg2)" stroke="#1a9e8f" stroke-width="1"/>
-      <text x="550" y="198" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="10" fill="currentColor">Financial services: risk assessment, KYC</text>
+      <rect x="420" y="176" width="260" height="34" rx="4" fill="url(#pg2)" stroke="#1F4FE0" stroke-width="1"/>
+      <text x="550" y="198" text-anchor="middle" font-family="Geist,sans-serif" font-size="10" fill="currentColor">Financial services: risk assessment, KYC</text>
 
-      <rect x="420" y="220" width="260" height="34" rx="4" fill="url(#pg2)" stroke="#1a9e8f" stroke-width="1"/>
-      <text x="550" y="242" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="10" fill="currentColor">Manufacturing: QC pipelines, supply chain</text>
+      <rect x="420" y="220" width="260" height="34" rx="4" fill="url(#pg2)" stroke="#1F4FE0" stroke-width="1"/>
+      <text x="550" y="242" text-anchor="middle" font-family="Geist,sans-serif" font-size="10" fill="currentColor">Manufacturing: QC pipelines, supply chain</text>
 
       <!-- Arrows -->
-      <line x1="350" y1="114" x2="420" y2="105" stroke="#1a9e8f" stroke-width="1" stroke-opacity=".4"/>
-      <line x1="350" y1="148" x2="420" y2="149" stroke="#1a9e8f" stroke-width="1" stroke-opacity=".4"/>
-      <line x1="350" y1="182" x2="420" y2="193" stroke="#1a9e8f" stroke-width="1" stroke-opacity=".4"/>
-      <line x1="350" y1="216" x2="420" y2="237" stroke="#1a9e8f" stroke-width="1" stroke-opacity=".4"/>
+      <line x1="350" y1="114" x2="420" y2="105" stroke="#1F4FE0" stroke-width="1" stroke-opacity=".4"/>
+      <line x1="350" y1="148" x2="420" y2="149" stroke="#1F4FE0" stroke-width="1" stroke-opacity=".4"/>
+      <line x1="350" y1="182" x2="420" y2="193" stroke="#1F4FE0" stroke-width="1" stroke-opacity=".4"/>
+      <line x1="350" y1="216" x2="420" y2="237" stroke="#1F4FE0" stroke-width="1" stroke-opacity=".4"/>
 
-      <text x="680" y="288" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#6e6e88" text-anchor="end" opacity=".4">&copy; 2026 Tawhid Rahman</text>
+      <text x="680" y="288" font-family="Geist Mono,monospace" font-size="8.5" fill="#5E6A7D" text-anchor="end" opacity=".4">&copy; 2026 Tawhid Rahman</text>
     </svg>
     <p class="diagram-caption">Each skill separates its universal interface from its vertical-specific knowledge. Deployment swaps knowledge, not architecture.</p>
   </div>
@@ -379,7 +350,7 @@ code{font-family:var(--mono);font-size:.86em;background:var(--bg-code);padding:.
 </footer>
 
 <script>
-function toggleTheme(){var h=document.documentElement,c=h.getAttribute('data-theme');h.setAttribute('data-theme',c==='dark'?'light':'dark');localStorage.setItem('theme',h.getAttribute('data-theme'))}
+
 (function(){var s=localStorage.getItem('theme');if(s)document.documentElement.setAttribute('data-theme',s)})();
 (function(){var secs=document.querySelectorAll('h2[id]'),links=document.querySelectorAll('.toc-rail a');var obs=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){links.forEach(function(l){l.classList.remove('active')});var t=document.querySelector('.toc-rail a[href="#'+e.target.id+'"]');if(t)t.classList.add('active')}})},{rootMargin:'-15% 0px -75% 0px'});secs.forEach(function(s){obs.observe(s)})})();
 </script>

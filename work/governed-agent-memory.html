@@ -10,114 +10,21 @@
 <meta property="og:title" content="Governed Memory for Multi-Agent Systems">
 <meta property="og:description" content="A three-tier state architecture for keeping several AI agent contexts consistent. Schemas, state machines, and the failures behind each rule.">
 <meta property="og:type" content="article">
+<meta property="og:image" content="https://rahman-tawhid.github.io/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,400&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-:root{
-  --navy:#0b1426;--navy-mid:#162033;--navy-light:#1e2d47;
-  --cream:#f8f5f0;--cream-dark:#ebe5dc;
-  --teal:#1a9e8f;--teal-light:#2ec4b6;--teal-dim:#145c54;
-  --warn:#b5462f;
-  --text-primary:#1a1a2e;--text-secondary:#3d3d56;--text-tertiary:#6e6e88;
-  --bg:var(--cream);--bg-card:#ffffff;--bg-code:#f0ebe4;
-  --border:#d4cdc2;--shadow:rgba(10,20,38,.06);
-  --serif:'Fraunces',Georgia,serif;
-  --sans:'Instrument Sans',-apple-system,sans-serif;
-  --mono:'JetBrains Mono','Menlo',monospace;
-  --max-w:780px;--toc-w:240px;
-}
-[data-theme="dark"]{
-  --text-primary:#e8e4de;--text-secondary:#b8b0a4;--text-tertiary:#7a7268;
-  --bg:var(--navy);--bg-card:var(--navy-mid);--bg-code:var(--navy-light);
-  --border:#2a3a52;--shadow:rgba(0,0,0,.3);--warn:#e0785f;
-}
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth;font-size:17px}
-body{font-family:var(--sans);background:var(--bg);color:var(--text-primary);line-height:1.78;font-weight:400;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
-.site-header{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:.7rem 2rem;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(14px);transition:background .3s}
-.brand{text-decoration:none;display:flex;align-items:baseline;gap:.4rem}
-.brand-name{font-family:var(--mono);font-weight:500;font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;color:var(--teal)}
-.header-controls{display:flex;gap:.75rem;align-items:center}
-.header-link{font-family:var(--mono);font-size:.68rem;color:var(--text-tertiary);text-decoration:none;letter-spacing:.06em}.header-link:hover{color:var(--teal)}
-.theme-toggle{background:none;border:1px solid var(--border);border-radius:6px;padding:.3rem .6rem;cursor:pointer;font-size:.82rem;color:var(--text-tertiary);transition:all .2s;font-family:var(--sans)}
-.theme-toggle:hover{border-color:var(--teal);color:var(--teal)}
-.page-wrapper{display:flex;margin-top:3.2rem;min-height:calc(100vh - 3.2rem)}
-.toc-rail{position:fixed;top:3.2rem;left:0;width:var(--toc-w);height:calc(100vh - 3.2rem);overflow-y:auto;padding:2rem 1.2rem 2rem 1.5rem;border-right:1px solid var(--border);background:var(--bg);transition:background .3s}
-.toc-rail h3{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:1rem}
-.toc-rail a{display:block;padding:.28rem 0;font-size:.8rem;color:var(--text-tertiary);text-decoration:none;border-left:2px solid transparent;padding-left:.7rem;margin-left:-.7rem;transition:all .2s;line-height:1.5}
-.toc-rail a:hover,.toc-rail a.active{color:var(--teal);border-left-color:var(--teal)}
-.main-content{margin-left:var(--toc-w);flex:1;min-width:0;padding:3rem 3.5rem 6rem;max-width:calc(var(--max-w) + 7rem)}
-h1{font-family:var(--serif);font-size:2.6rem;font-weight:600;line-height:1.15;color:var(--text-primary);margin-bottom:.5rem;letter-spacing:-.01em}
-h2{font-family:var(--serif);font-size:1.65rem;font-weight:400;line-height:1.28;margin:3.5rem 0 1.1rem;padding-top:2.2rem;border-top:1px solid var(--border);color:var(--text-primary)}
-h3{font-family:var(--sans);font-size:1.05rem;font-weight:700;margin:2rem 0 .7rem;color:var(--text-primary)}
-p{margin-bottom:1.15rem;color:var(--text-secondary)}
-strong{color:var(--text-primary);font-weight:600}
-ul.plain{margin:0 0 1.2rem 1.2rem;color:var(--text-secondary)}
-ul.plain li{margin-bottom:.45rem}
-.hero{margin-bottom:3rem;padding-bottom:2.5rem;border-bottom:1px solid var(--border)}
-.hero-eyebrow{font-family:var(--mono);font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);margin-bottom:.6rem}
-.hero-subtitle{font-size:1.12rem;color:var(--text-secondary);line-height:1.68;max-width:640px;margin-bottom:1.8rem}
-.hero-author{font-size:.92rem;color:var(--text-secondary);line-height:1.65;max-width:600px;margin-bottom:1.4rem;border-left:2px solid var(--teal);padding-left:1rem}
-.hero-meta{display:flex;gap:2rem;flex-wrap:wrap;font-size:.75rem;color:var(--text-tertiary);font-family:var(--mono)}
-.diagram-wrapper{margin:2rem 0;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:1.6rem;overflow-x:auto;color:var(--text-primary)}
-.diagram-wrapper svg{width:100%;min-width:620px;height:auto;display:block}
-.diagram-caption{font-family:var(--mono);font-size:.68rem;color:var(--text-tertiary);text-align:center;margin-top:.9rem;letter-spacing:.04em}
-code{font-family:var(--mono);font-size:.86em;background:var(--bg-code);padding:.12em .38em;border-radius:3px;color:var(--teal-dim)}
-[data-theme="dark"] code{color:var(--teal-light)}
-pre{font-family:var(--mono);font-size:.78rem;line-height:1.6;background:var(--bg-code);border:1px solid var(--border);border-radius:8px;padding:1.2rem 1.4rem;margin:1.5rem 0;overflow-x:auto;color:var(--text-primary)}
-pre code{background:none;padding:0;color:inherit;font-size:inherit}
-pre .c{color:var(--text-tertiary)}
-pre .k{color:var(--teal)}
-.pre-label{font-family:var(--mono);font-size:.66rem;color:var(--text-tertiary);margin:-1rem 0 1.6rem;letter-spacing:.04em}
-.callout{border-left:3px solid var(--teal);padding:1rem 1.3rem;margin:1.8rem 0;background:var(--bg-card);border-radius:0 6px 6px 0;font-size:.94rem;box-shadow:0 1px 3px var(--shadow)}
-.callout p{margin-bottom:0}
-.callout.warn{border-left-color:var(--warn)}
-.table-wrap{overflow-x:auto;margin:1.5rem 0}
-.ref-table{width:100%;border-collapse:collapse;font-size:.86rem;min-width:560px}
-.ref-table th{text-align:left;font-family:var(--mono);font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-tertiary);padding:.55rem .7rem;border-bottom:2px solid var(--border)}
-.ref-table td{padding:.6rem .7rem;border-bottom:1px solid var(--border);color:var(--text-secondary);vertical-align:top;line-height:1.55}
-.ref-table td:first-child{color:var(--text-primary);font-weight:600}
-.site-footer{margin-left:var(--toc-w);padding:3rem 3.5rem;border-top:1px solid var(--border);font-size:.76rem;color:var(--text-tertiary);line-height:1.85}
-.site-footer a{color:var(--teal);text-decoration:none}
-.disclaimer{margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);font-size:.7rem;font-style:italic}
-a:focus-visible,button:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
-@media print{
-  .site-header,.toc-rail,.theme-toggle,.header-controls{display:none!important}
-  .main-content{margin-left:0!important;padding:0!important;max-width:100%}
-  .site-footer{margin-left:0}
-  body{font-size:11pt;background:#fff;color:#111}
-  .diagram-wrapper,pre{break-inside:avoid}
-}
-@media(max-width:900px){
-  .toc-rail{display:none}
-  .main-content{margin-left:0;padding:1.5rem 1.2rem 4rem}
-  .site-footer{margin-left:0;padding:2rem 1.2rem}
-  h1{font-size:1.9rem}
-  .site-header{padding:.7rem 1.2rem}
-}
-
-/* LAYOUT v2: centre the reading column in the space right of the rail; let figures and tables run wider on large screens */
-@media(min-width:901px){
-  .page-wrapper{padding-left:var(--toc-w)}
-  .main-content{margin-left:auto;margin-right:auto;min-width:0;width:100%;max-width:1160px}
-  .main-content > *:not(.diagram-wrapper):not(.table-wrap):not(.ref-table):not(.wide){max-width:780px;margin-left:auto;margin-right:auto}
-  .main-content > .diagram-wrapper,.main-content > .table-wrap,.main-content > .ref-table,.main-content > .wide{max-width:1000px;margin-left:auto;margin-right:auto}
-  .site-footer > *{max-width:780px;margin-left:auto;margin-right:auto}
-}
-
-/* LAYOUT v2.1: no flex overflow on narrow screens; single rule between hero and first section */
-.main-content{min-width:0}
-.hero + h2{border-top:none;padding-top:0;margin-top:2.2rem}
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
 </head>
-<body>
+<body class="fig-scroll">
 
 <header class="site-header">
   <a class="brand" href="/"><span class="brand-name">Tawhid Rahman</span></a>
   <div class="header-controls">
     <a class="header-link" href="/">All work</a>
-    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">&#9681; Theme</button>
+    <a class="header-link" href="https://www.linkedin.com/in/tawhidurr/" target="_blank" rel="noopener">LinkedIn</a>
+    <a class="header-link" href="https://substack.com/@tawhidr" target="_blank" rel="noopener">Substack</a>
   </div>
 </header>
 
@@ -185,55 +92,55 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--teal);outline-offse
   <div class="diagram-wrapper">
     <svg viewBox="0 0 760 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Topology of the three-tier memory system: eight project contexts, a shared active state page, a decision archive, a promotion queue and a spine.">
       <defs>
-        <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1a9e8f"/></marker>
-        <marker id="a1g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6e6e88"/></marker>
-        <linearGradient id="tg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2ec4b6" stop-opacity=".16"/><stop offset="100%" stop-color="#2ec4b6" stop-opacity=".03"/></linearGradient>
+        <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1F4FE0"/></marker>
+        <marker id="a1g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5E6A7D"/></marker>
+        <linearGradient id="tg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#5B84F0" stop-opacity=".16"/><stop offset="100%" stop-color="#5B84F0" stop-opacity=".03"/></linearGradient>
       </defs>
-      <text x="30" y="22" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#1a9e8f" letter-spacing=".12em">PROJECT CONTEXTS (REPLICAS)</text>
-      <g font-family="Instrument Sans,sans-serif" font-size="10.5" fill="currentColor" text-anchor="middle"><rect x="30" y="32" width="78" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="69" y="51">Automation</text><text x="69" y="65" font-size="9" fill="#6e6e88">context</text><rect x="116" y="32" width="78" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="155" y="51">Publication</text><text x="155" y="65" font-size="9" fill="#6e6e88">context</text><rect x="202" y="32" width="78" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="241" y="51">Content</text><text x="241" y="65" font-size="9" fill="#6e6e88">context</text><rect x="288" y="32" width="78" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="327" y="51">Sales</text><text x="327" y="65" font-size="9" fill="#6e6e88">context</text><rect x="374" y="32" width="78" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="413" y="51">Counsel</text><text x="413" y="65" font-size="9" fill="#6e6e88">context</text><rect x="460" y="32" width="78" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="499" y="51">Ideas</text><text x="499" y="65" font-size="9" fill="#6e6e88">context</text><rect x="546" y="32" width="78" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="585" y="51">Research</text><text x="585" y="65" font-size="9" fill="#6e6e88">context</text><rect x="632" y="32" width="78" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="671" y="51">Relations</text><text x="671" y="65" font-size="9" fill="#6e6e88">context</text></g>
-      <g stroke="#1a9e8f" stroke-width="1.2" marker-end="url(#a1)"><line x1="69" y1="76" x2="69" y2="124"/><line x1="155" y1="76" x2="155" y2="124"/><line x1="241" y1="76" x2="241" y2="124"/><line x1="327" y1="76" x2="327" y2="124"/><line x1="413" y1="76" x2="413" y2="124"/><line x1="499" y1="76" x2="499" y2="124"/><line x1="585" y1="76" x2="585" y2="124"/><line x1="671" y1="76" x2="671" y2="124"/></g>
+      <text x="30" y="22" font-family="Geist Mono,monospace" font-size="9.5" fill="#1F4FE0" letter-spacing=".12em">PROJECT CONTEXTS (REPLICAS)</text>
+      <g font-family="Geist,sans-serif" font-size="10.5" fill="currentColor" text-anchor="middle"><rect x="30" y="32" width="78" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="69" y="51">Automation</text><text x="69" y="65" font-size="9" fill="#5E6A7D">context</text><rect x="116" y="32" width="78" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="155" y="51">Publication</text><text x="155" y="65" font-size="9" fill="#5E6A7D">context</text><rect x="202" y="32" width="78" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="241" y="51">Content</text><text x="241" y="65" font-size="9" fill="#5E6A7D">context</text><rect x="288" y="32" width="78" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="327" y="51">Sales</text><text x="327" y="65" font-size="9" fill="#5E6A7D">context</text><rect x="374" y="32" width="78" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="413" y="51">Counsel</text><text x="413" y="65" font-size="9" fill="#5E6A7D">context</text><rect x="460" y="32" width="78" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="499" y="51">Ideas</text><text x="499" y="65" font-size="9" fill="#5E6A7D">context</text><rect x="546" y="32" width="78" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="585" y="51">Research</text><text x="585" y="65" font-size="9" fill="#5E6A7D">context</text><rect x="632" y="32" width="78" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="671" y="51">Relations</text><text x="671" y="65" font-size="9" fill="#5E6A7D">context</text></g>
+      <g stroke="#1F4FE0" stroke-width="1.2" marker-end="url(#a1)"><line x1="69" y1="76" x2="69" y2="124"/><line x1="155" y1="76" x2="155" y2="124"/><line x1="241" y1="76" x2="241" y2="124"/><line x1="327" y1="76" x2="327" y2="124"/><line x1="413" y1="76" x2="413" y2="124"/><line x1="499" y1="76" x2="499" y2="124"/><line x1="585" y1="76" x2="585" y2="124"/><line x1="671" y1="76" x2="671" y2="124"/></g>
       
 
-      <rect x="24" y="116" width="690" height="90" rx="6" fill="url(#tg)" stroke="#1a9e8f" stroke-width="1.5"/>
-      <text x="40" y="195" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#1a9e8f" letter-spacing=".12em">TIER 2 · ACTIVE STATE</text><text x="700" y="195" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88" text-anchor="end">each context overwrites only its own section, reads all eight</text>
-      <g fill="none" stroke="#1a9e8f" stroke-opacity=".6"><rect x="33" y="128" width="72" height="42" rx="3"/><rect x="119" y="128" width="72" height="42" rx="3"/><rect x="205" y="128" width="72" height="42" rx="3"/><rect x="291" y="128" width="72" height="42" rx="3"/><rect x="377" y="128" width="72" height="42" rx="3"/><rect x="463" y="128" width="72" height="42" rx="3"/><rect x="549" y="128" width="72" height="42" rx="3"/><rect x="635" y="128" width="72" height="42" rx="3"/></g>
-      <g font-family="JetBrains Mono,monospace" font-size="8" fill="#6e6e88" text-anchor="middle"><text x="69" y="146">§ automation</text><text x="69" y="160">≤1,500 ch</text><text x="155" y="146">§ publication</text><text x="155" y="160">≤1,500 ch</text><text x="241" y="146">§ content</text><text x="241" y="160">≤1,500 ch</text><text x="327" y="146">§ sales</text><text x="327" y="160">≤1,500 ch</text><text x="413" y="146">§ counsel</text><text x="413" y="160">≤1,500 ch</text><text x="499" y="146">§ ideas</text><text x="499" y="160">≤1,500 ch</text><text x="585" y="146">§ research</text><text x="585" y="160">≤1,500 ch</text><text x="671" y="146">§ relations</text><text x="671" y="160">≤1,500 ch</text></g>
+      <rect x="24" y="116" width="690" height="90" rx="6" fill="url(#tg)" stroke="#1F4FE0" stroke-width="1.5"/>
+      <text x="40" y="195" font-family="Geist Mono,monospace" font-size="9.5" fill="#1F4FE0" letter-spacing=".12em">TIER 2 · ACTIVE STATE</text><text x="700" y="195" font-family="Geist,sans-serif" font-size="9.5" fill="#5E6A7D" text-anchor="end">each context overwrites only its own section, reads all eight</text>
+      <g fill="none" stroke="#1F4FE0" stroke-opacity=".6"><rect x="33" y="128" width="72" height="42" rx="3"/><rect x="119" y="128" width="72" height="42" rx="3"/><rect x="205" y="128" width="72" height="42" rx="3"/><rect x="291" y="128" width="72" height="42" rx="3"/><rect x="377" y="128" width="72" height="42" rx="3"/><rect x="463" y="128" width="72" height="42" rx="3"/><rect x="549" y="128" width="72" height="42" rx="3"/><rect x="635" y="128" width="72" height="42" rx="3"/></g>
+      <g font-family="Geist Mono,monospace" font-size="8" fill="#5E6A7D" text-anchor="middle"><text x="69" y="146">§ automation</text><text x="69" y="160">≤1,500 ch</text><text x="155" y="146">§ publication</text><text x="155" y="160">≤1,500 ch</text><text x="241" y="146">§ content</text><text x="241" y="160">≤1,500 ch</text><text x="327" y="146">§ sales</text><text x="327" y="160">≤1,500 ch</text><text x="413" y="146">§ counsel</text><text x="413" y="160">≤1,500 ch</text><text x="499" y="146">§ ideas</text><text x="499" y="160">≤1,500 ch</text><text x="585" y="146">§ research</text><text x="585" y="160">≤1,500 ch</text><text x="671" y="146">§ relations</text><text x="671" y="160">≤1,500 ch</text></g>
 
-      <g stroke="#1a9e8f" stroke-width="1.2" marker-end="url(#a1)">
+      <g stroke="#1F4FE0" stroke-width="1.2" marker-end="url(#a1)">
         <line x1="130" y1="208" x2="130" y2="290"/>
         <line x1="370" y1="208" x2="370" y2="290"/>
       </g>
-      <text x="138" y="252" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88">append decisions</text>
-      <text x="378" y="252" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88">propose (never write)</text>
+      <text x="138" y="252" font-family="Geist,sans-serif" font-size="9.5" fill="#5E6A7D">append decisions</text>
+      <text x="378" y="252" font-family="Geist,sans-serif" font-size="9.5" fill="#5E6A7D">propose (never write)</text>
 
       <rect x="24" y="292" width="212" height="112" rx="6" fill="none" stroke="currentColor" stroke-opacity=".45"/>
-      <text x="40" y="314" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#1a9e8f" letter-spacing=".12em">TIER 3 · ARCHIVE</text>
-      <text x="40" y="338" font-family="Fraunces,serif" font-size="15" fill="currentColor">Decision log</text>
-      <text x="40" y="358" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">append-only, Supersedes links</text>
-      <text x="40" y="373" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">scope: Local | Cross</text>
-      <text x="40" y="388" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">read by search, never whole</text>
+      <text x="40" y="314" font-family="Geist Mono,monospace" font-size="9.5" fill="#1F4FE0" letter-spacing=".12em">TIER 3 · ARCHIVE</text>
+      <text x="40" y="338" font-family="Geist,serif" font-size="15" fill="currentColor">Decision log</text>
+      <text x="40" y="358" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">append-only, Supersedes links</text>
+      <text x="40" y="373" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">scope: Local | Cross</text>
+      <text x="40" y="388" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">read by search, never whole</text>
 
       <rect x="264" y="292" width="212" height="112" rx="6" fill="none" stroke="currentColor" stroke-opacity=".45"/>
-      <text x="280" y="314" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#1a9e8f" letter-spacing=".12em">PROMOTION QUEUE</text>
-      <text x="280" y="338" font-family="Fraunces,serif" font-size="15" fill="currentColor">Pending changes</text>
-      <text x="280" y="358" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">verbatim old / new text</text>
-      <text x="280" y="373" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">change type, rationale, target</text>
-      <text x="280" y="388" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">the only path into Tier 1</text>
+      <text x="280" y="314" font-family="Geist Mono,monospace" font-size="9.5" fill="#1F4FE0" letter-spacing=".12em">PROMOTION QUEUE</text>
+      <text x="280" y="338" font-family="Geist,serif" font-size="15" fill="currentColor">Pending changes</text>
+      <text x="280" y="358" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">verbatim old / new text</text>
+      <text x="280" y="373" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">change type, rationale, target</text>
+      <text x="280" y="388" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">the only path into Tier 1</text>
 
-      <rect x="530" y="292" width="184" height="112" rx="6" fill="url(#tg)" stroke="#1a9e8f" stroke-width="1.5"/>
-      <text x="546" y="314" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#1a9e8f" letter-spacing=".12em">TIER 1 · SPINE</text>
-      <text x="546" y="338" font-family="Fraunces,serif" font-size="15" fill="currentColor">Canonical facts</text>
-      <text x="546" y="358" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">rules, IDs, eliminated list</text>
-      <text x="546" y="373" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">sections owned by project</text>
-      <text x="546" y="388" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">no direct writes, by anyone</text>
+      <rect x="530" y="292" width="184" height="112" rx="6" fill="url(#tg)" stroke="#1F4FE0" stroke-width="1.5"/>
+      <text x="546" y="314" font-family="Geist Mono,monospace" font-size="9.5" fill="#1F4FE0" letter-spacing=".12em">TIER 1 · SPINE</text>
+      <text x="546" y="338" font-family="Geist,serif" font-size="15" fill="currentColor">Canonical facts</text>
+      <text x="546" y="358" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">rules, IDs, eliminated list</text>
+      <text x="546" y="373" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">sections owned by project</text>
+      <text x="546" y="388" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">no direct writes, by anyone</text>
 
-      <line x1="478" y1="348" x2="526" y2="348" stroke="#1a9e8f" stroke-width="1.4" marker-end="url(#a1)"/>
-      <text x="503" y="424" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#1a9e8f" text-anchor="middle">human approves in chat,</text>
-      <text x="503" y="437" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#1a9e8f" text-anchor="middle">owning context applies</text>
-      <line x1="503" y1="412" x2="503" y2="352" stroke="#1a9e8f" stroke-width=".8" stroke-dasharray="2,2"/>
+      <line x1="478" y1="348" x2="526" y2="348" stroke="#1F4FE0" stroke-width="1.4" marker-end="url(#a1)"/>
+      <text x="503" y="424" font-family="Geist,sans-serif" font-size="9.5" fill="#1F4FE0" text-anchor="middle">human approves in chat,</text>
+      <text x="503" y="437" font-family="Geist,sans-serif" font-size="9.5" fill="#1F4FE0" text-anchor="middle">owning context applies</text>
+      <line x1="503" y1="412" x2="503" y2="352" stroke="#1F4FE0" stroke-width=".8" stroke-dasharray="2,2"/>
 
-      <path d="M716,340 L740,340 L740,53 L710,53" fill="none" stroke="#6e6e88" stroke-width="1.1" stroke-dasharray="5,3" marker-end="url(#a1g)"/>
-      <text x="747" y="200" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88" transform="rotate(90 747 200)" text-anchor="middle">conditional read before any channel or tool recommendation</text>
+      <path d="M716,340 L740,340 L740,53 L710,53" fill="none" stroke="#5E6A7D" stroke-width="1.1" stroke-dasharray="5,3" marker-end="url(#a1g)"/>
+      <text x="747" y="200" font-family="Geist,sans-serif" font-size="9.5" fill="#5E6A7D" transform="rotate(90 747 200)" text-anchor="middle">conditional read before any channel or tool recommendation</text>
     </svg>
     <p class="diagram-caption">Figure 1. Eight replicas, three tiers, one queue. Solid arrows are writes; the dashed arrow is a read.</p>
   </div>
@@ -291,33 +198,33 @@ POINTERS: <span class="c">&lt;tracker IDs, database IDs&gt;</span></code></pre>
 
   <div class="diagram-wrapper">
     <svg viewBox="0 0 740 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Supersession chain in the decision archive: newer entries point back at the entries they overtake; reads return only entries with an empty Superseded-by field.">
-      <defs><marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6e6e88"/></marker></defs>
-      <g font-family="Instrument Sans,sans-serif" font-size="10.5" fill="currentColor">
+      <defs><marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5E6A7D"/></marker></defs>
+      <g font-family="Geist,sans-serif" font-size="10.5" fill="currentColor">
         <rect x="20" y="40" width="190" height="78" rx="5" fill="none" stroke="currentColor" stroke-opacity=".3"/>
-        <text x="34" y="60" font-family="JetBrains Mono,monospace" font-size="9" fill="#6e6e88">2026-05-02 · Cross</text>
+        <text x="34" y="60" font-family="Geist Mono,monospace" font-size="9" fill="#5E6A7D">2026-05-02 · Cross</text>
         <text x="34" y="80">Channel X: primary</text>
-        <text x="34" y="104" font-size="9.5" fill="#6e6e88">Superseded by: #2</text>
+        <text x="34" y="104" font-size="9.5" fill="#5E6A7D">Superseded by: #2</text>
 
         <rect x="270" y="40" width="190" height="78" rx="5" fill="none" stroke="currentColor" stroke-opacity=".3"/>
-        <text x="284" y="60" font-family="JetBrains Mono,monospace" font-size="9" fill="#6e6e88">2026-06-02 · Cross</text>
+        <text x="284" y="60" font-family="Geist Mono,monospace" font-size="9" fill="#5E6A7D">2026-06-02 · Cross</text>
         <text x="284" y="80">Channel X: eliminated</text>
-        <text x="284" y="104" font-size="9.5" fill="#6e6e88">Superseded by: #3</text>
+        <text x="284" y="104" font-size="9.5" fill="#5E6A7D">Superseded by: #3</text>
 
-        <rect x="520" y="40" width="200" height="78" rx="5" fill="none" stroke="#1a9e8f" stroke-width="1.5"/>
-        <text x="534" y="60" font-family="JetBrains Mono,monospace" font-size="9" fill="#1a9e8f">2026-06-17 · Cross</text>
+        <rect x="520" y="40" width="200" height="78" rx="5" fill="none" stroke="#1F4FE0" stroke-width="1.5"/>
+        <text x="534" y="60" font-family="Geist Mono,monospace" font-size="9" fill="#1F4FE0">2026-06-17 · Cross</text>
         <text x="534" y="80">Channel X: eliminated,</text>
         <text x="534" y="94">inbound-only exception removed</text>
-        <text x="534" y="110" font-size="9.5" fill="#1a9e8f">Superseded by: (empty)</text>
+        <text x="534" y="110" font-size="9.5" fill="#1F4FE0">Superseded by: (empty)</text>
       </g>
-      <line x1="268" y1="79" x2="212" y2="79" stroke="#6e6e88" stroke-width="1.1" marker-end="url(#a2)"/>
-      <line x1="518" y1="79" x2="462" y2="79" stroke="#6e6e88" stroke-width="1.1" marker-end="url(#a2)"/>
-      <text x="240" y="72" font-family="Instrument Sans,sans-serif" font-size="9" fill="#6e6e88" text-anchor="middle">supersedes</text>
-      <text x="490" y="72" font-family="Instrument Sans,sans-serif" font-size="9" fill="#6e6e88" text-anchor="middle">supersedes</text>
-      <rect x="520" y="140" width="200" height="34" rx="4" fill="#2ec4b6" fill-opacity=".1" stroke="#1a9e8f" stroke-opacity=".5"/>
-      <text x="620" y="161" font-family="JetBrains Mono,monospace" font-size="9" fill="#1a9e8f" text-anchor="middle">search filter returns this only</text>
-      <line x1="620" y1="120" x2="620" y2="138" stroke="#1a9e8f" stroke-width="1" stroke-dasharray="3,2"/>
-      <text x="20" y="160" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Entries are never edited or deleted.</text>
-      <text x="20" y="176" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Currency is a property of the chain, not of the row.</text>
+      <line x1="268" y1="79" x2="212" y2="79" stroke="#5E6A7D" stroke-width="1.1" marker-end="url(#a2)"/>
+      <line x1="518" y1="79" x2="462" y2="79" stroke="#5E6A7D" stroke-width="1.1" marker-end="url(#a2)"/>
+      <text x="240" y="72" font-family="Geist,sans-serif" font-size="9" fill="#5E6A7D" text-anchor="middle">supersedes</text>
+      <text x="490" y="72" font-family="Geist,sans-serif" font-size="9" fill="#5E6A7D" text-anchor="middle">supersedes</text>
+      <rect x="520" y="140" width="200" height="34" rx="4" fill="#5B84F0" fill-opacity=".1" stroke="#1F4FE0" stroke-opacity=".5"/>
+      <text x="620" y="161" font-family="Geist Mono,monospace" font-size="9" fill="#1F4FE0" text-anchor="middle">search filter returns this only</text>
+      <line x1="620" y1="120" x2="620" y2="138" stroke="#1F4FE0" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="20" y="160" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Entries are never edited or deleted.</text>
+      <text x="20" y="176" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Currency is a property of the chain, not of the row.</text>
     </svg>
     <p class="diagram-caption">Figure 2. A supersession chain (illustrative entries). Reads filter on an empty Superseded-by field, so history stays intact and only the head is live.</p>
   </div>
@@ -340,64 +247,64 @@ POINTERS: <span class="c">&lt;tracker IDs, database IDs&gt;</span></code></pre>
   <div class="diagram-wrapper">
     <svg viewBox="0 0 760 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Promotion state machine: a candidate passes the durability and cross-project test, is checked against prior rejections, becomes a pending row, and is either approved and applied to Tier 1 or rejected and archived. Pending rows trigger a nag after 14 days and backpressure after 30.">
       <defs>
-        <marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1a9e8f"/></marker>
-        <marker id="a3g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6e6e88"/></marker>
+        <marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1F4FE0"/></marker>
+        <marker id="a3g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5E6A7D"/></marker>
         <marker id="a3r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#b5462f"/></marker>
       </defs>
-      <g font-family="Instrument Sans,sans-serif" font-size="10.5" fill="currentColor" text-anchor="middle">
+      <g font-family="Geist,sans-serif" font-size="10.5" fill="currentColor" text-anchor="middle">
         <rect x="14" y="120" width="108" height="56" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/>
-        <text x="68" y="143">Candidate</text><text x="68" y="159" font-size="9" fill="#6e6e88">session end</text>
+        <text x="68" y="143">Candidate</text><text x="68" y="159" font-size="9" fill="#5E6A7D">session end</text>
 
         <rect x="152" y="112" width="140" height="72" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/>
         <text x="222" y="134">Promotion test</text>
-        <text x="222" y="151" font-size="9" fill="#6e6e88">true in 90 days</text>
-        <text x="222" y="164" font-size="9" fill="#6e6e88">AND changes another</text>
-        <text x="222" y="176" font-size="9" fill="#6e6e88">context's behaviour</text>
+        <text x="222" y="151" font-size="9" fill="#5E6A7D">true in 90 days</text>
+        <text x="222" y="164" font-size="9" fill="#5E6A7D">AND changes another</text>
+        <text x="222" y="176" font-size="9" fill="#5E6A7D">context's behaviour</text>
 
         <rect x="322" y="120" width="120" height="56" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/>
-        <text x="382" y="143">Rejection search</text><text x="382" y="159" font-size="9" fill="#6e6e88">archive, type REJECTION</text>
+        <text x="382" y="143">Rejection search</text><text x="382" y="159" font-size="9" fill="#5E6A7D">archive, type REJECTION</text>
 
-        <rect x="474" y="120" width="112" height="56" rx="5" fill="#2ec4b6" fill-opacity=".1" stroke="#1a9e8f" stroke-width="1.5"/>
-        <text x="530" y="143" fill="#1a9e8f" font-family="JetBrains Mono,monospace" font-size="10">PENDING</text><text x="530" y="159" font-size="9" fill="#6e6e88">queue row</text>
+        <rect x="474" y="120" width="112" height="56" rx="5" fill="#5B84F0" fill-opacity=".1" stroke="#1F4FE0" stroke-width="1.5"/>
+        <text x="530" y="143" fill="#1F4FE0" font-family="Geist Mono,monospace" font-size="10">PENDING</text><text x="530" y="159" font-size="9" fill="#5E6A7D">queue row</text>
 
-        <rect x="618" y="120" width="128" height="56" rx="5" fill="#2ec4b6" fill-opacity=".18" stroke="#1a9e8f" stroke-width="1.5"/>
-        <text x="682" y="143" fill="#1a9e8f" font-family="JetBrains Mono,monospace" font-size="10">APPLIED</text><text x="682" y="159" font-size="9" fill="#6e6e88">Tier 1 line changed</text>
+        <rect x="618" y="120" width="128" height="56" rx="5" fill="#5B84F0" fill-opacity=".18" stroke="#1F4FE0" stroke-width="1.5"/>
+        <text x="682" y="143" fill="#1F4FE0" font-family="Geist Mono,monospace" font-size="10">APPLIED</text><text x="682" y="159" font-size="9" fill="#5E6A7D">Tier 1 line changed</text>
 
         <rect x="152" y="246" width="140" height="50" rx="5" fill="none" stroke="currentColor" stroke-opacity=".3" stroke-dasharray="4,3"/>
-        <text x="222" y="267">Tier 3, or nowhere</text><text x="222" y="283" font-size="9" fill="#6e6e88">the usual outcome</text>
+        <text x="222" y="267">Tier 3, or nowhere</text><text x="222" y="283" font-size="9" fill="#5E6A7D">the usual outcome</text>
 
         <rect x="322" y="246" width="120" height="50" rx="5" fill="none" stroke="currentColor" stroke-opacity=".3" stroke-dasharray="4,3"/>
-        <text x="382" y="267">Stop</text><text x="382" y="283" font-size="9" fill="#6e6e88">not re-proposed</text>
+        <text x="382" y="267">Stop</text><text x="382" y="283" font-size="9" fill="#5E6A7D">not re-proposed</text>
 
         <rect x="474" y="246" width="112" height="50" rx="5" fill="none" stroke="#b5462f" stroke-opacity=".7"/>
-        <text x="530" y="267">REJECTED</text><text x="530" y="283" font-size="9" fill="#6e6e88">archived with reasons</text>
+        <text x="530" y="267">REJECTED</text><text x="530" y="283" font-size="9" fill="#5E6A7D">archived with reasons</text>
       </g>
-      <g stroke="#1a9e8f" stroke-width="1.3" marker-end="url(#a3)" fill="none">
+      <g stroke="#1F4FE0" stroke-width="1.3" marker-end="url(#a3)" fill="none">
         <line x1="124" y1="148" x2="149" y2="148"/>
         <line x1="294" y1="148" x2="319" y2="148"/>
         <line x1="444" y1="148" x2="471" y2="148"/>
         <line x1="588" y1="148" x2="615" y2="148"/>
       </g>
-      <g font-family="Instrument Sans,sans-serif" font-size="8.5" fill="#1a9e8f" text-anchor="middle">
+      <g font-family="Geist,sans-serif" font-size="8.5" fill="#1F4FE0" text-anchor="middle">
         <text x="307" y="140">pass</text><text x="458" y="140">none</text><text x="602" y="140">yes</text>
       </g>
-      <g stroke="#6e6e88" stroke-width="1.1" marker-end="url(#a3g)" fill="none">
+      <g stroke="#5E6A7D" stroke-width="1.1" marker-end="url(#a3g)" fill="none">
         <line x1="222" y1="186" x2="222" y2="243"/>
         <line x1="382" y1="178" x2="382" y2="243"/>
       </g>
-      <g font-family="Instrument Sans,sans-serif" font-size="8.5" fill="#6e6e88">
+      <g font-family="Geist,sans-serif" font-size="8.5" fill="#5E6A7D">
         <text x="228" y="218">fail</text><text x="388" y="218">match found</text>
       </g>
       <line x1="530" y1="178" x2="530" y2="243" stroke="#b5462f" stroke-width="1.1" marker-end="url(#a3r)"/>
-      <text x="536" y="218" font-family="Instrument Sans,sans-serif" font-size="8.5" fill="#b5462f">no</text>
+      <text x="536" y="218" font-family="Geist,sans-serif" font-size="8.5" fill="#b5462f">no</text>
       <path d="M474,272 L446,272" stroke="#b5462f" stroke-width="1" stroke-dasharray="3,3" fill="none" marker-end="url(#a3r)"/>
-      <text x="460" y="314" font-family="Instrument Sans,sans-serif" font-size="8.5" fill="#6e6e88" text-anchor="middle">future proposals match against it</text>
+      <text x="460" y="314" font-family="Geist,sans-serif" font-size="8.5" fill="#5E6A7D" text-anchor="middle">future proposals match against it</text>
 
-      <text x="602" y="112" font-family="Instrument Sans,sans-serif" font-size="9" fill="#1a9e8f" text-anchor="middle">human, in chat only</text>
+      <text x="602" y="112" font-family="Geist,sans-serif" font-size="9" fill="#1F4FE0" text-anchor="middle">human, in chat only</text>
       <rect x="474" y="22" width="272" height="56" rx="5" fill="none" stroke="#b5462f" stroke-opacity=".6" stroke-dasharray="4,3"/>
-      <text x="488" y="42" font-family="JetBrains Mono,monospace" font-size="9" fill="#b5462f">TIMERS ON PENDING</text>
-      <text x="488" y="58" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="currentColor">&gt; 14 days: one-line nag every session</text>
-      <text x="488" y="71" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="currentColor">&gt; 30 days: no new rows for that section</text>
+      <text x="488" y="42" font-family="Geist Mono,monospace" font-size="9" fill="#b5462f">TIMERS ON PENDING</text>
+      <text x="488" y="58" font-family="Geist,sans-serif" font-size="9.5" fill="currentColor">&gt; 14 days: one-line nag every session</text>
+      <text x="488" y="71" font-family="Geist,sans-serif" font-size="9.5" fill="currentColor">&gt; 30 days: no new rows for that section</text>
       <line x1="530" y1="80" x2="530" y2="118" stroke="#b5462f" stroke-opacity=".6" stroke-dasharray="2,2"/>
     </svg>
     <p class="diagram-caption">Figure 3. The promotion state machine. Only one transition, Pending to Applied, touches Tier 1, and only a person can trigger it.</p>
@@ -430,55 +337,55 @@ POINTERS: <span class="c">&lt;tracker IDs, database IDs&gt;</span></code></pre>
 
   <div class="diagram-wrapper">
     <svg viewBox="0 0 740 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Tombstone write-set: one elimination triggers three required writes, a TOMBSTONE queue row, Deprecated status on every dependent row in three databases, and an archive entry. Below, the observed failure when only prose was changed.">
-      <defs><marker id="a4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1a9e8f"/></marker></defs>
-      <rect x="20" y="104" width="160" height="70" rx="6" fill="#2ec4b6" fill-opacity=".1" stroke="#1a9e8f" stroke-width="1.5"/>
-      <text x="100" y="134" font-family="Fraunces,serif" font-size="15" fill="currentColor" text-anchor="middle">Surface eliminated</text>
-      <text x="100" y="154" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88" text-anchor="middle">channel, tool, product line</text>
+      <defs><marker id="a4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1F4FE0"/></marker></defs>
+      <rect x="20" y="104" width="160" height="70" rx="6" fill="#5B84F0" fill-opacity=".1" stroke="#1F4FE0" stroke-width="1.5"/>
+      <text x="100" y="134" font-family="Geist,serif" font-size="15" fill="currentColor" text-anchor="middle">Surface eliminated</text>
+      <text x="100" y="154" font-family="Geist,sans-serif" font-size="9.5" fill="#5E6A7D" text-anchor="middle">channel, tool, product line</text>
 
-      <g stroke="#1a9e8f" stroke-width="1.3" fill="none" marker-end="url(#a4)">
+      <g stroke="#1F4FE0" stroke-width="1.3" fill="none" marker-end="url(#a4)">
         <path d="M182,130 C215,130 215,48 246,48"/>
         <line x1="182" y1="139" x2="246" y2="139"/>
         <path d="M182,148 C215,148 215,232 246,232"/>
       </g>
-      <g font-family="JetBrains Mono,monospace" font-size="9" fill="#1a9e8f">
+      <g font-family="Geist Mono,monospace" font-size="9" fill="#1F4FE0">
         <text x="206" y="80">1</text><text x="206" y="133">2</text><text x="206" y="204">3</text>
       </g>
 
       <rect x="248" y="18" width="220" height="62" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/>
-      <text x="262" y="38" font-family="JetBrains Mono,monospace" font-size="9" fill="#1a9e8f">QUEUE ROW</text>
-      <text x="262" y="56" font-family="Instrument Sans,sans-serif" font-size="10.5" fill="currentColor">Change type = TOMBSTONE</text>
-      <text x="262" y="71" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88">amends the eliminated list on approval</text>
+      <text x="262" y="38" font-family="Geist Mono,monospace" font-size="9" fill="#1F4FE0">QUEUE ROW</text>
+      <text x="262" y="56" font-family="Geist,sans-serif" font-size="10.5" fill="currentColor">Change type = TOMBSTONE</text>
+      <text x="262" y="71" font-family="Geist,sans-serif" font-size="9.5" fill="#5E6A7D">amends the eliminated list on approval</text>
 
       <rect x="248" y="100" width="220" height="80" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/>
-      <text x="262" y="120" font-family="JetBrains Mono,monospace" font-size="9" fill="#1a9e8f">RECORD WRITES</text>
-      <text x="262" y="138" font-family="Instrument Sans,sans-serif" font-size="10.5" fill="currentColor">Status = Deprecated on every</text>
-      <text x="262" y="153" font-family="Instrument Sans,sans-serif" font-size="10.5" fill="currentColor">dependent row, every database</text>
-      <text x="262" y="170" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88">not the ones someone remembers</text>
+      <text x="262" y="120" font-family="Geist Mono,monospace" font-size="9" fill="#1F4FE0">RECORD WRITES</text>
+      <text x="262" y="138" font-family="Geist,sans-serif" font-size="10.5" fill="currentColor">Status = Deprecated on every</text>
+      <text x="262" y="153" font-family="Geist,sans-serif" font-size="10.5" fill="currentColor">dependent row, every database</text>
+      <text x="262" y="170" font-family="Geist,sans-serif" font-size="9.5" fill="#5E6A7D">not the ones someone remembers</text>
 
       <rect x="248" y="202" width="220" height="62" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/>
-      <text x="262" y="222" font-family="JetBrains Mono,monospace" font-size="9" fill="#1a9e8f">ARCHIVE ENTRY</text>
-      <text x="262" y="240" font-family="Instrument Sans,sans-serif" font-size="10.5" fill="currentColor">Tier 3, scope Cross</text>
-      <text x="262" y="255" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88">with Supersedes link</text>
+      <text x="262" y="222" font-family="Geist Mono,monospace" font-size="9" fill="#1F4FE0">ARCHIVE ENTRY</text>
+      <text x="262" y="240" font-family="Geist,sans-serif" font-size="10.5" fill="currentColor">Tier 3, scope Cross</text>
+      <text x="262" y="255" font-family="Geist,sans-serif" font-size="9.5" fill="#5E6A7D">with Supersedes link</text>
 
-      <g stroke="#1a9e8f" stroke-width="1" fill="none" stroke-opacity=".7" marker-end="url(#a4)">
+      <g stroke="#1F4FE0" stroke-width="1" fill="none" stroke-opacity=".7" marker-end="url(#a4)">
         <line x1="470" y1="120" x2="520" y2="70"/>
         <line x1="470" y1="140" x2="520" y2="140"/>
         <line x1="470" y1="160" x2="520" y2="210"/>
       </g>
-      <g font-family="Instrument Sans,sans-serif" font-size="10.5" fill="currentColor">
-        <rect x="522" y="48" width="198" height="42" rx="4" fill="none" stroke="currentColor" stroke-opacity=".3"/><text x="536" y="67">Product backlog</text><text x="536" y="81" font-size="9" fill="#6e6e88">14 rows affected in the incident</text>
-        <rect x="522" y="119" width="198" height="42" rx="4" fill="none" stroke="currentColor" stroke-opacity=".3"/><text x="536" y="138">Content library</text><text x="536" y="152" font-size="9" fill="#6e6e88">pieces targeting the surface</text>
-        <rect x="522" y="190" width="198" height="42" rx="4" fill="none" stroke="currentColor" stroke-opacity=".3"/><text x="536" y="209">Ideas lab</text><text x="536" y="223" font-size="9" fill="#6e6e88">concepts routed to it</text>
+      <g font-family="Geist,sans-serif" font-size="10.5" fill="currentColor">
+        <rect x="522" y="48" width="198" height="42" rx="4" fill="none" stroke="currentColor" stroke-opacity=".3"/><text x="536" y="67">Product backlog</text><text x="536" y="81" font-size="9" fill="#5E6A7D">14 rows affected in the incident</text>
+        <rect x="522" y="119" width="198" height="42" rx="4" fill="none" stroke="currentColor" stroke-opacity=".3"/><text x="536" y="138">Content library</text><text x="536" y="152" font-size="9" fill="#5E6A7D">pieces targeting the surface</text>
+        <rect x="522" y="190" width="198" height="42" rx="4" fill="none" stroke="currentColor" stroke-opacity=".3"/><text x="536" y="209">Ideas lab</text><text x="536" y="223" font-size="9" fill="#5E6A7D">concepts routed to it</text>
       </g>
 
       <rect x="20" y="290" width="700" height="94" rx="6" fill="#b5462f" fill-opacity=".05" stroke="#b5462f" stroke-opacity=".7" stroke-dasharray="5,3"/>
-      <text x="36" y="312" font-family="JetBrains Mono,monospace" font-size="9" fill="#b5462f" letter-spacing=".1em">OBSERVED FAILURE · PROSE-ONLY DELETION</text>
-      <g font-family="Instrument Sans,sans-serif" font-size="10.5" fill="currentColor">
+      <text x="36" y="312" font-family="Geist Mono,monospace" font-size="9" fill="#b5462f" letter-spacing=".1em">OBSERVED FAILURE · PROSE-ONLY DELETION</text>
+      <g font-family="Geist,sans-serif" font-size="10.5" fill="currentColor">
         <text x="36" y="336">Rules: "Gumroad eliminated."</text>
         <text x="36" y="354">Backlog: 14 rows untouched, 10 Validating, 1 Ready.</text>
-        <text x="36" y="372" fill="#6e6e88">Every context that queried the backlog surfaced them as live work. For months. Correctly.</text>
+        <text x="36" y="372" fill="#5E6A7D">Every context that queried the backlog surfaced them as live work. For months. Correctly.</text>
       </g>
-      <g font-family="JetBrains Mono,monospace" font-size="22" fill="#b5462f" fill-opacity=".85" text-anchor="middle">
+      <g font-family="Geist Mono,monospace" font-size="22" fill="#b5462f" fill-opacity=".85" text-anchor="middle">
         <text x="560" y="348">1 ✓</text><text x="620" y="348">2 ✗</text><text x="680" y="348">3 ✗</text>
       </g>
     </svg>
@@ -507,36 +414,36 @@ POINTERS: <span class="c">&lt;tracker IDs, database IDs&gt;</span></code></pre>
 
   <div class="diagram-wrapper">
     <svg viewBox="0 0 740 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Session lifecycle. Start: read Tier 2, check the queue, conditionally read Tier 1, search Tier 3. End: conditional Tier 2 write, archive append, promotion test, tombstone set, tracker close if state changed, git push if a repository was written.">
-      <defs><marker id="a5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1a9e8f"/></marker></defs>
-      <text x="20" y="26" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#1a9e8f" letter-spacing=".12em">SESSION START · READ</text>
-      <g font-family="Instrument Sans,sans-serif" font-size="10" fill="currentColor">
+      <defs><marker id="a5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1F4FE0"/></marker></defs>
+      <text x="20" y="26" font-family="Geist Mono,monospace" font-size="9.5" fill="#1F4FE0" letter-spacing=".12em">SESSION START · READ</text>
+      <g font-family="Geist,sans-serif" font-size="10" fill="currentColor">
         <rect x="20" y="38" width="160" height="78" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/>
-        <text x="32" y="58" font-weight="600">Read Tier 2</text><text x="32" y="76" fill="#6e6e88" font-size="9.5">all eight sections</text><text x="32" y="90" fill="#6e6e88" font-size="9.5">one call, always</text>
+        <text x="32" y="58" font-weight="600">Read Tier 2</text><text x="32" y="76" fill="#5E6A7D" font-size="9.5">all eight sections</text><text x="32" y="90" fill="#5E6A7D" font-size="9.5">one call, always</text>
         <rect x="196" y="38" width="160" height="78" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/>
-        <text x="208" y="58" font-weight="600">Check the queue</text><text x="208" y="76" fill="#6e6e88" font-size="9.5">Pending rows for owned</text><text x="208" y="90" fill="#6e6e88" font-size="9.5">sections shown as diffs;</text><text x="208" y="104" fill="#6e6e88" font-size="9.5">nag &gt;14d, halt &gt;30d</text>
+        <text x="208" y="58" font-weight="600">Check the queue</text><text x="208" y="76" fill="#5E6A7D" font-size="9.5">Pending rows for owned</text><text x="208" y="90" fill="#5E6A7D" font-size="9.5">sections shown as diffs;</text><text x="208" y="104" fill="#5E6A7D" font-size="9.5">nag &gt;14d, halt &gt;30d</text>
         <rect x="372" y="38" width="170" height="78" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/>
-        <text x="384" y="58" font-weight="600">Read Tier 1, if</text><text x="384" y="76" fill="#6e6e88" font-size="9.5">infra or strategy work, or</text><text x="384" y="90" fill="#6e6e88" font-size="9.5">about to recommend any</text><text x="384" y="104" fill="#6e6e88" font-size="9.5">channel, tool or platform</text>
+        <text x="384" y="58" font-weight="600">Read Tier 1, if</text><text x="384" y="76" fill="#5E6A7D" font-size="9.5">infra or strategy work, or</text><text x="384" y="90" fill="#5E6A7D" font-size="9.5">about to recommend any</text><text x="384" y="104" fill="#5E6A7D" font-size="9.5">channel, tool or platform</text>
         <rect x="558" y="38" width="162" height="78" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/>
-        <text x="570" y="58" font-weight="600">Tier 3 on demand</text><text x="570" y="76" fill="#6e6e88" font-size="9.5">search only, head of</text><text x="570" y="90" fill="#6e6e88" font-size="9.5">chain only</text>
+        <text x="570" y="58" font-weight="600">Tier 3 on demand</text><text x="570" y="76" fill="#5E6A7D" font-size="9.5">search only, head of</text><text x="570" y="90" fill="#5E6A7D" font-size="9.5">chain only</text>
       </g>
-      <g stroke="#1a9e8f" stroke-width="1.2" marker-end="url(#a5)"><line x1="181" y1="77" x2="193" y2="77"/><line x1="357" y1="77" x2="369" y2="77"/><line x1="543" y1="77" x2="555" y2="77"/></g>
+      <g stroke="#1F4FE0" stroke-width="1.2" marker-end="url(#a5)"><line x1="181" y1="77" x2="193" y2="77"/><line x1="357" y1="77" x2="369" y2="77"/><line x1="543" y1="77" x2="555" y2="77"/></g>
 
-      <text x="20" y="150" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88">Carve-out: purely intellectual or learning sessions skip every read above. Reads cost context; a session that touches no shared state pays nothing.</text>
+      <text x="20" y="150" font-family="Geist,sans-serif" font-size="9.5" fill="#5E6A7D">Carve-out: purely intellectual or learning sessions skip every read above. Reads cost context; a session that touches no shared state pays nothing.</text>
 
-      <text x="20" y="186" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#1a9e8f" letter-spacing=".12em">SESSION END · WRITE ONLY WHAT CHANGED</text>
-      <g font-family="Instrument Sans,sans-serif" font-size="9.5" fill="currentColor">
+      <text x="20" y="186" font-family="Geist Mono,monospace" font-size="9.5" fill="#1F4FE0" letter-spacing=".12em">SESSION END · WRITE ONLY WHAT CHANGED</text>
+      <g font-family="Geist,sans-serif" font-size="9.5" fill="currentColor">
         <rect x="20" y="198" width="108" height="84" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/>
-        <text x="30" y="217" font-weight="600">Tier 2</text><text x="30" y="233" fill="#6e6e88">overwrite only if</text><text x="30" y="247" fill="#6e6e88">focus, decisions,</text><text x="30" y="261" fill="#6e6e88">next or blocker</text><text x="30" y="275" fill="#6e6e88">changed</text>
+        <text x="30" y="217" font-weight="600">Tier 2</text><text x="30" y="233" fill="#5E6A7D">overwrite only if</text><text x="30" y="247" fill="#5E6A7D">focus, decisions,</text><text x="30" y="261" fill="#5E6A7D">next or blocker</text><text x="30" y="275" fill="#5E6A7D">changed</text>
         <rect x="136" y="198" width="108" height="84" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/>
-        <text x="146" y="217" font-weight="600">Tier 3</text><text x="146" y="233" fill="#6e6e88">append, stamp,</text><text x="146" y="247" fill="#6e6e88">scope, link</text><text x="146" y="261" fill="#6e6e88">Supersedes</text>
+        <text x="146" y="217" font-weight="600">Tier 3</text><text x="146" y="233" fill="#5E6A7D">append, stamp,</text><text x="146" y="247" fill="#5E6A7D">scope, link</text><text x="146" y="261" fill="#5E6A7D">Supersedes</text>
         <rect x="252" y="198" width="108" height="84" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/>
-        <text x="262" y="217" font-weight="600">Promotion test</text><text x="262" y="233" fill="#6e6e88">both conditions,</text><text x="262" y="247" fill="#6e6e88">rejection search,</text><text x="262" y="261" fill="#6e6e88">then queue row</text>
+        <text x="262" y="217" font-weight="600">Promotion test</text><text x="262" y="233" fill="#5E6A7D">both conditions,</text><text x="262" y="247" fill="#5E6A7D">rejection search,</text><text x="262" y="261" fill="#5E6A7D">then queue row</text>
         <rect x="368" y="198" width="108" height="84" rx="5" fill="none" stroke="#b5462f" stroke-opacity=".7"/>
-        <text x="378" y="217" font-weight="600">Tombstone set</text><text x="378" y="233" fill="#6e6e88">if anything died:</text><text x="378" y="247" fill="#6e6e88">all three writes,</text><text x="378" y="261" fill="#6e6e88">this session</text>
+        <text x="378" y="217" font-weight="600">Tombstone set</text><text x="378" y="233" fill="#5E6A7D">if anything died:</text><text x="378" y="247" fill="#5E6A7D">all three writes,</text><text x="378" y="261" fill="#5E6A7D">this session</text>
         <rect x="484" y="198" width="112" height="84" rx="5" fill="none" stroke="currentColor" stroke-opacity=".3" stroke-dasharray="4,3"/>
-        <text x="494" y="217" font-weight="600">Close tracker issue</text><text x="494" y="233" fill="#6e6e88">only if the session</text><text x="494" y="247" fill="#6e6e88">mapped to one and</text><text x="494" y="261" fill="#6e6e88">changed system state</text>
+        <text x="494" y="217" font-weight="600">Close tracker issue</text><text x="494" y="233" fill="#5E6A7D">only if the session</text><text x="494" y="247" fill="#5E6A7D">mapped to one and</text><text x="494" y="261" fill="#5E6A7D">changed system state</text>
         <rect x="604" y="198" width="116" height="84" rx="5" fill="none" stroke="currentColor" stroke-opacity=".3" stroke-dasharray="4,3"/>
-        <text x="614" y="217" font-weight="600">Commit and push</text><text x="614" y="233" fill="#6e6e88">only if files were</text><text x="614" y="247" fill="#6e6e88">written into a git</text><text x="614" y="261" fill="#6e6e88">repository</text>
+        <text x="614" y="217" font-weight="600">Commit and push</text><text x="614" y="233" fill="#5E6A7D">only if files were</text><text x="614" y="247" fill="#5E6A7D">written into a git</text><text x="614" y="261" fill="#5E6A7D">repository</text>
       </g>
     </svg>
     <p class="diagram-caption">Figure 5. Start reads are unconditional and cheap; end writes are conditional. Dashed steps are obligations that attach to artifacts, not to conversations.</p>
@@ -631,8 +538,8 @@ POINTERS: <span class="c">&lt;tracker IDs, database IDs&gt;</span></code></pre>
 </footer>
 
 <script>
-function toggleTheme(){const h=document.documentElement,c=h.getAttribute('data-theme');h.setAttribute('data-theme',c==='dark'?'light':'dark');localStorage.setItem('theme',h.getAttribute('data-theme'))}
-(function(){const s=localStorage.getItem('theme');if(s)document.documentElement.setAttribute('data-theme',s)})();
+
+
 (function(){const secs=document.querySelectorAll('h2[id]'),links=document.querySelectorAll('.toc-rail a');const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.remove('active'));const t=document.querySelector('.toc-rail a[href="#'+e.target.id+'"]');if(t)t.classList.add('active')}})},{rootMargin:'-15% 0px -75% 0px'});secs.forEach(s=>obs.observe(s))})();
 </script>
 </body>

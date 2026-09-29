@@ -10,50 +10,21 @@
 <meta property="og:title" content="The AI Agent Build Gradient — From First Skill to Autonomous Operation">
 <meta property="og:description" content="From first skill to autonomous operation. The decision gates between stages, the failure modes at each transition, and how build sequence determines whether a system compounds or collapses.">
 <meta property="og:type" content="article">
+<meta property="og:image" content="https://rahman-tawhid.github.io/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,400&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-:root{--navy:#0b1426;--navy-mid:#162033;--navy-light:#1e2d47;--cream:#f8f5f0;--cream-dark:#ebe5dc;--teal:#1a9e8f;--teal-light:#2ec4b6;--teal-dim:#145c54;--text-primary:#1a1a2e;--text-secondary:#3d3d56;--text-tertiary:#6e6e88;--bg:var(--cream);--bg-card:#ffffff;--bg-code:#f0ebe4;--border:#d4cdc2;--shadow:rgba(10,20,38,.06);--serif:'Fraunces',Georgia,serif;--sans:'Instrument Sans',-apple-system,sans-serif;--mono:'JetBrains Mono','Menlo',monospace;--max-w:780px;--toc-w:240px}
-[data-theme="dark"]{--text-primary:#e8e4de;--text-secondary:#b8b0a4;--text-tertiary:#7a7268;--bg:var(--navy);--bg-card:var(--navy-mid);--bg-code:var(--navy-light);--border:#2a3a52;--shadow:rgba(0,0,0,.3)}
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth;font-size:17px}body{font-family:var(--sans);background:var(--bg);color:var(--text-primary);line-height:1.78;font-weight:400;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
-.site-header{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:.7rem 2rem;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(14px);transition:background .3s}.brand{text-decoration:none;display:flex;align-items:baseline;gap:.4rem}.brand-name{font-family:var(--mono);font-weight:500;font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;color:var(--teal)}.header-controls{display:flex;gap:.75rem;align-items:center}.header-link{font-family:var(--mono);font-size:.68rem;color:var(--text-tertiary);text-decoration:none;letter-spacing:.06em;transition:color .2s}.header-link:hover{color:var(--teal)}.theme-toggle{background:none;border:1px solid var(--border);border-radius:6px;padding:.3rem .6rem;cursor:pointer;font-size:.82rem;color:var(--text-tertiary);transition:all .2s;font-family:var(--sans)}.theme-toggle:hover{border-color:var(--teal);color:var(--teal)}
-.page-wrapper{display:flex;margin-top:3.2rem;min-height:calc(100vh - 3.2rem)}.toc-rail{position:fixed;top:3.2rem;left:0;width:var(--toc-w);height:calc(100vh - 3.2rem);overflow-y:auto;padding:2rem 1.2rem 2rem 1.5rem;border-right:1px solid var(--border);background:var(--bg);transition:background .3s}.toc-rail h3{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:1rem}.toc-rail a{display:block;padding:.28rem 0;font-size:.8rem;color:var(--text-tertiary);text-decoration:none;border-left:2px solid transparent;padding-left:.7rem;margin-left:-.7rem;transition:all .2s;line-height:1.5}.toc-rail a:hover,.toc-rail a.active{color:var(--teal);border-left-color:var(--teal)}.main-content{margin-left:var(--toc-w);flex:1;padding:3rem 3.5rem 6rem;max-width:calc(var(--max-w) + 7rem)}
-h1{font-family:var(--serif);font-size:2.6rem;font-weight:600;line-height:1.15;color:var(--text-primary);margin-bottom:.5rem;letter-spacing:-.01em}h2{font-family:var(--serif);font-size:1.65rem;font-weight:400;line-height:1.28;margin:3.5rem 0 1.1rem;padding-top:2.2rem;border-top:1px solid var(--border);color:var(--text-primary)}h3{font-family:var(--sans);font-size:1.05rem;font-weight:700;margin:2rem 0 .7rem;color:var(--text-primary)}p{margin-bottom:1.15rem;color:var(--text-secondary);text-align:justify}strong{color:var(--text-primary);font-weight:600}
-.hero{margin-bottom:3rem;padding-bottom:2.5rem;border-bottom:1px solid var(--border)}.hero-eyebrow{font-family:var(--mono);font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);margin-bottom:.6rem}.hero-subtitle{font-size:1.12rem;color:var(--text-secondary);line-height:1.68;max-width:620px;margin-bottom:1.8rem}.hero-author{font-size:.92rem;color:var(--text-secondary);line-height:1.65;max-width:600px;margin-bottom:1.4rem;border-left:2px solid var(--teal);padding-left:1rem}.hero-meta{display:flex;gap:2rem;flex-wrap:wrap;font-size:.75rem;color:var(--text-tertiary);font-family:var(--mono)}
-.arch-card{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:1.6rem 1.75rem;margin:1.5rem 0;box-shadow:0 1px 4px var(--shadow);transition:background .3s,border .3s}.arch-card h4{font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);margin-bottom:.8rem}
-.layer-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}.layer-item{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:1.2rem 1.3rem;border-left:3px solid var(--teal);transition:all .2s}.layer-item:hover{border-left-color:var(--teal-light);transform:translateY(-1px);box-shadow:0 3px 8px var(--shadow)}.layer-item h4{font-family:var(--sans);font-size:.92rem;font-weight:700;color:var(--text-primary);margin-bottom:.35rem}.layer-item p{font-size:.87rem;margin-bottom:0;line-height:1.6}.layer-num{font-family:var(--serif);font-size:1.6rem;color:var(--teal);opacity:.4;float:right;margin-top:-.2rem}
-.diagram-wrapper{margin:2rem 0;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:1.8rem;overflow-x:auto}.diagram-wrapper svg{width:100%;height:auto;display:block}.diagram-caption{font-family:var(--mono);font-size:.68rem;color:var(--text-tertiary);text-align:center;margin-top:.9rem;letter-spacing:.04em}
-code{font-family:var(--mono);font-size:.86em;background:var(--bg-code);padding:.12em .38em;border-radius:3px;color:var(--teal-dim)}[data-theme="dark"] code{color:var(--teal-light)}
-.callout{border-left:3px solid var(--teal);padding:1rem 1.3rem;margin:1.8rem 0;background:var(--bg-card);border-radius:0 6px 6px 0;font-size:.94rem;box-shadow:0 1px 3px var(--shadow)}.callout p{margin-bottom:0}
-.ref-table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:.88rem}.ref-table th{text-align:left;font-family:var(--mono);font-size:.67rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-tertiary);padding:.55rem .7rem;border-bottom:2px solid var(--border)}.ref-table td{padding:.6rem .7rem;border-bottom:1px solid var(--border);color:var(--text-secondary);vertical-align:top;line-height:1.55}.ref-table td:first-child{color:var(--text-primary);font-weight:600}
-.site-footer{margin-left:var(--toc-w);padding:3rem 3.5rem;border-top:1px solid var(--border);font-size:.76rem;color:var(--text-tertiary);line-height:1.85}.disclaimer{margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);font-size:.7rem;font-style:italic}
-@media print{.site-header,.toc-rail,.theme-toggle,.header-controls{display:none!important}.main-content{margin-left:0!important;padding:0!important;max-width:100%}.site-footer{margin-left:0}body{font-size:11pt;background:#fff;color:#111}h1{font-size:22pt}h2{font-size:15pt;border-top:none;padding-top:0}.arch-card,.layer-item{break-inside:avoid}}
-@media(max-width:900px){.toc-rail{display:none}.main-content{margin-left:0;padding:1.5rem 1.2rem 4rem}.site-footer{margin-left:0;padding:2rem 1.2rem}.layer-grid{grid-template-columns:1fr}h1{font-size:1.9rem}.site-header{padding:.7rem 1.2rem}}
-
-/* LAYOUT v2: centre the reading column in the space right of the rail; let figures and tables run wider on large screens */
-@media(min-width:901px){
-  .page-wrapper{padding-left:var(--toc-w)}
-  .main-content{margin-left:auto;margin-right:auto;min-width:0;width:100%;max-width:1160px}
-  .main-content > *:not(.diagram-wrapper):not(.table-wrap):not(.ref-table):not(.wide){max-width:780px;margin-left:auto;margin-right:auto}
-  .main-content > .diagram-wrapper,.main-content > .table-wrap,.main-content > .ref-table,.main-content > .wide{max-width:1000px;margin-left:auto;margin-right:auto}
-  .site-footer > *{max-width:780px;margin-left:auto;margin-right:auto}
-}
-
-/* LAYOUT v2.1: no flex overflow on narrow screens; single rule between hero and first section */
-.main-content{min-width:0}
-.hero + h2{border-top:none;padding-top:0;margin-top:2.2rem}
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
 </head>
 <body>
 
 <header class="site-header">
   <a class="brand" href="/"><span class="brand-name">Tawhid Rahman</span></a>
   <div class="header-controls">
-    <a class="header-link" href="/">&larr; All Work</a>
+    <a class="header-link" href="/">All work</a>
     <a class="header-link" href="https://www.linkedin.com/in/tawhidurr/" target="_blank" rel="noopener">LinkedIn</a>
     <a class="header-link" href="https://substack.com/@tawhidr" target="_blank" rel="noopener">Substack</a>
-    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">&#9685; Theme</button>
   </div>
 </header>
 
@@ -105,68 +76,68 @@ code{font-family:var(--mono);font-size:.86em;background:var(--bg-code);padding:.
   <div class="diagram-wrapper">
     <svg viewBox="0 0 740 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Build gradient stages with decision gates">
       <defs>
-        <linearGradient id="bg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2ec4b6" stop-opacity=".12"/><stop offset="100%" stop-color="#2ec4b6" stop-opacity=".02"/></linearGradient>
+        <linearGradient id="bg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#5B84F0" stop-opacity=".12"/><stop offset="100%" stop-color="#5B84F0" stop-opacity=".02"/></linearGradient>
       </defs>
-      <text x="370" y="24" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#1a9e8f" letter-spacing=".12em">THE BUILD GRADIENT</text>
+      <text x="370" y="24" text-anchor="middle" font-family="Geist Mono,monospace" font-size="9.5" fill="#1F4FE0" letter-spacing=".12em">THE BUILD GRADIENT</text>
 
       <!-- Stage 1 -->
-      <rect x="30" y="48" width="150" height="80" rx="6" fill="url(#bg1)" stroke="#1a9e8f" stroke-width="1.5"/>
-      <text x="105" y="70" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#1a9e8f" letter-spacing=".08em">STAGE 1</text>
-      <text x="105" y="90" text-anchor="middle" font-family="Fraunces,serif" font-size="14" fill="currentColor">Isolated Skills</text>
-      <text x="105" y="110" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9" fill="#6e6e88">Execute on demand</text>
-      <text x="105" y="122" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9" fill="#6e6e88">Human triggers each call</text>
+      <rect x="30" y="48" width="150" height="80" rx="6" fill="url(#bg1)" stroke="#1F4FE0" stroke-width="1.5"/>
+      <text x="105" y="70" text-anchor="middle" font-family="Geist Mono,monospace" font-size="8" fill="#1F4FE0" letter-spacing=".08em">STAGE 1</text>
+      <text x="105" y="90" text-anchor="middle" font-family="Geist,serif" font-size="14" fill="currentColor">Isolated Skills</text>
+      <text x="105" y="110" text-anchor="middle" font-family="Geist,sans-serif" font-size="9" fill="#5E6A7D">Execute on demand</text>
+      <text x="105" y="122" text-anchor="middle" font-family="Geist,sans-serif" font-size="9" fill="#5E6A7D">Human triggers each call</text>
 
       <!-- Gate 1 -->
-      <line x1="180" y1="88" x2="210" y2="88" stroke="#1a9e8f" stroke-width="1.5"/>
-      <polygon points="210,78 230,88 210,98" fill="#1a9e8f" opacity=".6"/>
-      <text x="220" y="115" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#1a9e8f">GATE 1</text>
+      <line x1="180" y1="88" x2="210" y2="88" stroke="#1F4FE0" stroke-width="1.5"/>
+      <polygon points="210,78 230,88 210,98" fill="#1F4FE0" opacity=".6"/>
+      <text x="220" y="115" text-anchor="middle" font-family="Geist Mono,monospace" font-size="7" fill="#1F4FE0">GATE 1</text>
 
       <!-- Stage 2 -->
-      <rect x="240" y="48" width="150" height="80" rx="6" fill="url(#bg1)" stroke="#1a9e8f" stroke-width="1.5"/>
-      <text x="315" y="70" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#1a9e8f" letter-spacing=".08em">STAGE 2</text>
-      <text x="315" y="90" text-anchor="middle" font-family="Fraunces,serif" font-size="14" fill="currentColor">Composed Pipelines</text>
-      <text x="315" y="110" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9" fill="#6e6e88">Skills chain together</text>
-      <text x="315" y="122" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9" fill="#6e6e88">Outputs feed inputs</text>
+      <rect x="240" y="48" width="150" height="80" rx="6" fill="url(#bg1)" stroke="#1F4FE0" stroke-width="1.5"/>
+      <text x="315" y="70" text-anchor="middle" font-family="Geist Mono,monospace" font-size="8" fill="#1F4FE0" letter-spacing=".08em">STAGE 2</text>
+      <text x="315" y="90" text-anchor="middle" font-family="Geist,serif" font-size="14" fill="currentColor">Composed Pipelines</text>
+      <text x="315" y="110" text-anchor="middle" font-family="Geist,sans-serif" font-size="9" fill="#5E6A7D">Skills chain together</text>
+      <text x="315" y="122" text-anchor="middle" font-family="Geist,sans-serif" font-size="9" fill="#5E6A7D">Outputs feed inputs</text>
 
       <!-- Gate 2 -->
-      <line x1="390" y1="88" x2="420" y2="88" stroke="#1a9e8f" stroke-width="1.5"/>
-      <polygon points="420,78 440,88 420,98" fill="#1a9e8f" opacity=".6"/>
-      <text x="430" y="115" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#1a9e8f">GATE 2</text>
+      <line x1="390" y1="88" x2="420" y2="88" stroke="#1F4FE0" stroke-width="1.5"/>
+      <polygon points="420,78 440,88 420,98" fill="#1F4FE0" opacity=".6"/>
+      <text x="430" y="115" text-anchor="middle" font-family="Geist Mono,monospace" font-size="7" fill="#1F4FE0">GATE 2</text>
 
       <!-- Stage 3 -->
-      <rect x="450" y="48" width="150" height="80" rx="6" fill="url(#bg1)" stroke="#1a9e8f" stroke-width="1.5"/>
-      <text x="525" y="70" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#1a9e8f" letter-spacing=".08em">STAGE 3</text>
-      <text x="525" y="90" text-anchor="middle" font-family="Fraunces,serif" font-size="14" fill="currentColor">Scheduled Autonomy</text>
-      <text x="525" y="110" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9" fill="#6e6e88">Runs without humans</text>
-      <text x="525" y="122" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9" fill="#6e6e88">Approval gates at edges</text>
+      <rect x="450" y="48" width="150" height="80" rx="6" fill="url(#bg1)" stroke="#1F4FE0" stroke-width="1.5"/>
+      <text x="525" y="70" text-anchor="middle" font-family="Geist Mono,monospace" font-size="8" fill="#1F4FE0" letter-spacing=".08em">STAGE 3</text>
+      <text x="525" y="90" text-anchor="middle" font-family="Geist,serif" font-size="14" fill="currentColor">Scheduled Autonomy</text>
+      <text x="525" y="110" text-anchor="middle" font-family="Geist,sans-serif" font-size="9" fill="#5E6A7D">Runs without humans</text>
+      <text x="525" y="122" text-anchor="middle" font-family="Geist,sans-serif" font-size="9" fill="#5E6A7D">Approval gates at edges</text>
 
       <!-- Gate 3 -->
-      <line x1="600" y1="88" x2="630" y2="88" stroke="#1a9e8f" stroke-width="1.5"/>
-      <polygon points="630,78 650,88 630,98" fill="#1a9e8f" opacity=".6"/>
-      <text x="640" y="115" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#1a9e8f">GATE 3</text>
+      <line x1="600" y1="88" x2="630" y2="88" stroke="#1F4FE0" stroke-width="1.5"/>
+      <polygon points="630,78 650,88 630,98" fill="#1F4FE0" opacity=".6"/>
+      <text x="640" y="115" text-anchor="middle" font-family="Geist Mono,monospace" font-size="7" fill="#1F4FE0">GATE 3</text>
 
       <!-- Stage 4 -->
-      <rect x="560" y="160" width="150" height="80" rx="6" fill="url(#bg1)" stroke="#1a9e8f" stroke-width="1.5"/>
-      <text x="635" y="182" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#1a9e8f" letter-spacing=".08em">STAGE 4</text>
-      <text x="635" y="202" text-anchor="middle" font-family="Fraunces,serif" font-size="14" fill="currentColor">Observant Intelligence</text>
-      <text x="635" y="222" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9" fill="#6e6e88">Watches everything</text>
-      <text x="635" y="234" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9" fill="#6e6e88">Synthesises, never modifies</text>
-      <line x1="650" y1="128" x2="650" y2="160" stroke="#1a9e8f" stroke-width="1" stroke-dasharray="4,3"/>
+      <rect x="560" y="160" width="150" height="80" rx="6" fill="url(#bg1)" stroke="#1F4FE0" stroke-width="1.5"/>
+      <text x="635" y="182" text-anchor="middle" font-family="Geist Mono,monospace" font-size="8" fill="#1F4FE0" letter-spacing=".08em">STAGE 4</text>
+      <text x="635" y="202" text-anchor="middle" font-family="Geist,serif" font-size="14" fill="currentColor">Observant Intelligence</text>
+      <text x="635" y="222" text-anchor="middle" font-family="Geist,sans-serif" font-size="9" fill="#5E6A7D">Watches everything</text>
+      <text x="635" y="234" text-anchor="middle" font-family="Geist,sans-serif" font-size="9" fill="#5E6A7D">Synthesises, never modifies</text>
+      <line x1="650" y1="128" x2="650" y2="160" stroke="#1F4FE0" stroke-width="1" stroke-dasharray="4,3"/>
 
       <!-- Failure zones -->
-      <rect x="30" y="170" width="500" height="60" rx="6" fill="none" stroke="#6e6e88" stroke-width="1" stroke-dasharray="4,3" stroke-opacity=".4"/>
-      <text x="280" y="190" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#6e6e88" letter-spacing=".06em">STALL ZONE &mdash; WHERE MOST IMPLEMENTATIONS STOP</text>
-      <text x="280" y="206" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88">Stage 1 feels like success. Gate 1 reveals what&rsquo;s missing.</text>
-      <text x="280" y="220" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88">Stage 2 requires structural work most teams underestimate.</text>
+      <rect x="30" y="170" width="500" height="60" rx="6" fill="none" stroke="#5E6A7D" stroke-width="1" stroke-dasharray="4,3" stroke-opacity=".4"/>
+      <text x="280" y="190" text-anchor="middle" font-family="Geist Mono,monospace" font-size="8" fill="#5E6A7D" letter-spacing=".06em">STALL ZONE &mdash; WHERE MOST IMPLEMENTATIONS STOP</text>
+      <text x="280" y="206" text-anchor="middle" font-family="Geist,sans-serif" font-size="9.5" fill="#5E6A7D">Stage 1 feels like success. Gate 1 reveals what&rsquo;s missing.</text>
+      <text x="280" y="220" text-anchor="middle" font-family="Geist,sans-serif" font-size="9.5" fill="#5E6A7D">Stage 2 requires structural work most teams underestimate.</text>
 
       <!-- Legend -->
-      <rect x="30" y="260" width="680" height="90" rx="6" fill="url(#bg1)" stroke="#1a9e8f" stroke-width="1" stroke-opacity=".3"/>
-      <text x="55" y="284" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#1a9e8f" letter-spacing=".08em">DECISION GATES</text>
-      <text x="55" y="304" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Gate 1: Does the skill produce consistent, contractually defined outputs?</text>
-      <text x="55" y="320" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Gate 2: Does the pipeline recover from upstream failures without human intervention?</text>
-      <text x="55" y="336" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Gate 3: Does the autonomous system surface its own failures before they reach production?</text>
+      <rect x="30" y="260" width="680" height="90" rx="6" fill="url(#bg1)" stroke="#1F4FE0" stroke-width="1" stroke-opacity=".3"/>
+      <text x="55" y="284" font-family="Geist Mono,monospace" font-size="8.5" fill="#1F4FE0" letter-spacing=".08em">DECISION GATES</text>
+      <text x="55" y="304" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Gate 1: Does the skill produce consistent, contractually defined outputs?</text>
+      <text x="55" y="320" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Gate 2: Does the pipeline recover from upstream failures without human intervention?</text>
+      <text x="55" y="336" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Gate 3: Does the autonomous system surface its own failures before they reach production?</text>
 
-      <text x="680" y="372" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#6e6e88" text-anchor="end" opacity=".4">&copy; 2026 Tawhid Rahman</text>
+      <text x="680" y="372" font-family="Geist Mono,monospace" font-size="8.5" fill="#5E6A7D" text-anchor="end" opacity=".4">&copy; 2026 Tawhid Rahman</text>
     </svg>
     <p class="diagram-caption">The four stages with decision gates. Most implementations stall between Stage 1 and Stage 2.</p>
   </div>
@@ -367,7 +338,7 @@ code{font-family:var(--mono);font-size:.86em;background:var(--bg-code);padding:.
 </footer>
 
 <script>
-function toggleTheme(){var h=document.documentElement,c=h.getAttribute('data-theme');h.setAttribute('data-theme',c==='dark'?'light':'dark');localStorage.setItem('theme',h.getAttribute('data-theme'))}
+
 (function(){var s=localStorage.getItem('theme');if(s)document.documentElement.setAttribute('data-theme',s)})();
 (function(){var secs=document.querySelectorAll('h2[id]'),links=document.querySelectorAll('.toc-rail a');var obs=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){links.forEach(function(l){l.classList.remove('active')});var t=document.querySelector('.toc-rail a[href="#'+e.target.id+'"]');if(t)t.classList.add('active')}})},{rootMargin:'-15% 0px -75% 0px'});secs.forEach(function(s){obs.observe(s)})})();
 </script>
