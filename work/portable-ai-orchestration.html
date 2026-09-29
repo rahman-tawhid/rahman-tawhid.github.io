@@ -88,43 +88,39 @@
   </p>
 
   <div class="diagram-wrapper">
-    <svg viewBox="0 0 740 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Architecture portability model">
+    <svg viewBox="0 0 740 392" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Architecture portability model: a constant layer of four reusable components above a separation boundary, and a variable layer of two components reconfigured per vertical below it">
       <defs>
         <linearGradient id="pg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#5B84F0" stop-opacity=".12"/><stop offset="100%" stop-color="#5B84F0" stop-opacity=".02"/></linearGradient>
       </defs>
       <text x="370" y="24" text-anchor="middle" font-family="Geist Mono,monospace" font-size="9.5" fill="#1F4FE0" letter-spacing=".12em">ARCHITECTURE PORTABILITY MODEL</text>
-
       <!-- Universal layer -->
-      <rect x="30" y="50" width="680" height="120" rx="8" fill="url(#pg1)" stroke="#1F4FE0" stroke-width="1.5"/>
+      <rect x="30" y="50" width="680" height="152" rx="8" fill="url(#pg1)" stroke="#1F4FE0" stroke-width="1.5"/>
       <text x="52" y="72" font-family="Geist Mono,monospace" font-size="9" fill="#1F4FE0" letter-spacing=".1em">CONSTANT &mdash; REUSED ACROSS VERTICALS</text>
-
       <text x="52" y="98" font-family="Geist,sans-serif" font-size="11" fill="currentColor" font-weight="600">Orchestration Engine</text>
-      <text x="52" y="114" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Pipeline patterns, scheduling, trigger logic, error handling, retry mechanisms</text>
-
+      <text x="52" y="114" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Pipeline patterns, scheduling, trigger logic,</text>
+      <text x="52" y="128" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">error handling, retry mechanisms</text>
       <text x="390" y="98" font-family="Geist,sans-serif" font-size="11" fill="currentColor" font-weight="600">Governance Framework</text>
-      <text x="390" y="114" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Approval gating, consequence assessment, audit logging, version control</text>
-
-      <text x="52" y="140" font-family="Geist,sans-serif" font-size="11" fill="currentColor" font-weight="600">Observation Architecture</text>
-      <text x="52" y="156" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Read/write separation, synthesis cadence, delivery channels, health monitoring</text>
-
-      <text x="390" y="140" font-family="Geist,sans-serif" font-size="11" fill="currentColor" font-weight="600">Skill Interface Contracts</text>
-      <text x="390" y="156" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Input/output schemas, error protocols, versioning, changelog standards</text>
-
+      <text x="390" y="114" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Approval gating, consequence assessment,</text>
+      <text x="390" y="128" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">audit logging, version control</text>
+      <text x="52" y="154" font-family="Geist,sans-serif" font-size="11" fill="currentColor" font-weight="600">Observation Architecture</text>
+      <text x="52" y="170" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Read/write separation, synthesis cadence,</text>
+      <text x="52" y="184" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">delivery channels, health monitoring</text>
+      <text x="390" y="154" font-family="Geist,sans-serif" font-size="11" fill="currentColor" font-weight="600">Skill Interface Contracts</text>
+      <text x="390" y="170" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Input/output schemas, error protocols,</text>
+      <text x="390" y="184" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">versioning, changelog standards</text>
       <!-- Separator -->
-      <line x1="30" y1="190" x2="710" y2="190" stroke="#1F4FE0" stroke-width="1.5" stroke-dasharray="6,4"/>
-      <text x="370" y="206" text-anchor="middle" font-family="Geist Mono,monospace" font-size="8" fill="#1F4FE0" letter-spacing=".1em">SEPARATION BOUNDARY</text>
-
+      <line x1="30" y1="226" x2="710" y2="226" stroke="#1F4FE0" stroke-width="1.5" stroke-dasharray="6,4"/>
+      <text x="370" y="244" text-anchor="middle" font-family="Geist Mono,monospace" font-size="8.5" fill="#1F4FE0" letter-spacing=".1em">SEPARATION BOUNDARY</text>
       <!-- Variable layer -->
-      <rect x="30" y="218" width="680" height="90" rx="8" fill="url(#pg1)" stroke="#1F4FE0" stroke-width="1" stroke-opacity=".5"/>
-      <text x="52" y="240" font-family="Geist Mono,monospace" font-size="9" fill="#1F4FE0" letter-spacing=".1em">VARIABLE &mdash; RECONFIGURED PER VERTICAL</text>
-
-      <text x="52" y="266" font-family="Geist,sans-serif" font-size="10.5" fill="currentColor" font-weight="600">Domain Knowledge</text>
-      <text x="52" y="282" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Skill expertise, scoring criteria, quality thresholds, decision boundaries, terminology</text>
-
-      <text x="390" y="266" font-family="Geist,sans-serif" font-size="10.5" fill="currentColor" font-weight="600">Vertical Configuration</text>
-      <text x="390" y="282" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Compliance requirements, approval authority, regulatory constraints, data sensitivity</text>
-
-      <text x="680" y="332" font-family="Geist Mono,monospace" font-size="8.5" fill="#5E6A7D" text-anchor="end" opacity=".4">&copy; 2026 Tawhid Rahman</text>
+      <rect x="30" y="258" width="680" height="106" rx="8" fill="url(#pg1)" stroke="#1F4FE0" stroke-width="1" stroke-opacity=".5"/>
+      <text x="52" y="280" font-family="Geist Mono,monospace" font-size="9" fill="#1F4FE0" letter-spacing=".1em">VARIABLE &mdash; RECONFIGURED PER VERTICAL</text>
+      <text x="52" y="306" font-family="Geist,sans-serif" font-size="11" fill="currentColor" font-weight="600">Domain Knowledge</text>
+      <text x="52" y="322" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Skill expertise, scoring criteria, quality</text>
+      <text x="52" y="336" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">thresholds, decision boundaries, terminology</text>
+      <text x="390" y="306" font-family="Geist,sans-serif" font-size="11" fill="currentColor" font-weight="600">Vertical Configuration</text>
+      <text x="390" y="322" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">Compliance requirements, approval authority,</text>
+      <text x="390" y="336" font-family="Geist,sans-serif" font-size="10" fill="#5E6A7D">regulatory constraints, data sensitivity</text>
+      <text x="700" y="384" font-family="Geist Mono,monospace" font-size="8.5" fill="#5E6A7D" text-anchor="end" opacity=".6">&copy; 2026 Tawhid Rahman</text>
     </svg>
     <p class="diagram-caption">Above the separation boundary: universal and reusable. Below: reconfigured for each vertical deployment.</p>
   </div>
