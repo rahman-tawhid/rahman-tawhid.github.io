@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Governed Memory for Multi-Agent Systems | Tawhid Rahman</title>
+<meta name="description" content="A three-tier state architecture for keeping several AI agent contexts consistent without transactions or a single writer. Schemas, a promotion state machine, tombstone write-sets, and the failures that forced each rule.">
+<meta name="author" content="Tawhid Rahman">
+<meta name="keywords" content="agent memory, multi-agent systems, LLM memory architecture, state consistency, promotion queue, tombstones, AI governance">
+<meta property="og:title" content="Governed Memory for Multi-Agent Systems">
+<meta property="og:description" content="A three-tier state architecture for keeping several AI agent contexts consistent. Schemas, state machines, and the failures behind each rule.">
+<meta property="og:type" content="article">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,400&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0b1426;--navy-mid:#162033;--navy-light:#1e2d47;
+  --cream:#f8f5f0;--cream-dark:#ebe5dc;
+  --teal:#1a9e8f;--teal-light:#2ec4b6;--teal-dim:#145c54;
+  --warn:#b5462f;
+  --text-primary:#1a1a2e;--text-secondary:#3d3d56;--text-tertiary:#6e6e88;
+  --bg:var(--cream);--bg-card:#ffffff;--bg-code:#f0ebe4;
+  --border:#d4cdc2;--shadow:rgba(10,20,38,.06);
+  --serif:'Fraunces',Georgia,serif;
+  --sans:'Instrument Sans',-apple-system,sans-serif;
+  --mono:'JetBrains Mono','Menlo',monospace;
+  --max-w:780px;--toc-w:240px;
+}
+[data-theme="dark"]{
+  --text-primary:#e8e4de;--text-secondary:#b8b0a4;--text-tertiary:#7a7268;
+  --bg:var(--navy);--bg-card:var(--navy-mid);--bg-code:var(--navy-light);
+  --border:#2a3a52;--shadow:rgba(0,0,0,.3);--warn:#e0785f;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;font-size:17px}
+body{font-family:var(--sans);background:var(--bg);color:var(--text-primary);line-height:1.78;font-weight:400;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+.site-header{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:.7rem 2rem;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(14px);transition:background .3s}
+.brand{text-decoration:none;display:flex;align-items:baseline;gap:.4rem}
+.brand-name{font-family:var(--mono);font-weight:500;font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;color:var(--teal)}
+.header-controls{display:flex;gap:.75rem;align-items:center}
+.header-link{font-family:var(--mono);font-size:.68rem;color:var(--text-tertiary);text-decoration:none;letter-spacing:.06em}.header-link:hover{color:var(--teal)}
+.theme-toggle{background:none;border:1px solid var(--border);border-radius:6px;padding:.3rem .6rem;cursor:pointer;font-size:.82rem;color:var(--text-tertiary);transition:all .2s;font-family:var(--sans)}
+.theme-toggle:hover{border-color:var(--teal);color:var(--teal)}
+.page-wrapper{display:flex;margin-top:3.2rem;min-height:calc(100vh - 3.2rem)}
+.toc-rail{position:fixed;top:3.2rem;left:0;width:var(--toc-w);height:calc(100vh - 3.2rem);overflow-y:auto;padding:2rem 1.2rem 2rem 1.5rem;border-right:1px solid var(--border);background:var(--bg);transition:background .3s}
+.toc-rail h3{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:1rem}
+.toc-rail a{display:block;padding:.28rem 0;font-size:.8rem;color:var(--text-tertiary);text-decoration:none;border-left:2px solid transparent;padding-left:.7rem;margin-left:-.7rem;transition:all .2s;line-height:1.5}
+.toc-rail a:hover,.toc-rail a.active{color:var(--teal);border-left-color:var(--teal)}
+.main-content{margin-left:var(--toc-w);flex:1;padding:3rem 3.5rem 6rem;max-width:calc(var(--max-w) + 7rem)}
+h1{font-family:var(--serif);font-size:2.6rem;font-weight:600;line-height:1.15;color:var(--text-primary);margin-bottom:.5rem;letter-spacing:-.01em}
+h2{font-family:var(--serif);font-size:1.65rem;font-weight:400;line-height:1.28;margin:3.5rem 0 1.1rem;padding-top:2.2rem;border-top:1px solid var(--border);color:var(--text-primary)}
+h3{font-family:var(--sans);font-size:1.05rem;font-weight:700;margin:2rem 0 .7rem;color:var(--text-primary)}
+p{margin-bottom:1.15rem;color:var(--text-secondary)}
+strong{color:var(--text-primary);font-weight:600}
+ul.plain{margin:0 0 1.2rem 1.2rem;color:var(--text-secondary)}
+ul.plain li{margin-bottom:.45rem}
+.hero{margin-bottom:3rem;padding-bottom:2.5rem;border-bottom:1px solid var(--border)}
+.hero-eyebrow{font-family:var(--mono);font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);margin-bottom:.6rem}
+.hero-subtitle{font-size:1.12rem;color:var(--text-secondary);line-height:1.68;max-width:640px;margin-bottom:1.8rem}
+.hero-author{font-size:.92rem;color:var(--text-secondary);line-height:1.65;max-width:600px;margin-bottom:1.4rem;border-left:2px solid var(--teal);padding-left:1rem}
+.hero-meta{display:flex;gap:2rem;flex-wrap:wrap;font-size:.75rem;color:var(--text-tertiary);font-family:var(--mono)}
+.diagram-wrapper{margin:2rem 0;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:1.6rem;overflow-x:auto;color:var(--text-primary)}
+.diagram-wrapper svg{width:100%;min-width:620px;height:auto;display:block}
+.diagram-caption{font-family:var(--mono);font-size:.68rem;color:var(--text-tertiary);text-align:center;margin-top:.9rem;letter-spacing:.04em}
+code{font-family:var(--mono);font-size:.86em;background:var(--bg-code);padding:.12em .38em;border-radius:3px;color:var(--teal-dim)}
+[data-theme="dark"] code{color:var(--teal-light)}
+pre{font-family:var(--mono);font-size:.78rem;line-height:1.6;background:var(--bg-code);border:1px solid var(--border);border-radius:8px;padding:1.2rem 1.4rem;margin:1.5rem 0;overflow-x:auto;color:var(--text-primary)}
+pre code{background:none;padding:0;color:inherit;font-size:inherit}
+pre .c{color:var(--text-tertiary)}
+pre .k{color:var(--teal)}
+.pre-label{font-family:var(--mono);font-size:.66rem;color:var(--text-tertiary);margin:-1rem 0 1.6rem;letter-spacing:.04em}
+.callout{border-left:3px solid var(--teal);padding:1rem 1.3rem;margin:1.8rem 0;background:var(--bg-card);border-radius:0 6px 6px 0;font-size:.94rem;box-shadow:0 1px 3px var(--shadow)}
+.callout p{margin-bottom:0}
+.callout.warn{border-left-color:var(--warn)}
+.table-wrap{overflow-x:auto;margin:1.5rem 0}
+.ref-table{width:100%;border-collapse:collapse;font-size:.86rem;min-width:560px}
+.ref-table th{text-align:left;font-family:var(--mono);font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-tertiary);padding:.55rem .7rem;border-bottom:2px solid var(--border)}
+.ref-table td{padding:.6rem .7rem;border-bottom:1px solid var(--border);color:var(--text-secondary);vertical-align:top;line-height:1.55}
+.ref-table td:first-child{color:var(--text-primary);font-weight:600}
+.site-footer{margin-left:var(--toc-w);padding:3rem 3.5rem;border-top:1px solid var(--border);font-size:.76rem;color:var(--text-tertiary);line-height:1.85}
+.site-footer a{color:var(--teal);text-decoration:none}
+.disclaimer{margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);font-size:.7rem;font-style:italic}
+a:focus-visible,button:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+@media print{
+  .site-header,.toc-rail,.theme-toggle,.header-controls{display:none!important}
+  .main-content{margin-left:0!important;padding:0!important;max-width:100%}
+  .site-footer{margin-left:0}
+  body{font-size:11pt;background:#fff;color:#111}
+  .diagram-wrapper,pre{break-inside:avoid}
+}
+@media(max-width:900px){
+  .toc-rail{display:none}
+  .main-content{margin-left:0;padding:1.5rem 1.2rem 4rem}
+  .site-footer{margin-left:0;padding:2rem 1.2rem}
+  h1{font-size:1.9rem}
+  .site-header{padding:.7rem 1.2rem}
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="brand" href="/"><span class="brand-name">Tawhid Rahman</span></a>
+  <div class="header-controls">
+    <a class="header-link" href="/">All work</a>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">&#9681; Theme</button>
+  </div>
+</header>
+
+<div class="page-wrapper">
+<nav class="toc-rail" aria-label="Table of contents">
+  <h3>Contents</h3>
+  <a href="#problem">The problem</a>
+  <a href="#topology">Topology</a>
+  <a href="#tier2">Tier 2: active state</a>
+  <a href="#tier3">Tier 3: decision archive</a>
+  <a href="#promotion">Promotion into Tier 1</a>
+  <a href="#tombstones">Tombstones</a>
+  <a href="#conflicts">Conflict resolution</a>
+  <a href="#lifecycle">Session lifecycle</a>
+  <a href="#trust">Trust boundary</a>
+  <a href="#failures">Failure modes</a>
+  <a href="#limits">What it does not solve</a>
+  <a href="#patterns">Patterns worth stealing</a>
+</nav>
+
+<main class="main-content">
+
+  <section class="hero">
+    <p class="hero-eyebrow">Systems Architecture</p>
+    <h1>Governed Memory for Multi-Agent Systems</h1>
+    <p class="hero-subtitle">
+      A three-tier state architecture for keeping several AI agent contexts consistent when there is no single writer, no transaction, and every session starts cold. Schemas, a promotion state machine, tombstone write-sets, and the failure behind each rule.
+    </p>
+    <p class="hero-author">
+      Tawhid Rahman is the CEO of Softograph, a software company he founded in 2012. He runs seven long-lived AI project contexts across sales, delivery, content, automation and research, and built this protocol after the contexts started disagreeing with each other about what was true.
+    </p>
+    <div class="hero-meta">
+      <span>Tawhid Rahman</span>
+      <span>2026</span>
+      <span>~16 min read</span>
+    </div>
+  </section>
+
+  <h2 id="problem">The problem</h2>
+  <p>
+    A single chat with a model has a memory problem that everyone has noticed: the session ends and the context goes with it. Several persistent project contexts, each with its own instructions, its own files and its own stream of sessions, have a harder problem that almost nobody names. They share facts. The sales context needs to know which channels the content context has abandoned. The automation context needs the same canonical database identifiers the delivery context uses. A decision made on Tuesday in one context has to constrain a recommendation made on Friday in another.
+  </p>
+  <p>
+    Stated in systems terms, this is replicated state. Every project context is a replica. Each replica reads a copy of the shared facts at session start, acts on it, and may write back at session end. There is no lock, no transaction and no consensus protocol, and the replicas are language models whose idea of the current state is whatever text happened to be loaded. The replication protocol, in most setups, is prose: a paragraph in the project instructions that says "we no longer use X", copied by hand into the places someone remembered.
+  </p>
+  <p>
+    That arrangement fails in five specific ways. Each is cheap to trigger and expensive to notice.
+  </p>
+  <ul class="plain">
+    <li><strong>Drift.</strong> Static copies of a fact live in project files and diverge from each other the first time only one of them is updated.</li>
+    <li><strong>Zombie records.</strong> A thing is declared dead in the rules while the database rows that depend on it stay alive, and any agent that reads the rows correctly resurrects it.</li>
+    <li><strong>Stale reads.</strong> A context acts on state that another context changed yesterday, because nothing told it to look.</li>
+    <li><strong>Proposal floods.</strong> Once agents are allowed to suggest changes to shared rules, they suggest changes at the rate they generate text, which is faster than a person can review.</li>
+    <li><strong>Authority spoofing.</strong> Any content that reaches an agent can claim to be an instruction from the system, and an agent with write access will sometimes believe it.</li>
+  </ul>
+  <p>
+    The architecture below is built around those five, and each rule answers one of them. The zombie-record failure is the one that actually cost me months, and it gets its own section.
+  </p>
+
+  <h2 id="topology">Topology</h2>
+  <p>
+    Shared memory is split into three tiers by rate of change and blast radius, plus one queue. The split matters more than any individual rule, because the tiers have different write disciplines and mixing them is how every earlier version broke.
+  </p>
+
+  <div class="diagram-wrapper">
+    <svg viewBox="0 0 760 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Topology of the three-tier memory system: seven project contexts, a shared active state page, a decision archive, a promotion queue and a spine.">
+      <defs>
+        <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1a9e8f"/></marker>
+        <marker id="a1g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6e6e88"/></marker>
+        <linearGradient id="tg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2ec4b6" stop-opacity=".16"/><stop offset="100%" stop-color="#2ec4b6" stop-opacity=".03"/></linearGradient>
+      </defs>
+      <text x="30" y="22" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#1a9e8f" letter-spacing=".12em">PROJECT CONTEXTS (REPLICAS)</text>
+      <g font-family="Instrument Sans,sans-serif" font-size="10.5" fill="currentColor" text-anchor="middle">
+        <rect x="30" y="32" width="88" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="74" y="51">Sales</text><text x="74" y="65" font-size="9" fill="#6e6e88">context</text>
+        <rect x="128" y="32" width="88" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="172" y="51">Delivery</text><text x="172" y="65" font-size="9" fill="#6e6e88">context</text>
+        <rect x="226" y="32" width="88" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="270" y="51">Content</text><text x="270" y="65" font-size="9" fill="#6e6e88">context</text>
+        <rect x="324" y="32" width="88" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="368" y="51">Automation</text><text x="368" y="65" font-size="9" fill="#6e6e88">context</text>
+        <rect x="422" y="32" width="88" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="466" y="51">Platform</text><text x="466" y="65" font-size="9" fill="#6e6e88">context</text>
+        <rect x="520" y="32" width="88" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="564" y="51">Research</text><text x="564" y="65" font-size="9" fill="#6e6e88">context</text>
+        <rect x="618" y="32" width="88" height="42" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/><text x="662" y="51">Publication</text><text x="662" y="65" font-size="9" fill="#6e6e88">context</text>
+      </g>
+      <g stroke="#1a9e8f" stroke-width="1.2" marker-end="url(#a1)">
+        <line x1="74" y1="76" x2="74" y2="124"/><line x1="172" y1="76" x2="172" y2="124"/><line x1="270" y1="76" x2="270" y2="124"/><line x1="368" y1="76" x2="368" y2="124"/><line x1="466" y1="76" x2="466" y2="124"/><line x1="564" y1="76" x2="564" y2="124"/><line x1="662" y1="76" x2="662" y2="124"/>
+      </g>
+      
+
+      <rect x="24" y="116" width="690" height="90" rx="6" fill="url(#tg)" stroke="#1a9e8f" stroke-width="1.5"/>
+      <text x="40" y="195" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#1a9e8f" letter-spacing=".12em">TIER 2 · ACTIVE STATE</text><text x="700" y="195" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88" text-anchor="end">each context overwrites only its own section, reads all seven</text>
+      <g fill="none" stroke="#1a9e8f" stroke-opacity=".6">
+        <rect x="33" y="128" width="82" height="42" rx="3"/><rect x="131" y="128" width="82" height="42" rx="3"/><rect x="229" y="128" width="82" height="42" rx="3"/><rect x="327" y="128" width="82" height="42" rx="3"/><rect x="425" y="128" width="82" height="42" rx="3"/><rect x="523" y="128" width="82" height="42" rx="3"/><rect x="621" y="128" width="82" height="42" rx="3"/>
+      </g>
+      <g font-family="JetBrains Mono,monospace" font-size="8.5" fill="#6e6e88" text-anchor="middle">
+        <text x="74" y="146">§ sales</text><text x="74" y="160">≤1,500 ch</text>
+        <text x="172" y="146">§ delivery</text><text x="172" y="160">≤1,500 ch</text>
+        <text x="270" y="146">§ content</text><text x="270" y="160">≤1,500 ch</text>
+        <text x="368" y="146">§ automation</text><text x="368" y="160">≤1,500 ch</text>
+        <text x="466" y="146">§ platform</text><text x="466" y="160">≤1,500 ch</text>
+        <text x="564" y="146">§ research</text><text x="564" y="160">≤1,500 ch</text>
+        <text x="662" y="146">§ publication</text><text x="662" y="160">≤1,500 ch</text>
+      </g>
+
+      <g stroke="#1a9e8f" stroke-width="1.2" marker-end="url(#a1)">
+        <line x1="130" y1="208" x2="130" y2="290"/>
+        <line x1="370" y1="208" x2="370" y2="290"/>
+      </g>
+      <text x="138" y="252" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88">append decisions</text>
+      <text x="378" y="252" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88">propose (never write)</text>
+
+      <rect x="24" y="292" width="212" height="112" rx="6" fill="none" stroke="currentColor" stroke-opacity=".45"/>
+      <text x="40" y="314" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#1a9e8f" letter-spacing=".12em">TIER 3 · ARCHIVE</text>
+      <text x="40" y="338" font-family="Fraunces,serif" font-size="15" fill="currentColor">Decision log</text>
+      <text x="40" y="358" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">append-only, Supersedes links</text>
+      <text x="40" y="373" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">scope: Local | Cross</text>
+      <text x="40" y="388" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">read by search, never whole</text>
+
+      <rect x="264" y="292" width="212" height="112" rx="6" fill="none" stroke="currentColor" stroke-opacity=".45"/>
+      <text x="280" y="314" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#1a9e8f" letter-spacing=".12em">PROMOTION QUEUE</text>
+      <text x="280" y="338" font-family="Fraunces,serif" font-size="15" fill="currentColor">Pending changes</text>
+      <text x="280" y="358" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">verbatim old / new text</text>
+      <text x="280" y="373" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">change type, rationale, target</text>
+      <text x="280" y="388" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">the only path into Tier 1</text>
+
+      <rect x="530" y="292" width="184" height="112" rx="6" fill="url(#tg)" stroke="#1a9e8f" stroke-width="1.5"/>
+      <text x="546" y="314" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#1a9e8f" letter-spacing=".12em">TIER 1 · SPINE</text>
+      <text x="546" y="338" font-family="Fraunces,serif" font-size="15" fill="currentColor">Canonical facts</text>
+      <text x="546" y="358" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">rules, IDs, eliminated list</text>
+      <text x="546" y="373" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">sections owned by project</text>
+      <text x="546" y="388" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">no direct writes, by anyone</text>
+
+      <line x1="478" y1="348" x2="526" y2="348" stroke="#1a9e8f" stroke-width="1.4" marker-end="url(#a1)"/>
+      <text x="503" y="424" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#1a9e8f" text-anchor="middle">human approves in chat,</text>
+      <text x="503" y="437" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#1a9e8f" text-anchor="middle">owning context applies</text>
+      <line x1="503" y1="412" x2="503" y2="352" stroke="#1a9e8f" stroke-width=".8" stroke-dasharray="2,2"/>
+
+      <path d="M716,340 L740,340 L740,53 L710,53" fill="none" stroke="#6e6e88" stroke-width="1.1" stroke-dasharray="5,3" marker-end="url(#a1g)"/>
+      <text x="747" y="200" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88" transform="rotate(90 747 200)" text-anchor="middle">conditional read before any channel or tool recommendation</text>
+    </svg>
+    <p class="diagram-caption">Figure 1. Seven replicas, three tiers, one queue. Solid arrows are writes; the dashed arrow is a read.</p>
+  </div>
+
+  <div class="table-wrap">
+  <table class="ref-table">
+    <thead><tr><th>Tier</th><th>Holds</th><th>Write rule</th><th>Read rule</th><th>Bound</th></tr></thead>
+    <tbody>
+      <tr><td>1 · Spine</td><td>Durable cross-project facts, canonical IDs, the eliminated-channel list, contact-surface boundaries</td><td>Never written directly. Changed only through an approved queue row, applied by the section's owning context or by the human</td><td>Conditional: when work touches infrastructure or strategy, and always before recommending a channel, tool or platform</td><td>Slow-changing by design</td></tr>
+      <tr><td>2 · Active state</td><td>Current focus, last three decisions, next action, blockers, one section per context</td><td>Overwritten in full by the owning context, only when something in it changed</td><td>Every session start, all sections, one call</td><td>1,500 characters per section</td></tr>
+      <tr><td>3 · Archive</td><td>Every qualifying decision, timestamped, with scope and supersession</td><td>Append-only</td><td>Search with <code>Superseded by</code> empty; never fetched whole</td><td>Unbounded, never loaded whole</td></tr>
+      <tr><td>Queue</td><td>Proposed Tier 1 changes with verbatim old and new text</td><td>Any context may add rows for sections it owns</td><td>Every session start, <code>Status = Pending</code></td><td>Backpressure at 30 days</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p>
+    The tiers are ordered by how expensive a wrong value is. A stale Tier 2 section costs one context a slightly wrong picture of another's week. A wrong Tier 1 line gets read by all seven contexts and acted on for months. So the write discipline tightens as you go up: Tier 3 accepts anything that qualifies, Tier 2 accepts anything its owner writes, and Tier 1 accepts nothing without a person saying yes.
+  </p>
+
+  <h2 id="tier2">Tier 2: active state</h2>
+  <p>
+    Tier 2 is a single page with one section per context. Every context reads the whole page at session start, which is the entire mechanism for preventing stale reads: one fetch, seven sections, and a context knows what the other six are doing before it does anything. The schema is fixed and deliberately small.
+  </p>
+
+<pre><code><span class="k">## Content</span>
+Updated: 2026-09-29 | by: Content
+FOCUS: <span class="c">&lt;one line&gt;</span>
+DECISIONS (last 3):
+  - [2026-09-27] <span class="c">&lt;one line&gt;</span>
+  - [2026-09-20] <span class="c">&lt;one line&gt;</span>
+  - [2026-09-14] <span class="c">&lt;one line&gt;</span>
+NEXT ACTION: <span class="c">&lt;one line&gt;</span>
+BLOCKED ON: <span class="c">&lt;one line or "-"&gt;</span>
+POINTERS: <span class="c">&lt;tracker IDs, database IDs&gt;</span></code></pre>
+  <p class="pre-label">Tier 2 section schema. Overwritten in full, never appended, under 1,500 characters.</p>
+
+  <p>
+    Three constraints carry the weight.
+  </p>
+  <p>
+    <strong>Overwrite, never append.</strong> An appended section grows until it stops being read. A section that must be rewritten in full forces the writer to decide what still matters, and the three-decision window drops the oldest decision automatically. The history is not lost, because every decision that qualifies has already gone to Tier 3.
+  </p>
+  <p>
+    <strong>Pointers, not narrative.</strong> The <code>POINTERS</code> line holds identifiers, not explanations. A context that needs the explanation follows the pointer. Keeping narrative out is what keeps seven sections inside a single cheap read.
+  </p>
+  <p>
+    <strong>Conditional write.</strong> A context rewrites its section only if <code>FOCUS</code>, <code>DECISIONS</code>, <code>NEXT ACTION</code> or <code>BLOCKED ON</code> actually changed. If nothing moved, the section and its date stay as they were. This rule looks like a detail and is the most useful signal in the system. An agent's instinct at the end of a session is to refresh the timestamp to show it was diligent. A refreshed timestamp on unchanged content destroys information: an old date tells every other context where attention has not been, and a context that touched the page without changing anything has erased that fact.
+  </p>
+
+  <h2 id="tier3">Tier 3: decision archive</h2>
+  <p>
+    The archive is an append-only log with four fields that matter: the statement, a timestamp, a consequence scope (<code>Local</code> or <code>Cross</code>), and a <code>Supersedes</code> relation pointing at any earlier entry the new one overtakes. Rejections are logged as their own type, <code>REJECTION</code>, with the reasoning.
+  </p>
+
+  <div class="diagram-wrapper">
+    <svg viewBox="0 0 740 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Supersession chain in the decision archive: newer entries point back at the entries they overtake; reads return only entries with an empty Superseded-by field.">
+      <defs><marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6e6e88"/></marker></defs>
+      <g font-family="Instrument Sans,sans-serif" font-size="10.5" fill="currentColor">
+        <rect x="20" y="40" width="190" height="78" rx="5" fill="none" stroke="currentColor" stroke-opacity=".3"/>
+        <text x="34" y="60" font-family="JetBrains Mono,monospace" font-size="9" fill="#6e6e88">2026-05-02 · Cross</text>
+        <text x="34" y="80">Channel X: primary</text>
+        <text x="34" y="104" font-size="9.5" fill="#6e6e88">Superseded by: #2</text>
+
+        <rect x="270" y="40" width="190" height="78" rx="5" fill="none" stroke="currentColor" stroke-opacity=".3"/>
+        <text x="284" y="60" font-family="JetBrains Mono,monospace" font-size="9" fill="#6e6e88">2026-06-02 · Cross</text>
+        <text x="284" y="80">Channel X: eliminated</text>
+        <text x="284" y="104" font-size="9.5" fill="#6e6e88">Superseded by: #3</text>
+
+        <rect x="520" y="40" width="200" height="78" rx="5" fill="none" stroke="#1a9e8f" stroke-width="1.5"/>
+        <text x="534" y="60" font-family="JetBrains Mono,monospace" font-size="9" fill="#1a9e8f">2026-06-17 · Cross</text>
+        <text x="534" y="80">Channel X: eliminated,</text>
+        <text x="534" y="94">inbound-only exception removed</text>
+        <text x="534" y="110" font-size="9.5" fill="#1a9e8f">Superseded by: (empty)</text>
+      </g>
+      <line x1="268" y1="79" x2="212" y2="79" stroke="#6e6e88" stroke-width="1.1" marker-end="url(#a2)"/>
+      <line x1="518" y1="79" x2="462" y2="79" stroke="#6e6e88" stroke-width="1.1" marker-end="url(#a2)"/>
+      <text x="240" y="72" font-family="Instrument Sans,sans-serif" font-size="9" fill="#6e6e88" text-anchor="middle">supersedes</text>
+      <text x="490" y="72" font-family="Instrument Sans,sans-serif" font-size="9" fill="#6e6e88" text-anchor="middle">supersedes</text>
+      <rect x="520" y="140" width="200" height="34" rx="4" fill="#2ec4b6" fill-opacity=".1" stroke="#1a9e8f" stroke-opacity=".5"/>
+      <text x="620" y="161" font-family="JetBrains Mono,monospace" font-size="9" fill="#1a9e8f" text-anchor="middle">search filter returns this only</text>
+      <line x1="620" y1="120" x2="620" y2="138" stroke="#1a9e8f" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="20" y="160" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Entries are never edited or deleted.</text>
+      <text x="20" y="176" font-family="Instrument Sans,sans-serif" font-size="10" fill="#6e6e88">Currency is a property of the chain, not of the row.</text>
+    </svg>
+    <p class="diagram-caption">Figure 2. A supersession chain (illustrative entries). Reads filter on an empty Superseded-by field, so history stays intact and only the head is live.</p>
+  </div>
+
+  <p>
+    Two read rules keep the archive useful as it grows. It is never fetched whole, because a year of decisions loaded into a context window crowds out the work and invites the model to reason from entries that have since been overtaken. And every search filters on <code>Superseded by</code> being empty, so a query returns the head of each chain rather than every version of the argument.
+  </p>
+  <p>
+    The <code>REJECTION</code> type is what stops the same bad idea arriving every fortnight. Before a context proposes anything for Tier 1, it searches the archive for a rejection matching the statement. A rejection with reasons is not re-proposed. Without this, the system has no memory of its own refusals, and a model that finds an idea plausible today will find it plausible again next month, with the same arguments, to the same person, who has to say no again.
+  </p>
+
+  <h2 id="promotion">Promotion into Tier 1</h2>
+  <p>
+    Tier 1 is the only tier every context trusts without question, which is exactly why nobody writes to it directly. Not the contexts, not scheduled automations, and not a context acting on the human's behalf mid-session. The only path in is a row in the promotion queue, and the row has to pass a test before it is allowed to exist.
+  </p>
+  <p>
+    <strong>The promotion test has two conditions, and both must hold.</strong> The statement is still true in 90 days, and at least one other context would behave differently knowing it. The first condition keeps out anything transient. The second keeps out facts that are durable but private to one context. An article being published is durable and changes nothing for the sales context, so it belongs in Tier 2. A channel changing from "not started" to "active" is durable and changes what every context may recommend, so it is a Tier 1 amendment. Most candidates fail, and when they fail the correct destination is Tier 3 or nowhere. Nowhere is correct most of the time.
+  </p>
+
+  <div class="diagram-wrapper">
+    <svg viewBox="0 0 760 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Promotion state machine: a candidate passes the durability and cross-project test, is checked against prior rejections, becomes a pending row, and is either approved and applied to Tier 1 or rejected and archived. Pending rows trigger a nag after 14 days and backpressure after 30.">
+      <defs>
+        <marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1a9e8f"/></marker>
+        <marker id="a3g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6e6e88"/></marker>
+        <marker id="a3r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#b5462f"/></marker>
+      </defs>
+      <g font-family="Instrument Sans,sans-serif" font-size="10.5" fill="currentColor" text-anchor="middle">
+        <rect x="14" y="120" width="108" height="56" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/>
+        <text x="68" y="143">Candidate</text><text x="68" y="159" font-size="9" fill="#6e6e88">session end</text>
+
+        <rect x="152" y="112" width="140" height="72" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/>
+        <text x="222" y="134">Promotion test</text>
+        <text x="222" y="151" font-size="9" fill="#6e6e88">true in 90 days</text>
+        <text x="222" y="164" font-size="9" fill="#6e6e88">AND changes another</text>
+        <text x="222" y="176" font-size="9" fill="#6e6e88">context's behaviour</text>
+
+        <rect x="322" y="120" width="120" height="56" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/>
+        <text x="382" y="143">Rejection search</text><text x="382" y="159" font-size="9" fill="#6e6e88">archive, type REJECTION</text>
+
+        <rect x="474" y="120" width="112" height="56" rx="5" fill="#2ec4b6" fill-opacity=".1" stroke="#1a9e8f" stroke-width="1.5"/>
+        <text x="530" y="143" fill="#1a9e8f" font-family="JetBrains Mono,monospace" font-size="10">PENDING</text><text x="530" y="159" font-size="9" fill="#6e6e88">queue row</text>
+
+        <rect x="618" y="120" width="128" height="56" rx="5" fill="#2ec4b6" fill-opacity=".18" stroke="#1a9e8f" stroke-width="1.5"/>
+        <text x="682" y="143" fill="#1a9e8f" font-family="JetBrains Mono,monospace" font-size="10">APPLIED</text><text x="682" y="159" font-size="9" fill="#6e6e88">Tier 1 line changed</text>
+
+        <rect x="152" y="246" width="140" height="50" rx="5" fill="none" stroke="currentColor" stroke-opacity=".3" stroke-dasharray="4,3"/>
+        <text x="222" y="267">Tier 3, or nowhere</text><text x="222" y="283" font-size="9" fill="#6e6e88">the usual outcome</text>
+
+        <rect x="322" y="246" width="120" height="50" rx="5" fill="none" stroke="currentColor" stroke-opacity=".3" stroke-dasharray="4,3"/>
+        <text x="382" y="267">Stop</text><text x="382" y="283" font-size="9" fill="#6e6e88">not re-proposed</text>
+
+        <rect x="474" y="246" width="112" height="50" rx="5" fill="none" stroke="#b5462f" stroke-opacity=".7"/>
+        <text x="530" y="267">REJECTED</text><text x="530" y="283" font-size="9" fill="#6e6e88">archived with reasons</text>
+      </g>
+      <g stroke="#1a9e8f" stroke-width="1.3" marker-end="url(#a3)" fill="none">
+        <line x1="124" y1="148" x2="149" y2="148"/>
+        <line x1="294" y1="148" x2="319" y2="148"/>
+        <line x1="444" y1="148" x2="471" y2="148"/>
+        <line x1="588" y1="148" x2="615" y2="148"/>
+      </g>
+      <g font-family="Instrument Sans,sans-serif" font-size="8.5" fill="#1a9e8f" text-anchor="middle">
+        <text x="307" y="140">pass</text><text x="458" y="140">none</text><text x="602" y="140">yes</text>
+      </g>
+      <g stroke="#6e6e88" stroke-width="1.1" marker-end="url(#a3g)" fill="none">
+        <line x1="222" y1="186" x2="222" y2="243"/>
+        <line x1="382" y1="178" x2="382" y2="243"/>
+      </g>
+      <g font-family="Instrument Sans,sans-serif" font-size="8.5" fill="#6e6e88">
+        <text x="228" y="218">fail</text><text x="388" y="218">match found</text>
+      </g>
+      <line x1="530" y1="178" x2="530" y2="243" stroke="#b5462f" stroke-width="1.1" marker-end="url(#a3r)"/>
+      <text x="536" y="218" font-family="Instrument Sans,sans-serif" font-size="8.5" fill="#b5462f">no</text>
+      <path d="M474,272 L446,272" stroke="#b5462f" stroke-width="1" stroke-dasharray="3,3" fill="none" marker-end="url(#a3r)"/>
+      <text x="460" y="314" font-family="Instrument Sans,sans-serif" font-size="8.5" fill="#6e6e88" text-anchor="middle">future proposals match against it</text>
+
+      <text x="602" y="112" font-family="Instrument Sans,sans-serif" font-size="9" fill="#1a9e8f" text-anchor="middle">human, in chat only</text>
+      <rect x="474" y="22" width="272" height="56" rx="5" fill="none" stroke="#b5462f" stroke-opacity=".6" stroke-dasharray="4,3"/>
+      <text x="488" y="42" font-family="JetBrains Mono,monospace" font-size="9" fill="#b5462f">TIMERS ON PENDING</text>
+      <text x="488" y="58" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="currentColor">&gt; 14 days: one-line nag every session</text>
+      <text x="488" y="71" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="currentColor">&gt; 30 days: no new rows for that section</text>
+      <line x1="530" y1="80" x2="530" y2="118" stroke="#b5462f" stroke-opacity=".6" stroke-dasharray="2,2"/>
+    </svg>
+    <p class="diagram-caption">Figure 3. The promotion state machine. Only one transition, Pending to Applied, touches Tier 1, and only a person can trigger it.</p>
+  </div>
+
+  <p>
+    A queue row carries four fields verbatim: the exact <code>Old text</code> of the Tier 1 line, the exact <code>New text</code>, a <code>Change type</code> such as <code>AMEND</code> or <code>TOMBSTONE</code>, and a <code>Rationale</code>. Verbatim old text matters because it turns approval into reviewing a diff. The person approving sees precisely what changes, and the applying context can refuse if the old text no longer matches the live line, which catches a second context having amended the same line in the meantime.
+  </p>
+  <p>
+    <strong>Ownership.</strong> Tier 1 is divided into sections, and each context may propose changes only to the sections it owns. The content context owns the channel list. The contact-surface rules, which decide whether a contact is a company handled by sales or an individual handled by consulting, are owned by nobody but the human and are applied by the human directly, in chat. No context can merge those two stores on its own initiative.
+  </p>
+  <p>
+    <strong>Backpressure.</strong> Two timers run on pending rows. After 14 days, any context that reads the queue raises a one-line nag. After 30 days, the context that owns the stalled section stops writing new rows for it and surfaces the blockage instead. This is the answer to the proposal flood. The rate at which rules can change is bounded by the rate at which a person reviews them, and the system makes that bound visible rather than letting the queue grow into something nobody opens.
+  </p>
+
+  <h2 id="tombstones">Tombstones</h2>
+  <p>
+    The rule that exists because of the worst failure is the tombstone rule, and the failure is worth describing precisely.
+  </p>
+  <p>
+    Gumroad was one of the channels I eliminated. The decision was recorded where decisions were recorded at the time: in the rules, in prose, in the eliminated list. The rules were correct. Meanwhile the product backlog database still held fourteen rows for products destined for that marketplace. Ten were marked <code>Validating</code>. One was marked <code>Ready</code>. They stayed that way for months.
+  </p>
+  <p>
+    Every context that queried the backlog did the right thing with what it read. It found products in validation, one of them ready to ship, and surfaced them as work to do. The agents were not malfunctioning. They were reading records, and the records said the channel was alive. The prose said it was dead, and the prose lost, because the prose was one paragraph and the records were fourteen rows that every query returned.
+  </p>
+
+  <div class="callout warn">
+    <p><strong>A deletion that happens only in prose is not a deletion.</strong> When a channel, tool, product line or surface is eliminated, the record has to change, not just the rules that describe it.</p>
+  </div>
+
+  <div class="diagram-wrapper">
+    <svg viewBox="0 0 740 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Tombstone write-set: one elimination triggers three required writes, a TOMBSTONE queue row, Deprecated status on every dependent row in three databases, and an archive entry. Below, the observed failure when only prose was changed.">
+      <defs><marker id="a4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1a9e8f"/></marker></defs>
+      <rect x="20" y="104" width="160" height="70" rx="6" fill="#2ec4b6" fill-opacity=".1" stroke="#1a9e8f" stroke-width="1.5"/>
+      <text x="100" y="134" font-family="Fraunces,serif" font-size="15" fill="currentColor" text-anchor="middle">Surface eliminated</text>
+      <text x="100" y="154" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88" text-anchor="middle">channel, tool, product line</text>
+
+      <g stroke="#1a9e8f" stroke-width="1.3" fill="none" marker-end="url(#a4)">
+        <path d="M182,130 C215,130 215,48 246,48"/>
+        <line x1="182" y1="139" x2="246" y2="139"/>
+        <path d="M182,148 C215,148 215,232 246,232"/>
+      </g>
+      <g font-family="JetBrains Mono,monospace" font-size="9" fill="#1a9e8f">
+        <text x="206" y="80">1</text><text x="206" y="133">2</text><text x="206" y="204">3</text>
+      </g>
+
+      <rect x="248" y="18" width="220" height="62" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/>
+      <text x="262" y="38" font-family="JetBrains Mono,monospace" font-size="9" fill="#1a9e8f">QUEUE ROW</text>
+      <text x="262" y="56" font-family="Instrument Sans,sans-serif" font-size="10.5" fill="currentColor">Change type = TOMBSTONE</text>
+      <text x="262" y="71" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88">amends the eliminated list on approval</text>
+
+      <rect x="248" y="100" width="220" height="80" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/>
+      <text x="262" y="120" font-family="JetBrains Mono,monospace" font-size="9" fill="#1a9e8f">RECORD WRITES</text>
+      <text x="262" y="138" font-family="Instrument Sans,sans-serif" font-size="10.5" fill="currentColor">Status = Deprecated on every</text>
+      <text x="262" y="153" font-family="Instrument Sans,sans-serif" font-size="10.5" fill="currentColor">dependent row, every database</text>
+      <text x="262" y="170" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88">not the ones someone remembers</text>
+
+      <rect x="248" y="202" width="220" height="62" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/>
+      <text x="262" y="222" font-family="JetBrains Mono,monospace" font-size="9" fill="#1a9e8f">ARCHIVE ENTRY</text>
+      <text x="262" y="240" font-family="Instrument Sans,sans-serif" font-size="10.5" fill="currentColor">Tier 3, scope Cross</text>
+      <text x="262" y="255" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88">with Supersedes link</text>
+
+      <g stroke="#1a9e8f" stroke-width="1" fill="none" stroke-opacity=".7" marker-end="url(#a4)">
+        <line x1="470" y1="120" x2="520" y2="70"/>
+        <line x1="470" y1="140" x2="520" y2="140"/>
+        <line x1="470" y1="160" x2="520" y2="210"/>
+      </g>
+      <g font-family="Instrument Sans,sans-serif" font-size="10.5" fill="currentColor">
+        <rect x="522" y="48" width="198" height="42" rx="4" fill="none" stroke="currentColor" stroke-opacity=".3"/><text x="536" y="67">Product backlog</text><text x="536" y="81" font-size="9" fill="#6e6e88">14 rows affected in the incident</text>
+        <rect x="522" y="119" width="198" height="42" rx="4" fill="none" stroke="currentColor" stroke-opacity=".3"/><text x="536" y="138">Content library</text><text x="536" y="152" font-size="9" fill="#6e6e88">pieces targeting the surface</text>
+        <rect x="522" y="190" width="198" height="42" rx="4" fill="none" stroke="currentColor" stroke-opacity=".3"/><text x="536" y="209">Ideas lab</text><text x="536" y="223" font-size="9" fill="#6e6e88">concepts routed to it</text>
+      </g>
+
+      <rect x="20" y="290" width="700" height="94" rx="6" fill="#b5462f" fill-opacity=".05" stroke="#b5462f" stroke-opacity=".7" stroke-dasharray="5,3"/>
+      <text x="36" y="312" font-family="JetBrains Mono,monospace" font-size="9" fill="#b5462f" letter-spacing=".1em">OBSERVED FAILURE · PROSE-ONLY DELETION</text>
+      <g font-family="Instrument Sans,sans-serif" font-size="10.5" fill="currentColor">
+        <text x="36" y="336">Rules: "Gumroad eliminated."</text>
+        <text x="36" y="354">Backlog: 14 rows untouched, 10 Validating, 1 Ready.</text>
+        <text x="36" y="372" fill="#6e6e88">Every context that queried the backlog surfaced them as live work. For months. Correctly.</text>
+      </g>
+      <g font-family="JetBrains Mono,monospace" font-size="22" fill="#b5462f" fill-opacity=".85" text-anchor="middle">
+        <text x="560" y="348">1 ✓</text><text x="620" y="348">2 ✗</text><text x="680" y="348">3 ✗</text>
+      </g>
+    </svg>
+    <p class="diagram-caption">Figure 4. The tombstone write-set. All three writes, in the same session. The incident below completed one of them.</p>
+  </div>
+
+  <p>
+    The three writes are a set, not a checklist to be worked through over time. All of them happen in the session that makes the decision. The queue row changes the rule, the record writes change what every query returns, and the archive entry records why. Of the three, the record writes are the ones that get skipped, because they are tedious and because the person making the decision feels the decision is already made. It is made in the only place nobody queries.
+  </p>
+  <p>
+    This is the characteristic failure of a context whose subject is choosing between options. It kills things often, and every kill leaves dependent records behind. The tombstone rule is written into that context's instructions as its own named failure, with the incident attached, rather than as a general principle about consistency. The design bet is that a model follows "this is the mistake you in particular make, and here is when you made it" more reliably than it follows "keep records consistent".
+  </p>
+
+  <h2 id="conflicts">Conflict resolution</h2>
+  <p>
+    Every line in Tier 1 and Tier 2 carries a provenance stamp in the form <code>[YYYY-MM-DD | source]</code>. When two lines conflict, the most recent wins. There is no reconciliation step.
+  </p>
+  <p>
+    Refusing to reconcile is a deliberate choice. Asked to reconcile two conflicting statements, a model produces a third statement that sounds like a synthesis and is usually a new claim that neither source made. Last-writer-wins is crude, but it is predictable, auditable from the stamps alone, and it never invents anything. The one case it cannot settle is two conflicting lines with the same date. Those become competing <code>AMEND</code> rows in the queue, and the human picks one.
+  </p>
+
+  <h2 id="lifecycle">Session lifecycle</h2>
+  <p>
+    The protocol is enforced by what each context does at the start and end of every session. The start sequence is about reading cheaply and completely. The end sequence is about writing only what changed.
+  </p>
+
+  <div class="diagram-wrapper">
+    <svg viewBox="0 0 740 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Session lifecycle. Start: read Tier 2, check the queue, conditionally read Tier 1, search Tier 3. End: conditional Tier 2 write, archive append, promotion test, tombstone set, tracker close if state changed, git push if a repository was written.">
+      <defs><marker id="a5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1a9e8f"/></marker></defs>
+      <text x="20" y="26" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#1a9e8f" letter-spacing=".12em">SESSION START · READ</text>
+      <g font-family="Instrument Sans,sans-serif" font-size="10" fill="currentColor">
+        <rect x="20" y="38" width="160" height="78" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/>
+        <text x="32" y="58" font-weight="600">Read Tier 2</text><text x="32" y="76" fill="#6e6e88" font-size="9.5">all seven sections</text><text x="32" y="90" fill="#6e6e88" font-size="9.5">one call, always</text>
+        <rect x="196" y="38" width="160" height="78" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/>
+        <text x="208" y="58" font-weight="600">Check the queue</text><text x="208" y="76" fill="#6e6e88" font-size="9.5">Pending rows for owned</text><text x="208" y="90" fill="#6e6e88" font-size="9.5">sections shown as diffs;</text><text x="208" y="104" fill="#6e6e88" font-size="9.5">nag &gt;14d, halt &gt;30d</text>
+        <rect x="372" y="38" width="170" height="78" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/>
+        <text x="384" y="58" font-weight="600">Read Tier 1, if</text><text x="384" y="76" fill="#6e6e88" font-size="9.5">infra or strategy work, or</text><text x="384" y="90" fill="#6e6e88" font-size="9.5">about to recommend any</text><text x="384" y="104" fill="#6e6e88" font-size="9.5">channel, tool or platform</text>
+        <rect x="558" y="38" width="162" height="78" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/>
+        <text x="570" y="58" font-weight="600">Tier 3 on demand</text><text x="570" y="76" fill="#6e6e88" font-size="9.5">search only, head of</text><text x="570" y="90" fill="#6e6e88" font-size="9.5">chain only</text>
+      </g>
+      <g stroke="#1a9e8f" stroke-width="1.2" marker-end="url(#a5)"><line x1="181" y1="77" x2="193" y2="77"/><line x1="357" y1="77" x2="369" y2="77"/><line x1="543" y1="77" x2="555" y2="77"/></g>
+
+      <text x="20" y="150" font-family="Instrument Sans,sans-serif" font-size="9.5" fill="#6e6e88">Carve-out: purely intellectual or learning sessions skip every read above. Reads cost context; a session that touches no shared state pays nothing.</text>
+
+      <text x="20" y="186" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#1a9e8f" letter-spacing=".12em">SESSION END · WRITE ONLY WHAT CHANGED</text>
+      <g font-family="Instrument Sans,sans-serif" font-size="9.5" fill="currentColor">
+        <rect x="20" y="198" width="108" height="84" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/>
+        <text x="30" y="217" font-weight="600">Tier 2</text><text x="30" y="233" fill="#6e6e88">overwrite only if</text><text x="30" y="247" fill="#6e6e88">focus, decisions,</text><text x="30" y="261" fill="#6e6e88">next or blocker</text><text x="30" y="275" fill="#6e6e88">changed</text>
+        <rect x="136" y="198" width="108" height="84" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/>
+        <text x="146" y="217" font-weight="600">Tier 3</text><text x="146" y="233" fill="#6e6e88">append, stamp,</text><text x="146" y="247" fill="#6e6e88">scope, link</text><text x="146" y="261" fill="#6e6e88">Supersedes</text>
+        <rect x="252" y="198" width="108" height="84" rx="5" fill="none" stroke="currentColor" stroke-opacity=".45"/>
+        <text x="262" y="217" font-weight="600">Promotion test</text><text x="262" y="233" fill="#6e6e88">both conditions,</text><text x="262" y="247" fill="#6e6e88">rejection search,</text><text x="262" y="261" fill="#6e6e88">then queue row</text>
+        <rect x="368" y="198" width="108" height="84" rx="5" fill="none" stroke="#b5462f" stroke-opacity=".7"/>
+        <text x="378" y="217" font-weight="600">Tombstone set</text><text x="378" y="233" fill="#6e6e88">if anything died:</text><text x="378" y="247" fill="#6e6e88">all three writes,</text><text x="378" y="261" fill="#6e6e88">this session</text>
+        <rect x="484" y="198" width="112" height="84" rx="5" fill="none" stroke="currentColor" stroke-opacity=".3" stroke-dasharray="4,3"/>
+        <text x="494" y="217" font-weight="600">Close tracker issue</text><text x="494" y="233" fill="#6e6e88">only if the session</text><text x="494" y="247" fill="#6e6e88">mapped to one and</text><text x="494" y="261" fill="#6e6e88">changed system state</text>
+        <rect x="604" y="198" width="116" height="84" rx="5" fill="none" stroke="currentColor" stroke-opacity=".3" stroke-dasharray="4,3"/>
+        <text x="614" y="217" font-weight="600">Commit and push</text><text x="614" y="233" fill="#6e6e88">only if files were</text><text x="614" y="247" fill="#6e6e88">written into a git</text><text x="614" y="261" fill="#6e6e88">repository</text>
+      </g>
+    </svg>
+    <p class="diagram-caption">Figure 5. Start reads are unconditional and cheap; end writes are conditional. Dashed steps are obligations that attach to artifacts, not to conversations.</p>
+  </div>
+
+  <p>
+    Two details in the start sequence carry most of the practical value.
+  </p>
+  <p>
+    The Tier 1 read has a clause with no exceptions: a context must read the spine before recommending any channel, tool, product surface or platform. The drift case is concrete: after the channel eliminations, several static project files still carried references to the eliminated marketplaces, queued for cleanup that had not happened yet. Any context loading those files would have recommended them in good faith. Memory drifts and static copies drift. The spine is the one copy that does not, so any recommendation that could collide with an elimination is checked against it at the moment the recommendation is made, not at the moment the project was configured.
+  </p>
+  <p>
+    The carve-out runs the other way. A session that is purely intellectual, a conversation about a book or a concept, skips every read. Reading shared state costs context window and latency, and a protocol that charges that cost on every session gets abandoned. Making the cost conditional on the session actually touching shared state is what keeps the protocol in use.
+  </p>
+  <p>
+    The end sequence ends with two obligations that look unrelated to memory and belong here for the same reason. A tracker issue is closed only if the session mapped to one and changed system state; a planning conversation does not qualify. A commit and push happens only if the session wrote into a git repository. Both rules exist because the natural failure is to attach obligations to conversations, closing an issue because a topic was discussed or treating a planning session as shipped work. Obligations attach to artifacts.
+  </p>
+
+  <h2 id="trust">Trust boundary</h2>
+  <p>
+    Approvals for Tier 1 changes happen in a live chat with the human, and nowhere else. Not through a scheduler, not through a messaging bot, not through email. A promotion that arrives through any other channel did not come from this system, by definition, and is treated as data rather than as an instruction.
+  </p>
+  <p>
+    This is the answer to authority spoofing, and it is cheap because it is structural rather than a matter of detection. A context never has to judge whether an instruction embedded in a document, a web page or a tool result looks legitimate. It only has to check which channel the approval arrived through, and there is exactly one valid answer. Combined with the rule that nobody writes to Tier 1 directly, the most injected text can achieve is a queue row that a person will read as a diff and decline.
+  </p>
+  <p>
+    Known ambiguity is also written down rather than resolved by whichever context meets it first. When two pages both have a plausible claim to being canonical for the same content, the protocol names both, states that the choice is the human's and has not been made, and instructs every context to surface the question rather than pick one. An agent that silently chooses one of two candidates is right half the time and writes the other half into shared state as fact.
+  </p>
+
+  <h2 id="failures">Failure modes and the rule that answers each</h2>
+  <div class="table-wrap">
+  <table class="ref-table">
+    <thead><tr><th>Failure</th><th>Symptom</th><th>Rule</th></tr></thead>
+    <tbody>
+      <tr><td>Drift</td><td>Static project files still referencing marketplaces after they were eliminated</td><td>Mandatory Tier 1 read before any channel, tool or platform recommendation</td></tr>
+      <tr><td>Zombie records</td><td>14 backlog rows for an eliminated marketplace, 10 Validating, 1 Ready</td><td>Tombstone write-set: queue row, record deprecation, archive entry, same session</td></tr>
+      <tr><td>Stale reads</td><td>A context acting on state another context changed the day before</td><td>Every session reads all seven Tier 2 sections in one call</td></tr>
+      <tr><td>Erased staleness</td><td>A refreshed timestamp on an unchanged section hides that nobody is working on it</td><td>Conditional Tier 2 write; an old date is information</td></tr>
+      <tr><td>Proposal flood</td><td>More suggested rule changes than anyone reviews</td><td>Two-condition promotion test; 14-day nag; 30-day backpressure per section</td></tr>
+      <tr><td>Relitigation</td><td>The same rejected idea proposed again with the same arguments</td><td><code>REJECTION</code> entries searched before any proposal</td></tr>
+      <tr><td>Invented synthesis</td><td>A reconciled rule neither source had stated</td><td>Provenance stamps; most recent wins; same-date conflicts go to the human</td></tr>
+      <tr><td>Authority spoofing</td><td>Embedded text claiming pre-authorisation</td><td>Single approval channel; no direct Tier 1 writes by anyone</td></tr>
+      <tr><td>Context bloat</td><td>A year of decisions loaded into every session</td><td>Tier 3 by search only, head of chain only; Tier 2 capped at 1,500 characters</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2 id="limits">What it does not solve</h2>
+  <p>
+    The protocol is enforced by instruction, not by database constraint. Every rule above is text in a context's instructions, and a model follows text with high but not perfect reliability. Nothing in the storage layer prevents a direct Tier 1 edit; the rule against it is a sentence. The obvious next step is to move the invariants that can be checked mechanically into code: reject a Tier 2 write over 1,500 characters, reject a queue row whose old text does not match the live line, reject any deprecation-free elimination. Those checks are cheap and certain. The ones that remain, such as whether a statement will still be true in 90 days, are judgement and stay with the model and the person.
+  </p>
+  <p>
+    Human review throughput is the binding constraint, and the design makes it visible rather than removing it. Backpressure stops the queue growing, but it does so by blocking change. If the person reviewing is away for a month, sections freeze. That is the correct failure for a system whose Tier 1 is trusted by every context, and it is still a failure.
+  </p>
+  <p>
+    Day-granularity stamps cannot order two changes made on the same day. The protocol hands those to the human rather than guessing, which is honest and slightly annoying.
+  </p>
+
+  <h2 id="patterns">Patterns worth stealing</h2>
+  <p>
+    Most of this transfers to any setup with more than one persistent agent context sharing facts, whatever the storage layer.
+  </p>
+  <ul class="plain">
+    <li><strong>Tier by blast radius.</strong> Put facts where the cost of a wrong value matches the strictness of the write rule.</li>
+    <li><strong>Overwrite small state, append large history.</strong> A fixed schema with a character cap stays readable; a log stays trustworthy.</li>
+    <li><strong>Do not refresh what did not change.</strong> Staleness is a signal. Protect it.</li>
+    <li><strong>Make promotion pass two tests, not one.</strong> Durable and cross-cutting. Either alone lets too much through.</li>
+    <li><strong>Remember refusals.</strong> A logged rejection with reasons is the cheapest defence against relitigating the same idea.</li>
+    <li><strong>Tombstone the records, not the prose.</strong> An elimination is a write-set across every store that references the thing.</li>
+    <li><strong>Let the latest stamp win.</strong> Deterministic resolution beats model-generated reconciliation.</li>
+    <li><strong>One approval channel.</strong> Authority defined by channel is structural; authority judged by content is a detection problem.</li>
+    <li><strong>Name the known ambiguities.</strong> An unresolved choice written down is safer than a resolved one guessed.</li>
+    <li><strong>Attach obligations to artifacts.</strong> Close issues and push commits because state changed, not because a conversation happened.</li>
+  </ul>
+  <p>
+    The operations architecture these contexts run is described in <a href="/work/continuum.html" style="color:var(--teal)">Continuum</a>. This page is about the layer underneath it that decides what all of them believe.
+  </p>
+
+  <div class="callout">
+    <p>If you are running several agent contexts against shared facts and they have started disagreeing, I would welcome comparing notes. <strong>tawhid@softograph.com</strong></p>
+  </div>
+
+</main>
+</div>
+
+<footer class="site-footer">
+  <p>&copy; 2026 Tawhid Rahman. All rights reserved.</p>
+  <p>Licensed under <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</a>. Share with attribution. Do not modify or use commercially without permission.</p>
+  <div class="disclaimer">
+    <p>This document describes an architectural approach from a specific implementation, provided for informational purposes. Project names are generalised. Results depend on context and should not be assumed to transfer directly.</p>
+  </div>
+</footer>
+
+<script>
+function toggleTheme(){const h=document.documentElement,c=h.getAttribute('data-theme');h.setAttribute('data-theme',c==='dark'?'light':'dark');localStorage.setItem('theme',h.getAttribute('data-theme'))}
+(function(){const s=localStorage.getItem('theme');if(s)document.documentElement.setAttribute('data-theme',s)})();
+(function(){const secs=document.querySelectorAll('h2[id]'),links=document.querySelectorAll('.toc-rail a');const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.remove('active'));const t=document.querySelector('.toc-rail a[href="#'+e.target.id+'"]');if(t)t.classList.add('active')}})},{rootMargin:'-15% 0px -75% 0px'});secs.forEach(s=>obs.observe(s))})();
+</script>
+</body>
+</html>
